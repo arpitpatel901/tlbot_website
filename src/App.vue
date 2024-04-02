@@ -1,6 +1,7 @@
 <script setup>
 import ExampleComponent from "./components/ExampleComponent.vue";
 import StackedList from "./components/StackedList.vue";
+// import Navbar from "./components/Navbar.vue";
 
 </script>
 
@@ -8,6 +9,7 @@ import StackedList from "./components/StackedList.vue";
   <header></header>
 
   <main>
+    <Navbar />
     <StackedList />
   </main>
 </template>
