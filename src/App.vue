@@ -1,7 +1,7 @@
 <script setup>
-import ExampleComponent from "./components/ExampleComponent.vue";
-import StackedList from "./components/StackedList.vue";
 import Navbar from "./components/Navbar.vue";
+import BuilderNavbar from "./components/BuilderNavbar.vue";
+import NavbarCopy from "./components/NavbarCopy.vue";
 
 </script>
 
@@ -9,9 +9,10 @@ import Navbar from "./components/Navbar.vue";
   <header></header>
 
   <main>
-    <Navbar />
-    <!-- <StackedList /> -->
-  </main>
+    <!-- <BuilderNavbar /> -->
+    <!-- <Navbar /> -->
+    <NavbarCopy />
+</main>
 </template>
 
 <style scoped></style>
