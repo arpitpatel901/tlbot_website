@@ -32,6 +32,8 @@
         >
         <!-- Hamburger Icon -->
         <button
+          @click="toggleMenuButton"
+          ref="menuButton"
           id="menu-btn"
           class="block hamburger md:hidden focus:outline-none"
         >
@@ -44,6 +46,7 @@
       <!-- Mobile Menu -->
       <div class="md:hidden">
         <div
+          ref="menu"
           id="menu"
           class="absolute flex-col items-center hidden self-end py-8 mt-10 space-y-6 font-bold bg-white sm:w-auto sm:self-center left-6 right-6 drop-shadow-md"
         >
@@ -216,7 +219,11 @@
           <div
             class="flex flex-col items-center p-6 space-y-6 rounded-lg bg-veryLightGray md:w-1/3"
           >
-            <img src="./../assets/avatar-anisha.png" class="w-16 -mt-14" alt="" />
+            <img
+              src="./../assets/avatar-anisha.png"
+              class="w-16 -mt-14"
+              alt=""
+            />
             <h5 class="text-lg font-bold">Anisha Li</h5>
             <p class="text-sm text-darkGrayishBlue">
               “Manage has supercharged our team’s workflow. The ability to
@@ -242,7 +249,11 @@
           <div
             class="hidden flex-col items-center p-6 space-y-6 rounded-lg bg-veryLightGray md:flex md:w-1/3"
           >
-            <img src="./../assets/avatar-richard.png" class="w-16 -mt-14" alt="" />
+            <img
+              src="./../assets/avatar-richard.png"
+              class="w-16 -mt-14"
+              alt=""
+            />
             <h5 class="text-lg font-bold">Richard Watts</h5>
             <p class="text-sm text-darkGrayishBlue">
               “Manage has supercharged our team’s workflow. The ability to
@@ -363,11 +374,20 @@
         </div>
       </div>
     </footer>
-
   </div>
 </template>
 
 <script>
+// // Custom javascript
+// const btn = document.getElementById('menu-btn')
+// const nav = document.getElementById('menu')
+
+// btn.addEventListener('click', () => {
+//   btn.classList.toggle('open')
+//   nav.classList.toggle('flex')
+//   nav.classList.toggle('hidden')
+// })
+
 // import Navbar from './Navbar.vue';
 export default {
   name: "NavbarTailwind",
@@ -375,21 +395,28 @@ export default {
     toggleTheme() {
       document.body.classList.toggle("dark");
     },
+    toggleMenuButton() {
+      // console.log("toggleMenuButton triggered");
+      this.$refs.menuButton.classList.toggle("open");
+      // console.log("toggleMenu triggered");
+      // console.log(this.$refs.menu);
+      this.$refs.menu.classList.toggle("flex");
+      this.$refs.menu.classList.toggle("hidden");
+    },
   },
 };
 </script>
 
 <style>
-
 body {
-  background-image: url('./../assets/bg-tablet-pattern.svg');
+  background-image: url("./../assets/bg-tablet-pattern.svg");
   background-repeat: no-repeat;
   background-size: 800px;
   background-position: 90% -25%;
 }
 
 #cta {
-  background-image: url('./../assets/bg-simplify-section-desktop.svg');
+  background-image: url("./../assets/bg-simplify-section-desktop.svg");
   background-repeat: no-repeat;
 }
 
@@ -400,7 +427,7 @@ body {
   }
 
   #cta {
-    background-image: url('./../assets/bg-simplify-section-mobile.svg');
+    background-image: url("./../assets/bg-simplify-section-mobile.svg");
   }
 }
 
