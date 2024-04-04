@@ -1,6 +1,7 @@
 <template>
   <div>
-    <nav class="relative container mx-auto p-6">
+      <div class="custom-background relative w-full h-full">
+      <nav class="relative container mx-auto p-6">
       <!-- Flex container -->
       <div class="flex items-center justify-between">
         <!-- Logo -->
@@ -50,13 +51,42 @@
       </div>
     </nav>
 
-    <!-- Title -->
-    <header
-      class="box-border relative mx-20 mt-5 py-10 h-auto text-7xl text-center md:space-y-1 md:py-60"
-    >
-    <h1>Build Your <span class="text-blue-500">AI Support</span></h1>
-    <p
-            class="box-border relative mx-10 pt-10 mt-5 h-auto text-2xl text-center md:text-4xl md:space-y-10 md:py-30 md:px-30"
+      <!-- <div class="relative"> -->
+        <!-- <div class="custom-shape-divider-bottom-1712260637 animate-sinusoid">
+          <svg
+            data-name="Layer 1"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 1200 120"
+            preserveAspectRatio="none"
+          >
+            <path
+              d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
+              class="shape-fill"
+            ></path>
+          </svg>
+        </div> -->
+        <!-- <div class="absolute spacer layer1 animate-sinusoid"></div> -->
+        <!-- <div
+          class="absolute blur-sm top-20 right-4 w-72 h-16 bg-blue-700 rounded-2xl md:left-20"
+        ></div>
+        <div
+          class="absolute blur-sm top-40 left-4 w-72 h-16 bg-green-300 rounded-2xl md:right-20"
+        ></div>
+        <div
+          class="absolute blur-sm top-60 right-4 w-72 h-16 bg-blue-700 rounded-2xl md:left-20"
+        ></div>
+        <div
+          class="absolute blur-sm top-80 left-4 w-72 h-16 bg-green-300 rounded-2xl md:right-20"
+        ></div> -->
+        <!-- Title -->
+        <header
+          ref="title"
+          id="title"
+          class="z-10 box-border relative mx-20 mt-5 py-10 h-auto text-7xl text-center md:space-y-1 md:py-60 md:px-30 md:mt-28"
+        >
+          <h1>Build Your <span class="text-blue-500">AI Support</span></h1>
+          <p
+            class="box-border relative mx-auto pt-10 mt-5 h-auto text-2xl text-center md:text-4xl md:space-y-10 md:py-30 md:px-30 lg:max-w-3xl"
           >
             Build transparency into customer feedback with
             <!-- <span class="text-brightRed font-bold" -->
@@ -64,8 +94,16 @@
               >AI automations, Integrated ticket tracking, Automatic esclations,
               and much more..</span
             >
-    </p>
-    </header>
+          </p>
+          <a
+              href="#"
+              class="inline-block items-center text-2xl px-1 py-2 text-black bg-white font-bold rounded-lg baseline hover:bg-blue-200"
+              >Book Demo</a
+          >
+        </header>
+      </div>
+    </div>
+    <div>
 
     <!-- Hero Section -->
     <section id="hero">
@@ -414,13 +452,39 @@ export default {
 </script>
 
 <style>
-body {
-  /* background-image: url("./../assets/bg-tablet-pattern.svg"); */
-  background-image: url("./../assets/wave.svg");
-  background-repeat: no-repeat;
-  background-size: 800px;
-  background-position: 90% -25%;
+.custom-background {
+  background-image: 
+    linear-gradient(to bottom, transparent, var(--vt-c-black) 100%),
+    url('./../assets/topography.svg');
+  background-repeat: repeat, repeat;
+  background-position: center, center;
 }
+/* body { */
+/* background-image: url("./../assets/bg-tablet-pattern.svg"); */
+/* background-image: url("./../assets/wave.svg"); */
+/* background-repeat: no-repeat; */
+/* background-size: 800px; */
+/* background-position: 90% -25%; */
+/* } */
+.spacer {
+  aspect-ratio: 760/500;
+  width: 100%;
+  background-repeat: repeat-x;
+  background-position: center;
+  background-size: auto 100%;
+}
+.layer1 {
+  background-image: url("./../assets/wave.svg");
+}
+/* .custom-shape-divider-bottom-1712260637 {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+    background-repeat: repeat-x;
+} */
 
 #cta {
   background-image: url("./../assets/bg-simplify-section-desktop.svg");
