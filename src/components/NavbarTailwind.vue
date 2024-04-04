@@ -1,35 +1,26 @@
 <template>
-  <!-- <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
-      <div class="md:flex">
-        <div class="p-8">
-          <div class="uppercase tracking-wide text-sm text-indigo-500 font-semibold">Example</div>
-          <a href="#" class="block mt-1 text-lg leading-tight font-medium text-black hover:underline">Tailwind CSS with Vue</a>
-          <p class="mt-2 text-gray-500">This is a basic example of a Tailwind CSS component integrated into a Vue project.</p>
-        </div>
-      </div>
-    </div> -->
   <div>
     <nav class="relative container mx-auto p-6">
       <!-- Flex container -->
       <div class="flex items-center justify-between">
         <!-- Logo -->
-        <div class="pt-2">
-          <img src="./../assets/logo.svg" alt="" />
+        <div class="pt-4">
+          <img src="./../assets/logo_manage.svg" alt="" />
         </div>
         <!-- Menu Items -->
-        <div class="hidden space-x-6 md:flex">
-          <a href="#" class="hover:text-darkGrayishBlue">Pricing</a>
+        <div class="hidden items-center space-x-6 md:flex text-xl pt-2">
           <a href="#" class="hover:text-darkGrayishBlue">Product</a>
-          <a href="#" class="hover:text-darkGrayishBlue">About Us</a>
-          <a href="#" class="hover:text-darkGrayishBlue">Careers</a>
-          <a href="#" class="hover:text-darkGrayishBlue">Community</a>
+          <a href="#" class="hover:text-darkGrayishBlue">Integrations</a>
+          <a href="#" class="hover:text-darkGrayishBlue">About</a>
+          <a href="#" class="hover:text-darkGrayishBlue">Contact</a>
+          <!-- Button -->
+          <a
+            href="#"
+            class="hidden p-2 px-4 pt-2 text-black bg-white font-bold rounded-lg baseline hover:bg-brightRedLight md:block"
+            >Login</a
+          >
         </div>
-        <!-- Button -->
-        <a
-          href="#"
-          class="hidden p-3 px-6 pt-2 text-white bg-brightRed rounded-full baseline hover:bg-brightRedLight md:block"
-          >Get Started</a
-        >
+
         <!-- Hamburger Icon -->
         <button
           @click="toggleMenuButton"
@@ -50,11 +41,11 @@
           id="menu"
           class="absolute flex-col items-center hidden self-end py-8 mt-10 space-y-6 font-bold bg-white sm:w-auto sm:self-center left-6 right-6 drop-shadow-md"
         >
-          <a href="#">Pricing</a>
           <a href="#">Product</a>
-          <a href="#">About Us</a>
-          <a href="#">Careers</a>
-          <a href="#">Community</a>
+          <a href="#">Integrations</a>
+          <a href="#">About</a>
+          <a href="#">Contact</a>
+          <!-- <a href="#">Community</a> -->
         </div>
       </div>
     </nav>
@@ -341,13 +332,12 @@
         <div class="flex justify-around space-x-32">
           <div class="flex flex-col space-y-3 text-white">
             <a href="#" class="hover:text-brightRed">Home</a>
-            <a href="#" class="hover:text-brightRed">Pricing</a>
+            <a href="#" class="hover:text-brightRed">Integrations</a>
             <a href="#" class="hover:text-brightRed">Products</a>
-            <a href="#" class="hover:text-brightRed">About</a>
           </div>
           <div class="flex flex-col space-y-3 text-white">
-            <a href="#" class="hover:text-brightRed">Careers</a>
-            <a href="#" class="hover:text-brightRed">Community</a>
+            <a href="#" class="hover:text-brightRed">About</a>
+            <a href="#" class="hover:text-brightRed">Contact</a>
             <a href="#" class="hover:text-brightRed">Privacy Policy</a>
           </div>
         </div>
@@ -378,17 +368,6 @@
 </template>
 
 <script>
-// // Custom javascript
-// const btn = document.getElementById('menu-btn')
-// const nav = document.getElementById('menu')
-
-// btn.addEventListener('click', () => {
-//   btn.classList.toggle('open')
-//   nav.classList.toggle('flex')
-//   nav.classList.toggle('hidden')
-// })
-
-// import Navbar from './Navbar.vue';
 export default {
   name: "NavbarTailwind",
   methods: {
@@ -409,7 +388,8 @@ export default {
 
 <style>
 body {
-  background-image: url("./../assets/bg-tablet-pattern.svg");
+  /* background-image: url("./../assets/bg-tablet-pattern.svg"); */
+  background-image: url("./../assets/wave.svg");
   background-repeat: no-repeat;
   background-size: 800px;
   background-position: 90% -25%;
