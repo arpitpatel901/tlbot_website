@@ -9,14 +9,14 @@
         </div>
         <!-- Menu Items -->
         <div class="hidden items-center space-x-6 md:flex text-xl pt-2">
-          <a href="#" class="hover:text-darkGrayishBlue">Product</a>
-          <a href="#" class="hover:text-darkGrayishBlue">Integrations</a>
-          <a href="#" class="hover:text-darkGrayishBlue">About</a>
-          <a href="#" class="hover:text-darkGrayishBlue">Contact</a>
+          <a href="#" class="hover:text-blue-300">Product</a>
+          <a href="#" class="hover:text-blue-300">Integrations</a>
+          <a href="#" class="hover:text-blue-300">About</a>
+          <a href="#" class="hover:text-blue-300">Contact</a>
           <!-- Button -->
           <a
             href="#"
-            class="hidden p-2 px-4 pt-2 text-black bg-white font-bold rounded-lg baseline hover:bg-brightRedLight md:block"
+            class="hidden p-2 px-4 pt-2 text-black bg-white font-bold rounded-lg baseline hover:bg-blue-200 md:block"
             >Login</a
           >
         </div>
@@ -50,28 +50,55 @@
       </div>
     </nav>
 
+    <!-- Title -->
+    <header
+      class="box-border relative mx-20 mt-5 py-10 h-auto text-7xl text-center md:space-y-1 md:py-60"
+    >
+    <h1>Build Your <span class="text-blue-500">AI Support</span></h1>
+    <p
+            class="box-border relative mx-10 pt-10 mt-5 h-auto text-2xl text-center md:text-4xl md:space-y-10 md:py-30 md:px-30"
+          >
+            Build transparency into customer feedback with
+            <!-- <span class="text-brightRed font-bold" -->
+            <span class="text-gray-500 font-bold"
+              >AI automations, Integrated ticket tracking, Automatic esclations,
+              and much more..</span
+            >
+    </p>
+    </header>
+
     <!-- Hero Section -->
     <section id="hero">
       <!-- Flex Container -->
       <div
-        class="container flex flex-col-reverse items-center px-6 mx-auto mt-10 space-y-0 md:space-y-0 md:flex-row"
+        class="container flex flex-col-reverse items-center px-6 mx-auto mt-20 space-y-0 md:space-y-0 md:flex-row"
       >
         <!-- Left item -->
-        <div class="flex flex-col mb-32 space-y-12 md:w-1/2">
+        <div class="flex flex-col mb-32 space-y-4 md:w-1/2">
           <h1
             class="max-w-md text-4xl font-bold text-center md:text-5xl md:text-left"
           >
-            Bring everyone together to build better products
+            Build Your
           </h1>
-          <p class="max-w-sm text-center text-darkGrayishBlue md:text-left">
-            Manage makes it simple for software teams to plan day-to-day tasks
-            while keeping the larger team goals in view.
+          <h1
+            class="max-w-md text-4xl font-bold text-blue-400 text-center md:text-5xl md:text-left"
+          >
+            AI Support
+          </h1>
+          <p
+            class="max-w-sm text-lg text-center text-darkGrayishBlue md:text-left"
+          >
+            Build transparency into customer feedback with
+            <span class="text-brightRed font-bold"
+              >AI automations, Integrated ticket tracking, Automatic esclations,
+              and much more..</span
+            >
           </p>
           <div class="flex justify-center md:justify-start">
             <a
               href="#"
-              class="p-3 px-6 pt-2 text-white bg-brightRed rounded-full baseline hover:bg-brightRedLight"
-              >Get Started</a
+              class="hidden items-center p-3 text-black bg-white font-bold rounded-lg baseline hover:bg-blue-200 md:block"
+              >Book Demo</a
             >
           </div>
         </div>
