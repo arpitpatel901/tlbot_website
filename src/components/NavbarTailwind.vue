@@ -115,7 +115,7 @@
         </p>
         <a
           href="#"
-          class="inline-block items-center text-2xl px-3 py-2 text-black bg-white font-bold rounded-lg baseline transition duration-300 hover:bg-blue-200 relative"
+          class="inline-block items-center text-2xl px-3 py-2 text-black bg-white font-bold rounded-lg baseline transition duration-300 relative"
           >Book Demo</a
         >
       </header>
