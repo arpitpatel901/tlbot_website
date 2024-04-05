@@ -11,6 +11,18 @@ export default {
       xl: '1440px',
     },  
     extend: {
+      animation: {
+        sinusoid: "sinusoid 5s infinite",
+      },
+      keyframes: {
+        sinusoid: {
+          "0%": { transform: "translateX(0)",},
+          "33%": { transform: "translateX(-10%)", },
+          "50%": { transform: "translateX(-20%)", },
+          "66%": { transform: "translateX(10%)", },
+          "100%": { transform: "translateX(20%)", },
+        },
+      },
       fontFamily: {
         sans: ["Inter var", ...defaultTheme.fontFamily.sans],
       },
