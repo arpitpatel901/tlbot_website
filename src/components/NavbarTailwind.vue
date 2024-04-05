@@ -1,58 +1,76 @@
 <template>
   <div>
-      <div class="custom-background relative w-full h-full">
+    <div class="custom-background relative w-full h-full">
       <nav class="relative container mx-auto p-6">
-      <!-- Flex container -->
-      <div class="flex items-center justify-between">
-        <!-- Logo -->
-        <div class="pt-4">
-          <img src="./../assets/logo_manage.svg" alt="" />
-        </div>
-        <!-- Menu Items -->
-        <div class="hidden items-center space-x-6 md:flex text-xl pt-2">
-          <a href="#" class="hover:text-blue-300">Product</a>
-          <a href="#" class="hover:text-blue-300">Integrations</a>
-          <a href="#" class="hover:text-blue-300">About</a>
-          <a href="#" class="hover:text-blue-300">Contact</a>
-          <!-- Button -->
-          <a
-            href="#"
-            class="hidden p-2 px-4 pt-2 text-black bg-white font-bold rounded-lg baseline hover:bg-blue-200 md:block"
-            >Login</a
+        <!-- Flex container -->
+        <div class="flex items-center justify-between">
+          <!-- Logo -->
+          <div class="pt-4">
+            <img src="./../assets/logo_manage.svg" alt="" />
+          </div>
+          <!-- Menu Items -->
+          <div class="hidden items-center space-x-6 md:flex text-xl pt-2">
+            <a
+              href="#"
+              class="py-2 px-4 border-transparent border-2 hover:rounded-lg transition-all ease-in-out duration-200 hover:border-blue-300 hover:text-blue-300 hover:bg-gray-600"
+              >Product</a
+            >
+            <a
+              href="#"
+              class="py-2 px-4 border-transparent border-2 hover:rounded-lg transition-all ease-in-out duration-200 hover:border-blue-300 hover:text-blue-300 hover:bg-gray-600"
+              >Integrations</a
+            >
+            <a
+              href="#"
+              class="py-2 px-4 border-transparent border-2 hover:rounded-lg transition-all ease-in-out duration-200 hover:border-blue-300 hover:text-blue-300 hover:bg-gray-600"
+              >About</a
+            >
+            <a
+              href="#"
+              class="py-2 px-4 border-transparent border-2 hover:rounded-lg transition-all ease-in-out duration-200 hover:border-blue-300 hover:text-blue-300 hover:bg-gray-600"
+              >Contact</a
+            >
+            <!-- Button -->
+            <a
+              href="#"
+              class="hidden p-2 px-4 pt-2 text-black bg-white font-bold rounded-lg baseline hover:bg-blue-200 md:block border-transparent border-2"
+              >Login</a
+            >
+          </div>
+
+          <!-- Hamburger Icon -->
+          <button
+            @click="toggleMenuButton"
+            ref="menuButton"
+            id="menu-btn"
+            class="block hamburger md:hidden focus:outline-none"
           >
+            <span class="hamburger-top"></span>
+            <span class="hamburger-middle"></span>
+            <span class="hamburger-bottom"></span>
+          </button>
         </div>
 
-        <!-- Hamburger Icon -->
-        <button
-          @click="toggleMenuButton"
-          ref="menuButton"
-          id="menu-btn"
-          class="block hamburger md:hidden focus:outline-none"
-        >
-          <span class="hamburger-top"></span>
-          <span class="hamburger-middle"></span>
-          <span class="hamburger-bottom"></span>
-        </button>
-      </div>
-
-      <!-- Mobile Menu -->
-      <div class="md:hidden">
-        <div
-          ref="menu"
-          id="menu"
-          class="absolute flex-col items-center hidden self-end py-8 mt-10 space-y-6 font-bold bg-white sm:w-auto sm:self-center left-6 right-6 drop-shadow-md"
-        >
-          <a href="#">Product</a>
-          <a href="#">Integrations</a>
-          <a href="#">About</a>
-          <a href="#">Contact</a>
-          <!-- <a href="#">Community</a> -->
+        <!-- Mobile Menu -->
+        <div class="md:hidden">
+          <div
+            ref="menu"
+            id="menu"
+            class="relative flex-col items-center text-3xl hidden self-end py-8 mt-10 space-y-6 font-bold bg-transparent sm:w-auto sm:self-center left-6 right-6 drop-shadow-md"
+          >
+            <a href="#" class="text-gray-500 hover:text-gray-300">Product</a>
+            <a href="#" class="text-gray-500 hover:text-gray-300"
+              >Integrations</a
+            >
+            <a href="#" class="text-gray-500 hover:text-gray-300">About</a>
+            <a href="#" class="text-gray-500 hover:text-gray-300">Contact</a>
+            <!-- <a href="#">Community</a> -->
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
 
       <!-- <div class="relative"> -->
-        <!-- <div class="custom-shape-divider-bottom-1712260637 animate-sinusoid">
+      <!-- <div class="custom-shape-divider-bottom-1712260637 animate-sinusoid">
           <svg
             data-name="Layer 1"
             xmlns="http://www.w3.org/2000/svg"
@@ -65,8 +83,8 @@
             ></path>
           </svg>
         </div> -->
-        <!-- <div class="absolute spacer layer1 animate-sinusoid"></div> -->
-        <!-- <div
+      <!-- <div class="absolute spacer layer1 animate-sinusoid"></div> -->
+      <!-- <div
           class="absolute blur-sm top-20 right-4 w-72 h-16 bg-blue-700 rounded-2xl md:left-20"
         ></div>
         <div
@@ -78,90 +96,50 @@
         <div
           class="absolute blur-sm top-80 left-4 w-72 h-16 bg-green-300 rounded-2xl md:right-20"
         ></div> -->
-        <!-- Title -->
-        <header
-          ref="title"
-          id="title"
-          class="z-10 box-border relative mx-20 mt-5 py-10 h-auto text-7xl text-center md:space-y-1 md:py-60 md:px-30 md:mt-28"
-        >
-          <h1>Build Your <span class="text-blue-500">AI Support</span></h1>
-          <p
-            class="box-border relative mx-auto pt-10 mt-5 h-auto text-2xl text-center md:text-4xl md:space-y-10 md:py-30 md:px-30 lg:max-w-3xl"
-          >
-            Build transparency into customer feedback with
-            <!-- <span class="text-brightRed font-bold" -->
-            <span class="text-gray-500 font-bold"
-              >AI automations, Integrated ticket tracking, Automatic esclations,
-              and much more..</span
-            >
-          </p>
-          <a
-              href="#"
-              class="inline-block items-center text-2xl px-1 py-2 text-black bg-white font-bold rounded-lg baseline hover:bg-blue-200"
-              >Book Demo</a
-          >
-        </header>
-      </div>
-    </div>
-    <div>
-
-    <!-- Hero Section -->
-    <section id="hero">
-      <!-- Flex Container -->
-      <div
-        class="container flex flex-col-reverse items-center px-6 mx-auto mt-20 space-y-0 md:space-y-0 md:flex-row"
+      <!-- Title -->
+      <header
+        ref="title"
+        id="title"
+        class="z-10 box-border relative mx-20 mt-5 py-10 h-auto text-8xl text-center md:space-y-1 md:py-60 md:px-30 md:mt-28"
       >
-        <!-- Left item -->
-        <div class="flex flex-col mb-32 space-y-4 md:w-1/2">
-          <h1
-            class="max-w-md text-4xl font-bold text-center md:text-5xl md:text-left"
+        <h1>Build Your <span class="text-blue-500">AI Support</span></h1>
+        <p
+          class="box-border relative mx-auto pt-10 mt-5 h-auto text-4xl text-center md:text-4xl md:space-y-10 md:py-30 md:px-30 lg:max-w-3xl"
+        >
+          Build transparency into customer feedback with
+          <!-- <span class="text-brightRed font-bold" -->
+          <span class="text-gray-500 font-bold"
+            >AI automations, Integrated ticket tracking, Automatic esclations,
+            and much more..</span
           >
-            Build Your
-          </h1>
-          <h1
-            class="max-w-md text-4xl font-bold text-blue-400 text-center md:text-5xl md:text-left"
-          >
-            AI Support
-          </h1>
-          <p
-            class="max-w-sm text-lg text-center text-darkGrayishBlue md:text-left"
-          >
-            Build transparency into customer feedback with
-            <span class="text-brightRed font-bold"
-              >AI automations, Integrated ticket tracking, Automatic esclations,
-              and much more..</span
-            >
-          </p>
-          <div class="flex justify-center md:justify-start">
-            <a
-              href="#"
-              class="hidden items-center p-3 text-black bg-white font-bold rounded-lg baseline hover:bg-blue-200 md:block"
-              >Book Demo</a
-            >
-          </div>
-        </div>
-        <!-- Image -->
-        <div class="md:w-1/2">
-          <img src="./../assets/illustration-intro.svg" alt="" />
-        </div>
-      </div>
-    </section>
-
-    <!-- Features Section -->
-    <section id="features">
+        </p>
+        <a
+          href="#"
+          class="inline-block items-center text-2xl px-3 py-2 text-black bg-white font-bold rounded-lg baseline transition duration-300 hover:bg-blue-200 relative"
+          >Book Demo</a
+        >
+      </header>
+    </div>
+  </div>
+  <div>
+    <!-- Uniqueness Section -->
+    <section id="Uniqueness">
       <!-- Flex container -->
       <div
         class="container flex flex-col px-4 mx-auto mt-10 space-y-12 md:space-y-0 md:flex-row"
       >
         <!-- What's Different -->
-        <div class="flex flex-col space-y-12 md:w-1/2">
+        <div class="flex flex-col space-y-4 md:w-1/2">
           <h2 class="max-w-md text-4xl font-bold text-center md:text-left">
-            What's different about Manage?
+            What's different about TLabs?
           </h2>
-          <p class="max-w-sm text-center text-darkGrayishBlue md:text-left">
-            Manage provides all the functionality your team needs, without the
-            complexity. Our software is tailor-made for modern digital product
-            teams.
+          <p
+            class="max-w-sm text-xl text-center text-darkGrayishBlue md:text-left"
+          >
+            Designed for scalabilty, ease of use and cost-effectiveness, rest
+            assured you are getting the optimal value for your investment.
+            Reduce operational costs and simultaneously enhance customer
+            experience.
           </p>
         </div>
 
@@ -180,20 +158,20 @@
                   01
                 </div>
                 <h3 class="text-base font-bold md:mb-4 md:hidden">
-                  Track company-wide progress
+                  Single platform for all your needs
                 </h3>
               </div>
             </div>
 
             <div>
-              <h3 class="hidden mb-4 text-lg font-bold md:block">
-                Track company-wide progress
+              <h3 class="hidden mb-4 text-2xl font-bold md:block">
+                Single platform for all your needs
               </h3>
-              <p class="text-darkGrayishBlue">
-                See how your day-to-day tasks fit into the wider vision. Go from
-                tracking progress at the milestone level all the way down to the
-                smallest of details. Never lose sight of the bigger picture
-                again.
+              <p class="text-darkGrayishBlue text-lg md:text-xl">
+                Handle everything from automated AI support, ticket tracking,
+                escalation management, without worrying about tweaking
+                parameters. Give your customers a platform to raise their
+                voices, and retarget them through continuous improvement.
               </p>
             </div>
           </div>
@@ -211,19 +189,19 @@
                   02
                 </div>
                 <h3 class="text-base font-bold md:mb-4 md:hidden">
-                  Advanced built-in reports
+                  Cost Effectiveness
                 </h3>
               </div>
             </div>
 
             <div>
-              <h3 class="hidden mb-4 text-lg font-bold md:block">
-                Advanced built-in reports
+              <h3 class="hidden mb-4 text-2xl font-bold md:block">
+                Cost Effectiveness
               </h3>
-              <p class="text-darkGrayishBlue">
-                Set internal delivery estimates and track progress toward
-                company goals. Our customisable dashboard helps you build out
-                the reports you need to keep key stakeholders informed.
+              <p class="text-darkGrayishBlue text-lg md:text-xl">
+                Leveraging open-source models to enhance performance tailored to
+                your specific needs, ensuring you receive unparalleled value for
+                your investment.
               </p>
             </div>
           </div>
@@ -241,25 +219,29 @@
                   03
                 </div>
                 <h3 class="text-base font-bold md:mb-4 md:hidden">
-                  Everything you need in one place
+                  Scalable and Private
                 </h3>
               </div>
             </div>
 
             <div>
-              <h3 class="hidden mb-4 text-lg font-bold md:block">
-                Everything you need in one place
+              <h3 class="hidden mb-4 text-2xl font-bold md:block">
+                Scalable and Private
               </h3>
-              <p class="text-darkGrayishBlue">
-                Stop jumping from one service to another to communicate, store
-                files, track tasks and share documents. Manage offers an
-                all-in-one team productivity solution.
+              <p class="text-darkGrayishBlue text-lg md:text-xl">
+                Designed to be scalable in nature the platform grows with your
+                customers. The platform is inherently scalable, ensuring it
+                evolves alongside your customer base. Rest assured, your data
+                remains exclusively yours, securely stored in a private
+                database, and is never utilized to train our models.
               </p>
             </div>
           </div>
         </div>
       </div>
     </section>
+
+    <!-- Use Cases -->
 
     <!-- Testimonials -->
     <section id="testimonials">
@@ -453,9 +435,12 @@ export default {
 
 <style>
 .custom-background {
-  background-image: 
-    linear-gradient(to bottom, transparent, var(--vt-c-black) 100%),
-    url('./../assets/topography.svg');
+  background-image: linear-gradient(
+      to bottom,
+      transparent,
+      var(--vt-c-black) 100%
+    ),
+    url("./../assets/topography.svg");
   background-repeat: repeat, repeat;
   background-position: center, center;
 }
@@ -518,9 +503,9 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
-  width: 24px;
-  height: 2px;
-  background: #000;
+  width: 30px;
+  height: 4px;
+  background: #4b5563;
   transform: rotate(0);
   transition: all 0.5s;
 }
@@ -573,6 +558,28 @@ export default {
 .focus\:outline-none:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
+}
+
+/* Hover highlight effect */
+a.relative {
+  position: relative; /* Ensures that the pseudo-element is positioned relative to the button */
+}
+
+a.relative::after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: -12px; /* Adjust these values to control the offset of the border */
+  bottom: -12px;
+  left: -12px;
+  right: -12px;
+  border: 6px solid transparent; /* Makes the border invisible by default */
+  border-radius: inherit; /* Matches the border-radius of the button */
+  transition: border-color 0.3s; /* Smooth transition for the border color */
+}
+
+a.relative:hover::after {
+  border-color: #3b82f6; /* Sets the border color on hover to Tailwind's blue-500 */
 }
 
 @media (min-width: 480px) {
