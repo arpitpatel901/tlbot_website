@@ -242,77 +242,43 @@
     </section>
 
     <!-- Use Cases -->
+    <h2 class="text-5xl mt-20 font-bold text-center md:text-6xl">
+          Use Cases
+    </h2>
+    <section id="Use-Cases">
+      <div
+        class="container flex flex-col px-4 mx-auto mt-10 space-y-12 md:space-y-0 md:flex-row"
+      >
+      <div class="flex flex-col md:w-1/2">
 
-    <!-- Testimonials -->
-    <section id="testimonials">
-      <!-- Container to heading and testm blocks -->
-      <div class="max-w-6xl px-5 mx-auto mt-32 text-center">
-        <!-- Heading -->
-        <h2 class="text-4xl font-bold text-center">
-          What's Different About Manage?
-        </h2>
-        <!-- Testimonials Container -->
-        <div class="flex flex-col mt-24 md:flex-row md:space-x-6">
-          <!-- Testimonial 1 -->
-          <div
-            class="flex flex-col items-center p-6 space-y-6 rounded-lg bg-veryLightGray md:w-1/3"
-          >
-            <img
-              src="./../assets/avatar-anisha.png"
-              class="w-16 -mt-14"
-              alt=""
-            />
-            <h5 class="text-lg font-bold">Anisha Li</h5>
-            <p class="text-sm text-darkGrayishBlue">
-              “Manage has supercharged our team’s workflow. The ability to
-              maintain visibility on larger milestones at all times keeps
-              everyone motivated.”
-            </p>
-          </div>
-
-          <!-- Testimonial 2 -->
-          <div
-            class="hidden flex-col items-center p-6 space-y-6 rounded-lg bg-veryLightGray md:flex md:w-1/3"
-          >
-            <img src="./../assets/avatar-ali.png" class="w-16 -mt-14" alt="" />
-            <h5 class="text-lg font-bold">Ali Bravo</h5>
-            <p class="text-sm text-darkGrayishBlue">
-              “We have been able to cancel so many other subscriptions since
-              using Manage. There is no more cross-channel confusion and
-              everyone is much more focused.”
-            </p>
-          </div>
-
-          <!-- Testimonial 3 -->
-          <div
-            class="hidden flex-col items-center p-6 space-y-6 rounded-lg bg-veryLightGray md:flex md:w-1/3"
-          >
-            <img
-              src="./../assets/avatar-richard.png"
-              class="w-16 -mt-14"
-              alt=""
-            />
-            <h5 class="text-lg font-bold">Richard Watts</h5>
-            <p class="text-sm text-darkGrayishBlue">
-              “Manage has supercharged our team’s workflow. The ability to
-              maintain visibility on larger milestones at all times keeps
-              everyone motivated.”
-            </p>
-          </div>
+        <TileComponent
+          tileImage="whatsapp.jpeg"
+          title="AI Draft Composer"
+          description="Generate responses in a click, adhering to your company's brand and tone, based on expert knowledge."
+        />
+        <TileComponent
+          tileImage="89354.jpg"
+          title="Ticket Tracking"
+          description="Track tickets from creation to resolution, ensuring no customer query goes unanswered."
+        />
         </div>
-        <!-- Button -->
-        <div class="my-16">
-          <a
-            href="#"
-            class="p-3 px-6 pt-2 text-white bg-brightRed rounded-full baseline hover:bg-brightRedLight"
-            >Get Started</a
-          >
+        <div class="flex flex-col md:w-1/2">
+        <TileComponent
+          tileImage="whatsapp.jpeg"
+          title="WhatApp Business Integration"
+          description="Integrate your WhatsApp Business account to manage customer queries and feedback."
+        />
+        <TileComponent
+          tileImage="topography.svg"
+          title="Instagram Support Integration"
+          description="Integrate your Instagram account to manage customer queries and feedback."
+        />
         </div>
       </div>
     </section>
 
     <!-- CTA Section -->
-    <section id="cta" class="bg-brightRed">
+    <section id="cta" class="hidden bg-orange-500 md:flex">
       <!-- Flex Container -->
       <div
         class="container flex flex-col items-center justify-between px-6 py-24 mx-auto space-y-12 md:py-12 md:flex-row md:space-y-0"
@@ -321,14 +287,14 @@
         <h2
           class="text-5xl font-bold text-center text-white md:text-4xl md:max-w-xl md:text-left"
         >
-          Simplify how your team works today
+        Automate your support so you can do what you do best
         </h2>
         <!-- Button -->
         <div>
           <a
             href="#"
-            class="p-3 px-6 pt-2 text-brightRed bg-white rounded-full shadow-2xl baseline hover:bg-gray-900"
-            >Get Started</a
+            class="p-3 px-6 pt-2 text-brightRed bg-white rounded-lg shadow-2xl baseline hover:bg-gray-900"
+            >Book Demo</a
           >
         </div>
       </div>
@@ -415,8 +381,13 @@
 </template>
 
 <script>
+import TileComponent from "./TileComponent.vue";
+
 export default {
   name: "NavbarTailwind",
+  components: {
+    TileComponent,
+  },
   methods: {
     toggleTheme() {
       document.body.classList.toggle("dark");
@@ -472,8 +443,9 @@ export default {
 } */
 
 #cta {
-  background-image: url("./../assets/bg-simplify-section-desktop.svg");
-  background-repeat: no-repeat;
+  background-image: url("./../assets/wave.svg");
+  background-repeat: repeat-x;
+  aspect-ratio: 2500/500;
 }
 
 @media (max-width: 576px) {
@@ -482,9 +454,9 @@ export default {
     background-size: 500px;
   }
 
-  #cta {
+  /* #cta {
     background-image: url("./../assets/bg-simplify-section-mobile.svg");
-  }
+  } */
 }
 
 /* Hamburger Menu */
@@ -566,7 +538,7 @@ a.relative {
 }
 
 a.relative::after {
-  content: '';
+  content: "";
   display: block;
   position: absolute;
   top: -12px; /* Adjust these values to control the offset of the border */
