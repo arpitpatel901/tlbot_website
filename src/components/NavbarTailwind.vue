@@ -33,9 +33,12 @@
             <!-- Button -->
             <a
               href="#"
-              class="hidden p-2 px-4 pt-2 text-black bg-white font-bold rounded-lg baseline hover:bg-blue-200 md:block border-transparent border-2"
-              >Login</a
-            >
+              class="hidden p-2 px-4 pt-2 text-black bg-white font-bold rounded-lg baseline hover:bg-blue-200 md:block border-transparent border-2"> 
+                <button @click="loginClick">
+                  Login
+                </button> 
+              </a>
+            <!-- <GoogleLogin :callback="callback" prompt/> -->
           </div>
 
           <!-- Hamburger Icon -->
@@ -381,12 +384,16 @@
 </template>
 
 <script>
+import { CLIENT_ID } from "@/main";
 import TileComponent from "./TileComponent.vue";
 
+import { GoogleLogin } from "vue3-google-login";
+import { googleSdkLoaded } from "vue3-google-login"
 export default {
   name: "NavbarTailwind",
   components: {
     TileComponent,
+    GoogleLogin
   },
   methods: {
     toggleTheme() {
@@ -400,8 +407,69 @@ export default {
       this.$refs.menu.classList.toggle("flex");
       this.$refs.menu.classList.toggle("hidden");
     },
-  },
+    loginClick(response1) {
+      // alert('login click'+ JSON.parse(response))
+      googleSdkLoaded((google) => {
+    google.accounts.oauth2.initCodeClient({
+      client_id: CLIENT_ID,
+      scope: 'email profile openid',
+      callback: (response) => {
+        console.log("Handle the response", response)
+        if (response.code) {
+                this.sendCodeToBackend(response.code);
+              }
+        // {{ log(response) }}
+        // alert('login click'+ JSON.parse(response))
+      }
+    }).requestCode()
+  })
+    },
+  async sendCodeToBackend(code) {
+      try {
+        const response = await axios.post(
+          "https://oauth2.googleapis.com/token",
+          {
+            code,
+            client_id: CLIENT_ID,
+            // client_secret: "GOCSPX-u02eNidw0DqWutQVi",
+            redirect_uri: "postmessage",
+            grant_type: "authorization_code"
+          }
+        );
+
+        // const accessToken = response.data.access_token;
+        // console.log(accessToken);
+
+        // // Fetch user details using the access token
+        // const userResponse = await axios.get(
+        //   "https://www.googleapis.com/oauth2/v3/userinfo",
+        //   {
+        //     headers: {
+        //       Authorization: `Bearer ${accessToken}`
+        //     }
+        //   }
+        // );
+
+        // if (userResponse && userResponse.data) {
+        //   // Set the userDetails data property to the userResponse object
+        //   this.userDetails = userResponse.data;
+        // } else {
+        //   // Handle the case where userResponse or userResponse.data is undefined
+        //   console.error("Failed to fetch user details.");
+        // }
+      } catch (error) {
+        console.error("Token exchange failed:", error.response);
+      }
+    }
+  }
 };
+
+// const callback = (response) => {
+//   // This callback will be triggered when the user selects or login to
+//   // his Google account from the popup
+//   alert('login click'+ response)
+//   console.log("Handle the response", response)
+// }
 </script>
 
 <style>
