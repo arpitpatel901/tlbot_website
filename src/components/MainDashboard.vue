@@ -6,20 +6,32 @@
 </template>
 
 <script>
+import axios from 'axios'; // Ensure Axios is imported
+
 export default {
-  name: "MainDashboard",
-  data() {
-    return {
-      // Data properties for the dashboard can be added here
-    };
+  name: 'MainDashboard',
+  created() {
+    console.log("Created MainDashboard")
+    // Parse the query parameters from the URL
+    const queryParams = new URLSearchParams(window.location.search);
+    const code = queryParams.get('code');
+    if (code) {
+      // If you have a code, send it to the backend for validation/processing
+      this.sendCodeToBackend(code);
+    }
   },
   methods: {
-    // Methods for dashboard functionality can be added here
-  },
-  mounted() {
-    // This lifecycle hook can be used to fetch data when the component mounts
-    console.log("Main Dashboard Component has been mounted.");
-  },
+    async sendCodeToBackend(code) {
+      try {
+        // Note: Change this URL to your actual backend endpoint that handles the OAuth process
+        const response = await axios.get(`http://localhost:3001/api/process-code`, { params: { code } });
+        console.log("Response from backend:", response.data);
+        // Handle the response, e.g., log in the user
+      } catch (error) {
+        console.error("Error processing the login code:", error);
+      }
+    }
+  }
 };
 </script>
 

@@ -1,19 +1,24 @@
 // src/router/index.js
-
 import { createRouter, createWebHistory } from 'vue-router';
-import MainDashboard from './../components/MainDashboard.vue'; // Adjust the path as necessary
+import MainDashboard from '../components/MainDashboard.vue'; // Adjust the import path as needed.
+import NavbarTailwind from '../components/NavbarTailwind.vue';
 
 const routes = [
   {
+    path: '/',
+    name: 'Home',
+    component: NavbarTailwind
+  },
+  {
     path: '/main_dashboard',
     name: 'MainDashboard',
-    component: MainDashboard
+    component: MainDashboard,
   },
-  // Add other routes here
+  // other routes...
 ];
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   routes,
 });
 
