@@ -33,11 +33,10 @@
             <!-- Button -->
             <a
               href="#"
-              class="hidden p-2 px-4 pt-2 text-black bg-white font-bold rounded-lg baseline hover:bg-blue-200 md:block border-transparent border-2"> 
-                <button @click="loginClick">
-                  Login
-                </button> 
-              </a>
+              class="hidden p-2 px-4 pt-2 text-black bg-white font-bold rounded-lg baseline hover:bg-blue-200 md:block border-transparent border-2"
+            >
+              <button @click="loginClick">Login</button>
+            </a>
             <!-- <GoogleLogin :callback="callback" prompt/> -->
           </div>
 
@@ -245,37 +244,34 @@
     </section>
 
     <!-- Use Cases -->
-    <h2 class="text-5xl mt-20 font-bold text-center md:text-6xl">
-          Use Cases
-    </h2>
+    <h2 class="text-5xl mt-20 font-bold text-center md:text-6xl">Use Cases</h2>
     <section id="Use-Cases">
       <div
         class="container flex flex-col px-4 mx-auto mt-10 space-y-12 md:space-y-0 md:flex-row"
       >
-      <div class="flex flex-col md:w-1/2">
-
-        <TileComponent
-          tileImage="whatsapp.jpeg"
-          title="AI Draft Composer"
-          description="Generate responses in a click, adhering to your company's brand and tone, based on expert knowledge."
-        />
-        <TileComponent
-          tileImage="89354.jpg"
-          title="Ticket Tracking"
-          description="Track tickets from creation to resolution, ensuring no customer query goes unanswered."
-        />
+        <div class="flex flex-col md:w-1/2">
+          <TileComponent
+            tileImage="whatsapp.jpeg"
+            title="AI Draft Composer"
+            description="Generate responses in a click, adhering to your company's brand and tone, based on expert knowledge."
+          />
+          <TileComponent
+            tileImage="89354.jpg"
+            title="Ticket Tracking"
+            description="Track tickets from creation to resolution, ensuring no customer query goes unanswered."
+          />
         </div>
         <div class="flex flex-col md:w-1/2">
-        <TileComponent
-          tileImage="whatsapp.jpeg"
-          title="WhatApp Business Integration"
-          description="Integrate your WhatsApp Business account to manage customer queries and feedback."
-        />
-        <TileComponent
-          tileImage="topography.svg"
-          title="Instagram Support Integration"
-          description="Integrate your Instagram account to manage customer queries and feedback."
-        />
+          <TileComponent
+            tileImage="whatsapp.jpeg"
+            title="WhatApp Business Integration"
+            description="Integrate your WhatsApp Business account to manage customer queries and feedback."
+          />
+          <TileComponent
+            tileImage="topography.svg"
+            title="Instagram Support Integration"
+            description="Integrate your Instagram account to manage customer queries and feedback."
+          />
         </div>
       </div>
     </section>
@@ -290,7 +286,7 @@
         <h2
           class="text-5xl font-bold text-center text-white md:text-4xl md:max-w-xl md:text-left"
         >
-        Automate your support so you can do what you do best
+          Automate your support so you can do what you do best
         </h2>
         <!-- Button -->
         <div>
@@ -385,15 +381,15 @@
 
 <script>
 import { CLIENT_ID } from "@/main";
-import TileComponent from "./TileComponent.vue";
+// import TileComponent from "./TileComponent.vue";
 
 import { GoogleLogin } from "vue3-google-login";
-import { googleSdkLoaded } from "vue3-google-login"
+// import { googleSdkLoaded } from "vue3-google-login";
 export default {
   name: "NavbarTailwind",
   components: {
-    TileComponent,
-    GoogleLogin
+    // TileComponent,
+    GoogleLogin,
   },
   methods: {
     toggleTheme() {
@@ -407,61 +403,42 @@ export default {
       this.$refs.menu.classList.toggle("flex");
       this.$refs.menu.classList.toggle("hidden");
     },
-    loginClick(response1) {
-      // alert('login click'+ JSON.parse(response))
-      googleSdkLoaded((google) => {
-    google.accounts.oauth2.initCodeClient({
-      client_id: CLIENT_ID,
-      scope: 'email profile openid',
-      callback: (response) => {
-        console.log("Handle the response", response)
-        if (response.code) {
-                this.sendCodeToBackend(response.code);
-              }
-        // {{ log(response) }}
-        // alert('login click'+ JSON.parse(response))
-      }
-    }).requestCode()
-  })
+    loginClick() {
+      google.accounts.oauth2
+        .initCodeClient({
+          client_id: CLIENT_ID, // Your Google OAuth Client ID
+          scope: "email profile openid",
+          ux_mode: "redirect", // Optional: depends on your flow
+          redirect_uri: "http://localhost:5173/api/google-auth", // Update this to the actual endpoint
+          callback: (response) => {
+            if (response.code) {
+              this.sendCodeToBackend(response.code);
+            }
+          },
+        })
+        .requestCode();
     },
-  async sendCodeToBackend(code) {
+    async sendCodeToBackend(code) {
       try {
-        const response = await axios.post(
-          "https://oauth2.googleapis.com/token",
-          {
-            code,
-            client_id: CLIENT_ID,
-            // client_secret: "GOCSPX-u02eNidw0DqWutQVi",
-            redirect_uri: "postmessage",
-            grant_type: "authorization_code"
-          }
+        // const response = await axios.post("YOUR_BACKEND_URI", { code });
+        const response = await axios.get(
+          "http://localhost:5173/api/google-auth",
+          { code }
         );
-
-        // const accessToken = response.data.access_token;
-        // console.log(accessToken);
-
-        // // Fetch user details using the access token
-        // const userResponse = await axios.get(
-        //   "https://www.googleapis.com/oauth2/v3/userinfo",
-        //   {
-        //     headers: {
-        //       Authorization: `Bearer ${accessToken}`
-        //     }
-        //   }
-        // );
-
-        // if (userResponse && userResponse.data) {
-        //   // Set the userDetails data property to the userResponse object
-        //   this.userDetails = userResponse.data;
-        // } else {
-        //   // Handle the case where userResponse or userResponse.data is undefined
-        //   console.error("Failed to fetch user details.");
-        // }
+        console.log("Received from dummy backend:", response.data);
+        // Handle response e.g., setting user state
+        // You can now simulate logging in the user using the received mock access token
+        // Check for success and handle redirection
+        if (response.data.success) {
+          this.$router.push(response.data.redirect);
+        } else {
+          console.error("Login failed:", response.data.message);
+        }
       } catch (error) {
-        console.error("Token exchange failed:", error.response);
+        console.error("Error sending code to backend:", error);
       }
-    }
-  }
+    },
+  },
 };
 
 // const callback = (response) => {
