@@ -380,15 +380,16 @@
 </template>
 
 <script>
+import axios from "axios";
 import { CLIENT_ID } from "@/main";
-// import TileComponent from "./TileComponent.vue";
+import TileComponent from "./TileComponent.vue";
 
 import { GoogleLogin } from "vue3-google-login";
 // import { googleSdkLoaded } from "vue3-google-login";
 export default {
   name: "NavbarTailwind",
   components: {
-    // TileComponent,
+    TileComponent,
     GoogleLogin,
   },
   methods: {
@@ -396,7 +397,7 @@ export default {
       document.body.classList.toggle("dark");
     },
     toggleMenuButton() {
-      // console.log("toggleMenuButton triggered");
+      console.log("toggleMenuButton triggered");
       this.$refs.menuButton.classList.toggle("open");
       // console.log("toggleMenu triggered");
       // console.log(this.$refs.menu);
@@ -409,28 +410,30 @@ export default {
           client_id: CLIENT_ID, // Your Google OAuth Client ID
           scope: "email profile openid",
           ux_mode: "redirect", // Optional: depends on your flow
-          redirect_uri: "http://localhost:5173/api/google-auth", // Update this to the actual endpoint
+          redirect_uri: "http://localhost:3001/api/google-auth", // Point this to your backend
           callback: (response) => {
             if (response.code) {
               this.sendCodeToBackend(response.code);
             }
           },
+          // window.location: "http://localhost:3001/api/google-auth",
         })
         .requestCode();
     },
     async sendCodeToBackend(code) {
+      console.log('Sending code to backend:', code); // Log the code being sent
       try {
-        // const response = await axios.post("YOUR_BACKEND_URI", { code });
         const response = await axios.get(
-          "http://localhost:5173/api/google-auth",
-          { code }
+          "http://localhost:3001/api/google-auth",
+          { params: { code } }
         );
         console.log("Received from dummy backend:", response.data);
+
         // Handle response e.g., setting user state
-        // You can now simulate logging in the user using the received mock access token
-        // Check for success and handle redirection
         if (response.data.success) {
-          this.$router.push(response.data.redirect);
+          console.log("Redirecting to:", response.data.redirect);
+          this.$router.push("/main_dashboard"); // Make sure this route is defined in your Vue router
+          console.log("Redirect should have occurred.");
         } else {
           console.error("Login failed:", response.data.message);
         }
