@@ -34,8 +34,10 @@
             <a
               href="#"
               class="hidden p-2 px-4 pt-2 text-black bg-white font-bold rounded-lg baseline hover:bg-blue-200 md:block border-transparent border-2"
-              >Login</a
             >
+              <button @click="loginClick">Login</button>
+            </a>
+            <!-- <GoogleLogin :callback="callback" prompt/> -->
           </div>
 
           <!-- Hamburger Icon -->
@@ -242,37 +244,34 @@
     </section>
 
     <!-- Use Cases -->
-    <h2 class="text-5xl mt-20 font-bold text-center md:text-6xl">
-          Use Cases
-    </h2>
+    <h2 class="text-5xl mt-20 font-bold text-center md:text-6xl">Use Cases</h2>
     <section id="Use-Cases">
       <div
         class="container flex flex-col px-4 mx-auto mt-10 space-y-12 md:space-y-0 md:flex-row"
       >
-      <div class="flex flex-col md:w-1/2">
-
-        <TileComponent
-          tileImage="whatsapp.jpeg"
-          title="AI Draft Composer"
-          description="Generate responses in a click, adhering to your company's brand and tone, based on expert knowledge."
-        />
-        <TileComponent
-          tileImage="89354.jpg"
-          title="Ticket Tracking"
-          description="Track tickets from creation to resolution, ensuring no customer query goes unanswered."
-        />
+        <div class="flex flex-col md:w-1/2">
+          <TileComponent
+            tileImage="whatsapp.jpeg"
+            title="AI Draft Composer"
+            description="Generate responses in a click, adhering to your company's brand and tone, based on expert knowledge."
+          />
+          <TileComponent
+            tileImage="89354.jpg"
+            title="Ticket Tracking"
+            description="Track tickets from creation to resolution, ensuring no customer query goes unanswered."
+          />
         </div>
         <div class="flex flex-col md:w-1/2">
-        <TileComponent
-          tileImage="whatsapp.jpeg"
-          title="WhatApp Business Integration"
-          description="Integrate your WhatsApp Business account to manage customer queries and feedback."
-        />
-        <TileComponent
-          tileImage="topography.svg"
-          title="Instagram Support Integration"
-          description="Integrate your Instagram account to manage customer queries and feedback."
-        />
+          <TileComponent
+            tileImage="whatsapp.jpeg"
+            title="WhatApp Business Integration"
+            description="Integrate your WhatsApp Business account to manage customer queries and feedback."
+          />
+          <TileComponent
+            tileImage="topography.svg"
+            title="Instagram Support Integration"
+            description="Integrate your Instagram account to manage customer queries and feedback."
+          />
         </div>
       </div>
     </section>
@@ -287,7 +286,7 @@
         <h2
           class="text-5xl font-bold text-center text-white md:text-4xl md:max-w-xl md:text-left"
         >
-        Automate your support so you can do what you do best
+          Automate your support so you can do what you do best
         </h2>
         <!-- Button -->
         <div>
@@ -381,27 +380,76 @@
 </template>
 
 <script>
+import axios from "axios";
+import { CLIENT_ID } from "@/main";
 import TileComponent from "./TileComponent.vue";
 
+import { GoogleLogin } from "vue3-google-login";
+// import { googleSdkLoaded } from "vue3-google-login";
 export default {
   name: "NavbarTailwind",
   components: {
     TileComponent,
+    GoogleLogin,
   },
   methods: {
     toggleTheme() {
       document.body.classList.toggle("dark");
     },
     toggleMenuButton() {
-      // console.log("toggleMenuButton triggered");
+      console.log("toggleMenuButton triggered");
       this.$refs.menuButton.classList.toggle("open");
       // console.log("toggleMenu triggered");
       // console.log(this.$refs.menu);
       this.$refs.menu.classList.toggle("flex");
       this.$refs.menu.classList.toggle("hidden");
     },
+    loginClick() {
+      google.accounts.oauth2
+        .initCodeClient({
+          client_id: CLIENT_ID, // Your Google OAuth Client ID
+          scope: "email profile openid",
+          ux_mode: "redirect", // Optional: depends on your flow
+          redirect_uri: "http://localhost:3001/api/google-auth", // Point this to your backend
+          callback: (response) => {
+            if (response.code) {
+              this.sendCodeToBackend(response.code);
+            }
+          },
+          // window.location: "http://localhost:3001/api/google-auth",
+        })
+        .requestCode();
+    },
+    async sendCodeToBackend(code) {
+      console.log('Sending code to backend:', code); // Log the code being sent
+      try {
+        const response = await axios.get(
+          "http://localhost:3001/api/google-auth",
+          { params: { code } }
+        );
+        console.log("Received from dummy backend:", response.data);
+
+        // Handle response e.g., setting user state
+        if (response.data.success) {
+          console.log("Redirecting to:", response.data.redirect);
+          this.$router.push("/main_dashboard"); // Make sure this route is defined in your Vue router
+          console.log("Redirect should have occurred.");
+        } else {
+          console.error("Login failed:", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error sending code to backend:", error);
+      }
+    },
   },
 };
+
+// const callback = (response) => {
+//   // This callback will be triggered when the user selects or login to
+//   // his Google account from the popup
+//   alert('login click'+ response)
+//   console.log("Handle the response", response)
+// }
 </script>
 
 <style>
