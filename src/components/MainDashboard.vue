@@ -8,6 +8,15 @@
       <h2>User Information</h2>
       <p><strong>Name:</strong> {{ user.name }}</p>
       <p><strong>Email:</strong> {{ user.email }}</p>
+
+      <a 
+        href="#" 
+        class="hidden p-2 px-4 pt-2 text-black bg-white font-bold rounded-lg baseline hover:bg-blue-200 md:block border-transparent border-2"
+      >
+        <button @click="handleLogout">Logout</button>
+      </a>
+
+      
       <!-- Add more fields as needed -->
     </div>
     <div v-else>
@@ -19,25 +28,29 @@
 <script>
 import { onMounted, ref } from 'vue';
 import { useUserStore } from '@/stores/userStore'; // Ensure the path is correct
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'MainDashboard',
   setup() {
     // Access user information from Pinia store
     const userStore = useUserStore();
-    const user = ref(userStore.userData);
+    const user = ref(userStore.userData); // Reactive reference to user data
+    const router = useRouter();
+
+    const handleLogout = () => {
+      userStore.logout();
+      router.push('/login');
+    };
 
     onMounted(() => {
       const queryParams = new URLSearchParams(window.location.search);
       const userDataJSON = queryParams.get('userData');
       if (userDataJSON) {
         try {
-          // Parse and decode user data from the URL parameter
           const userData = JSON.parse(decodeURIComponent(userDataJSON));
-          // Update the user store with the retrieved data
           userStore.setUser(userData);
-          // Update the local user ref to be reactive
-          user.value = userData;
+          user.value = userData; // Update reactive reference
         } catch (e) {
           console.error('Error parsing user data from URL parameter:', e);
         }
@@ -45,7 +58,8 @@ export default {
     });
 
     return {
-      user
+      user, // Make sure to return this so it's available in the template
+      handleLogout
     };
   }
 };
