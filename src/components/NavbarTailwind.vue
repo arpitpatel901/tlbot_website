@@ -383,7 +383,9 @@
 <script>
 import axios from "axios";
 import { CLIENT_ID } from "@/main";
+import { CLIENT_SECRET } from "@/main";
 import TileComponent from "./TileComponent.vue";
+import { useUserStore } from '@/stores/userStore'; // Make sure the path is correct
 
 import { GoogleLogin } from "vue3-google-login";
 // import { googleSdkLoaded } from "vue3-google-login";
@@ -411,37 +413,68 @@ export default {
           client_id: CLIENT_ID, // Your Google OAuth Client ID
           scope: "email profile openid",
           ux_mode: "redirect", // Optional: depends on your flow
-          redirect_uri: "http://localhost:3001/api/google-auth", // Point this to your backend
-          callback: (response) => {
-            if (response.code) {
-              this.sendCodeToBackend(response.code);
-            }
-          },
+          redirect_uri: "http://localhost:5173/auth/callback", // This should be a frontend route
+          // redirect_uri: "http://localhost:3001/api/google-auth", // Point this to your backend
+          // callback: (response) => {
+          //   if (response.code) {
+          //     this.sendCodeToBackend(response.code);
+          //   }
+          // },
           // window.location: "http://localhost:3001/api/google-auth",
         })
         .requestCode();
     },
     async sendCodeToBackend(code) {
-      console.log('Sending code to backend:', code); // Log the code being sent
       try {
-        const response = await axios.get(
-          "http://localhost:3001/api/google-auth",
-          { params: { code } }
-        );
-        console.log("Received from dummy backend:", response.data);
+        const response = await axios.get(`http://localhost:3001/api/google-auth`, { params: { code } });
 
-        // Handle response e.g., setting user state
-        if (response.data.success) {
-          console.log("Redirecting to:", response.data.redirect);
-          this.$router.push("/main_dashboard"); // Make sure this route is defined in your Vue router
-          console.log("Redirect should have occurred.");
+        if (response.data.success && response.data.userData) {
+          console.log("Received user data from backend:", response.data.userData);
+          const userStore = useUserStore();
+          userStore.setUser(response.data.userData);
+          this.$router.push("/main_dashboard");
         } else {
-          console.error("Login failed:", response.data.message);
+          console.error("Failed to retrieve user data:", response.data.error);
         }
       } catch (error) {
-        console.error("Error sending code to backend:", error);
+        console.error("Error during the login process:", error);
       }
     },
+    // async fetchUserDataFrom(code) {
+    //   const userStore = useUserStore(); // Initialize Pinia store
+
+    //   try {
+    //     // Exchange the authorization code for an access token
+    //     const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', {
+    //       code: code,
+    //       client_id: CLIENT_ID,
+    //       client_secret: CLIENT_SECRET,
+    //       redirect_uri: "http://localhost:3001/api/google-auth",
+    //       grant_type: 'authorization_code',
+    //     });
+        
+    //     if (tokenResponse.data) {
+    //       const accessToken = tokenResponse.data.access_token;
+          
+    //       // Fetch user details using the access token
+    //       const userResponse = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+    //         headers: {
+    //           Authorization: `Bearer ${accessToken}`,
+    //         },
+    //       });
+
+    //       if (userResponse && userResponse.data) {
+    //         console.log('User Data:', userResponse.data);
+    //         userStore.setUser(userResponse.data); // Save the user data in the store
+    //         // Here you can set the user data to your Vue state or store
+    //       } else {
+    //         console.error('Failed to fetch user data');
+    //       }
+    //     }
+    //   } catch (error) {
+    //     console.error('Error during Google Auth process:', error);
+    //   }
+    // },
   },
 };
 

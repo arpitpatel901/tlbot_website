@@ -2,14 +2,35 @@
   <div class="main-dashboard">
     <h1>Main Dashboard</h1>
     <p>Welcome to the Main Dashboard of the Application!</p>
+
+    <!-- Display user information if available -->
+    <div v-if="user">
+      <h2>User Information</h2>
+      <p><strong>Name:</strong> {{ user.name }}</p>
+      <p><strong>Email:</strong> {{ user.email }}</p>
+      <!-- Add more fields as needed -->
+    </div>
+    <div v-else>
+      <p>No user information available.</p>
+    </div>
+
   </div>
 </template>
 
 <script>
 import axios from 'axios'; // Ensure Axios is imported
+import { useUserStore } from '@/stores/userStore'; // Ensure the path is correct
 
 export default {
   name: 'MainDashboard',
+  setup() {
+    // Access user information from Pinia store
+    const userStore = useUserStore();
+
+    return {
+      user: userStore.userData, // Make the user data reactive and accessible in the template
+    };
+  },
   created() {
     console.log("Created MainDashboard")
     // Parse the query parameters from the URL
