@@ -5,7 +5,6 @@ import PrimeVue from "primevue/config";
 import Lara from "@/presets/lara"; // import preset
 // import Wind from '@/presets/wind';      // import preset
 import vue3GoogleLogin from "vue3-google-login";
-import GAuth from 'vue3-google-login';
 import router from "./router";
 import App from "./App.vue";
 
@@ -24,13 +23,6 @@ app.use(PrimeVue, {
 app.use(vue3GoogleLogin, {
     clientId: CLIENT_ID
 });
-
-app.use(GAuth, {
-    clientId: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
-    scope: 'email profile openid',
-    prompt: 'consent',
-    fetch_basic_profile: true
-  });
 
 // Router setup
 app.use(router);
