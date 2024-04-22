@@ -6,9 +6,11 @@ import Lara from "@/presets/lara"; // import preset
 // import Wind from '@/presets/wind';      // import preset
 import vue3GoogleLogin from "vue3-google-login";
 import router from "./router";
+import { createPinia } from 'pinia';
 import App from "./App.vue";
 
 export const CLIENT_ID = "497764252617-oau8a78f5pcolh165ntbm36e9f3d3hgh.apps.googleusercontent.com";
+export const CLIENT_SECRET = "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"
 
 const app = createApp(App);
 
@@ -18,6 +20,8 @@ app.use(PrimeVue, {
     pt: Lara, // apply preset
     // pt: Wind  // apply preset
 });
+
+app.use(createPinia());
 
 // Google Login setup
 app.use(vue3GoogleLogin, {
