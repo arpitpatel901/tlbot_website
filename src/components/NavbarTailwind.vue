@@ -385,13 +385,12 @@ import axios from "axios";
 import { CLIENT_ID } from "@/main";
 import TileComponent from "./TileComponent.vue";
 
-import { GoogleLogin } from "vue3-google-login";
+import { googleAuthCodeLogin } from 'vue3-google-login';
 // import { googleSdkLoaded } from "vue3-google-login";
 export default {
   name: "NavbarTailwind",
   components: {
     TileComponent,
-    GoogleLogin,
   },
   methods: {
     toggleTheme() {
@@ -405,43 +404,31 @@ export default {
       this.$refs.menu.classList.toggle("flex");
       this.$refs.menu.classList.toggle("hidden");
     },
-    loginClick() {
-      google.accounts.oauth2
-        .initCodeClient({
-          client_id: CLIENT_ID, // Your Google OAuth Client ID
-          scope: "email profile openid",
-          ux_mode: "redirect", // Optional: depends on your flow
-          redirect_uri: "http://localhost:3001/api/google-auth", // Point this to your backend
-          callback: (response) => {
-            if (response.code) {
-              this.sendCodeToBackend(response.code);
-            }
-          },
-          // window.location: "http://localhost:3001/api/google-auth",
-        })
-        .requestCode();
+    async loginClick() {
+      try {
+        const response = await googleAuthCodeLogin({
+          clientId: CLIENT_ID, // Ensure you have your Google client ID here
+        });
+        if (response.code) {
+          this.sendCodeToBackend(response.code);
+        }
+      } catch (error) {
+        console.error("Login failed:", error);
+      }
     },
     async sendCodeToBackend(code) {
-      console.log('Sending code to backend:', code); // Log the code being sent
       try {
-        const response = await axios.get(
-          "http://localhost:3001/api/google-auth",
-          { params: { code } }
-        );
-        console.log("Received from dummy backend:", response.data);
-
-        // Handle response e.g., setting user state
-        if (response.data.success) {
-          console.log("Redirecting to:", response.data.redirect);
-          this.$router.push("/main_dashboard"); // Make sure this route is defined in your Vue router
-          console.log("Redirect should have occurred.");
+        const result = await axios.get("http://localhost:3001/api/google-auth", { params: { code } });
+        console.log("Response from backend:", result.data);
+        if (result.data.success) {
+          this.$router.push('/main_dashboard');
         } else {
-          console.error("Login failed:", response.data.message);
+          console.error("Login failed:", result.data.message);
         }
       } catch (error) {
         console.error("Error sending code to backend:", error);
       }
-    },
+    }
   },
 };
 
