@@ -413,13 +413,12 @@ export default {
           client_id: CLIENT_ID, // Your Google OAuth Client ID
           scope: "email profile openid",
           ux_mode: "redirect", // Optional: depends on your flow
-          redirect_uri: "http://localhost:5173/auth/callback", // This should be a frontend route
-          // redirect_uri: "http://localhost:3001/api/google-auth", // Point this to your backend
-          // callback: (response) => {
-          //   if (response.code) {
-          //     this.sendCodeToBackend(response.code);
-          //   }
-          // },
+          redirect_uri: "http://localhost:3001/api/google-auth", // Point this to your backend
+          callback: (response) => {
+            if (response.code) {
+              this.sendCodeToBackend(response.code);
+            }
+          },
           // window.location: "http://localhost:3001/api/google-auth",
         })
         .requestCode();
