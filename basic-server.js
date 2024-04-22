@@ -45,11 +45,8 @@ app.get('/api/google-auth', async (req, res) => {
               });
 
               if (userResponse && userResponse.data) {
-                // Send user data back to the frontend
-                res.json({
-                  success: true,
-                  userData: userResponse.data
-                });
+                console.log('Redicteding to auth/callback')
+                res.redirect(`http://localhost:5173/auth/callback?userData=${encodeURIComponent(JSON.stringify(userResponse.data))}`);
               } else {
                 console.error('Failed to fetch user data');
                 res.status(500).json({ error: "Failed to fetch user data" });
