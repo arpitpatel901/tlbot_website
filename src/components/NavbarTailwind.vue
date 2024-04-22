@@ -7,6 +7,7 @@
           <!-- Logo -->
           <div class="pt-4">
             <img src="./../assets/logo_manage.svg" alt="" />
+            <!-- <img src="./../assets/test_logo.svg" alt="" /> -->
           </div>
           <!-- Menu Items -->
           <div class="hidden items-center space-x-6 md:flex text-xl pt-2">
