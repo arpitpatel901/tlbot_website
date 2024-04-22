@@ -381,8 +381,9 @@
 </template>
 
 <script>
-import axios from "axios";
+// import axios from "axios";
 import { CLIENT_ID } from "@/main";
+// import { CLIENT_SECRET } from "@/main";
 import TileComponent from "./TileComponent.vue";
 
 import { GoogleLogin } from "vue3-google-login";
@@ -406,51 +407,18 @@ export default {
       this.$refs.menu.classList.toggle("hidden");
     },
     loginClick() {
-      google.accounts.oauth2
-        .initCodeClient({
-          client_id: CLIENT_ID, // Your Google OAuth Client ID
-          scope: "email profile openid",
-          ux_mode: "redirect", // Optional: depends on your flow
-          redirect_uri: "http://localhost:3001/api/google-auth", // Point this to your backend
-          callback: (response) => {
-            if (response.code) {
-              this.sendCodeToBackend(response.code);
-            }
-          },
-          // window.location: "http://localhost:3001/api/google-auth",
-        })
-        .requestCode();
+      google.accounts.oauth2.initCodeClient({
+        client_id: CLIENT_ID, // Your Google OAuth Client ID
+        scope: "email profile openid",
+        ux_mode: "redirect", // Redirect mode as the UX mode
+        redirect_uri: "http://localhost:3001/api/google-auth", // Point this to your backend
+        // No need for the callback here, as the backend will handle it
+      }).requestCode();
     },
-    async sendCodeToBackend(code) {
-      console.log('Sending code to backend:', code); // Log the code being sent
-      try {
-        const response = await axios.get(
-          "http://localhost:3001/api/google-auth",
-          { params: { code } }
-        );
-        console.log("Received from dummy backend:", response.data);
 
-        // Handle response e.g., setting user state
-        if (response.data.success) {
-          console.log("Redirecting to:", response.data.redirect);
-          this.$router.push("/main_dashboard"); // Make sure this route is defined in your Vue router
-          console.log("Redirect should have occurred.");
-        } else {
-          console.error("Login failed:", response.data.message);
-        }
-      } catch (error) {
-        console.error("Error sending code to backend:", error);
-      }
-    },
   },
 };
 
-// const callback = (response) => {
-//   // This callback will be triggered when the user selects or login to
-//   // his Google account from the popup
-//   alert('login click'+ response)
-//   console.log("Handle the response", response)
-// }
 </script>
 
 <style>

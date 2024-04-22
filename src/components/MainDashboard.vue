@@ -2,35 +2,65 @@
   <div class="main-dashboard">
     <h1>Main Dashboard</h1>
     <p>Welcome to the Main Dashboard of the Application!</p>
+
+    <!-- Display user information if available -->
+    <div v-if="user">
+      <h2>User Information</h2>
+      <p><strong>Name:</strong> {{ user.name }}</p>
+      <p><strong>Email:</strong> {{ user.email }}</p>
+
+      <a 
+        href="#" 
+        class="hidden p-2 px-4 pt-2 text-black bg-white font-bold rounded-lg baseline hover:bg-blue-200 md:block border-transparent border-2"
+      >
+        <button @click="handleLogout">Logout</button>
+      </a>
+
+      
+      <!-- Add more fields as needed -->
+    </div>
+    <div v-else>
+      <p>No user information available.</p>
+    </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios'; // Ensure Axios is imported
+import { onMounted, ref } from 'vue';
+import { useUserStore } from '@/stores/userStore'; // Ensure the path is correct
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'MainDashboard',
-  created() {
-    console.log("Created MainDashboard")
-    // Parse the query parameters from the URL
-    const queryParams = new URLSearchParams(window.location.search);
-    const code = queryParams.get('code');
-    if (code) {
-      // If you have a code, send it to the backend for validation/processing
-      this.sendCodeToBackend(code);
-    }
-  },
-  methods: {
-    async sendCodeToBackend(code) {
-      try {
-        // Note: Change this URL to your actual backend endpoint that handles the OAuth process
-        const response = await axios.get(`http://localhost:3001/api/process-code`, { params: { code } });
-        console.log("Response from backend:", response.data);
-        // Handle the response, e.g., log in the user
-      } catch (error) {
-        console.error("Error processing the login code:", error);
+  setup() {
+    // Access user information from Pinia store
+    const userStore = useUserStore();
+    const user = ref(userStore.userData); // Reactive reference to user data
+    const router = useRouter();
+
+    const handleLogout = () => {
+      userStore.logout();
+      router.push('/login');
+    };
+
+    onMounted(() => {
+      const queryParams = new URLSearchParams(window.location.search);
+      const userDataJSON = queryParams.get('userData');
+      if (userDataJSON) {
+        try {
+          const userData = JSON.parse(decodeURIComponent(userDataJSON));
+          userStore.setUser(userData);
+          user.value = userData; // Update reactive reference
+        } catch (e) {
+          console.error('Error parsing user data from URL parameter:', e);
+        }
       }
-    }
+    });
+
+    return {
+      user, // Make sure to return this so it's available in the template
+      handleLogout
+    };
   }
 };
 </script>
