@@ -13,12 +13,11 @@
     <div v-else>
       <p>No user information available.</p>
     </div>
-
   </div>
 </template>
 
 <script>
-import axios from 'axios'; // Ensure Axios is imported
+import { onMounted, ref } from 'vue';
 import { useUserStore } from '@/stores/userStore'; // Ensure the path is correct
 
 export default {
@@ -26,32 +25,28 @@ export default {
   setup() {
     // Access user information from Pinia store
     const userStore = useUserStore();
+    const user = ref(userStore.userData);
+
+    onMounted(() => {
+      const queryParams = new URLSearchParams(window.location.search);
+      const userDataJSON = queryParams.get('userData');
+      if (userDataJSON) {
+        try {
+          // Parse and decode user data from the URL parameter
+          const userData = JSON.parse(decodeURIComponent(userDataJSON));
+          // Update the user store with the retrieved data
+          userStore.setUser(userData);
+          // Update the local user ref to be reactive
+          user.value = userData;
+        } catch (e) {
+          console.error('Error parsing user data from URL parameter:', e);
+        }
+      }
+    });
 
     return {
-      user: userStore.userData, // Make the user data reactive and accessible in the template
+      user
     };
-  },
-  created() {
-    console.log("Created MainDashboard")
-    // Parse the query parameters from the URL
-    const queryParams = new URLSearchParams(window.location.search);
-    const code = queryParams.get('code');
-    if (code) {
-      // If you have a code, send it to the backend for validation/processing
-      this.sendCodeToBackend(code);
-    }
-  },
-  methods: {
-    async sendCodeToBackend(code) {
-      try {
-        // Note: Change this URL to your actual backend endpoint that handles the OAuth process
-        const response = await axios.get(`http://localhost:3001/api/process-code`, { params: { code } });
-        console.log("Response from backend:", response.data);
-        // Handle the response, e.g., log in the user
-      } catch (error) {
-        console.error("Error processing the login code:", error);
-      }
-    }
   }
 };
 </script>

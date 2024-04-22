@@ -381,11 +381,10 @@
 </template>
 
 <script>
-import axios from "axios";
+// import axios from "axios";
 import { CLIENT_ID } from "@/main";
-import { CLIENT_SECRET } from "@/main";
+// import { CLIENT_SECRET } from "@/main";
 import TileComponent from "./TileComponent.vue";
-import { useUserStore } from '@/stores/userStore'; // Make sure the path is correct
 
 import { GoogleLogin } from "vue3-google-login";
 // import { googleSdkLoaded } from "vue3-google-login";
@@ -408,81 +407,18 @@ export default {
       this.$refs.menu.classList.toggle("hidden");
     },
     loginClick() {
-      google.accounts.oauth2
-        .initCodeClient({
-          client_id: CLIENT_ID, // Your Google OAuth Client ID
-          scope: "email profile openid",
-          ux_mode: "redirect", // Optional: depends on your flow
-          redirect_uri: "http://localhost:3001/api/google-auth", // Point this to your backend
-          callback: (response) => {
-            if (response.code) {
-              this.sendCodeToBackend(response.code);
-            }
-          },
-          // window.location: "http://localhost:3001/api/google-auth",
-        })
-        .requestCode();
+      google.accounts.oauth2.initCodeClient({
+        client_id: CLIENT_ID, // Your Google OAuth Client ID
+        scope: "email profile openid",
+        ux_mode: "redirect", // Redirect mode as the UX mode
+        redirect_uri: "http://localhost:3001/api/google-auth", // Point this to your backend
+        // No need for the callback here, as the backend will handle it
+      }).requestCode();
     },
-    async sendCodeToBackend(code) {
-      try {
-        const response = await axios.get(`http://localhost:3001/api/google-auth`, { params: { code } });
 
-        if (response.data.success && response.data.userData) {
-          console.log("Received user data from backend:", response.data.userData);
-          const userStore = useUserStore();
-          userStore.setUser(response.data.userData);
-          this.$router.push("/main_dashboard");
-        } else {
-          console.error("Failed to retrieve user data:", response.data.error);
-        }
-      } catch (error) {
-        console.error("Error during the login process:", error);
-      }
-    },
-    // async fetchUserDataFrom(code) {
-    //   const userStore = useUserStore(); // Initialize Pinia store
-
-    //   try {
-    //     // Exchange the authorization code for an access token
-    //     const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', {
-    //       code: code,
-    //       client_id: CLIENT_ID,
-    //       client_secret: CLIENT_SECRET,
-    //       redirect_uri: "http://localhost:3001/api/google-auth",
-    //       grant_type: 'authorization_code',
-    //     });
-        
-    //     if (tokenResponse.data) {
-    //       const accessToken = tokenResponse.data.access_token;
-          
-    //       // Fetch user details using the access token
-    //       const userResponse = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
-    //         headers: {
-    //           Authorization: `Bearer ${accessToken}`,
-    //         },
-    //       });
-
-    //       if (userResponse && userResponse.data) {
-    //         console.log('User Data:', userResponse.data);
-    //         userStore.setUser(userResponse.data); // Save the user data in the store
-    //         // Here you can set the user data to your Vue state or store
-    //       } else {
-    //         console.error('Failed to fetch user data');
-    //       }
-    //     }
-    //   } catch (error) {
-    //     console.error('Error during Google Auth process:', error);
-    //   }
-    // },
   },
 };
 
-// const callback = (response) => {
-//   // This callback will be triggered when the user selects or login to
-//   // his Google account from the popup
-//   alert('login click'+ response)
-//   console.log("Handle the response", response)
-// }
 </script>
 
 <style>
