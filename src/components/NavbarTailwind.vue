@@ -31,6 +31,11 @@
               class="py-2 px-4 border-transparent border-2 hover:rounded-lg transition-all ease-in-out duration-200 hover:border-blue-300 hover:text-blue-300 hover:bg-gray-600"
               >Contact</a
             >
+            <a
+              href="#"
+              class="py-2 px-4 border-transparent border-2 hover:rounded-lg transition-all ease-in-out duration-200 hover:border-blue-300 hover:text-blue-300 hover:bg-gray-600"
+              ><button @click="signInClick">Sign In</button></a
+            >
             <!-- Button -->
             <a
               href="#"
@@ -67,6 +72,12 @@
             >
             <a href="#" class="text-gray-500 hover:text-gray-300">About</a>
             <a href="#" class="text-gray-500 hover:text-gray-300">Contact</a>
+            <a href="#" class="text-gray-500 hover:text-gray-300">
+              <button @click="signInClick">Sign In</button>
+            </a>
+            <a href="#" class="text-gray-500 hover:text-gray-300">
+              <button @click="loginClick">Login</button>
+            </a>
             <!-- <a href="#">Community</a> -->
           </div>
         </div>
@@ -415,7 +426,9 @@ export default {
         // No need for the callback here, as the backend will handle it
       }).requestCode();
     },
-
+    signInClick() {
+      this.$router.push('/sign_in');
+    },
   },
 };
 
