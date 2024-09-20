@@ -100,28 +100,31 @@
           class="absolute blur-sm top-80 left-4 w-72 h-16 bg-green-300 rounded-2xl md:right-20"
         ></div> -->
       <!-- Title -->
-      <header
-        ref="title"
-        id="title"
-        class="z-10 box-border relative mx-20 mt-5 py-10 h-auto text-8xl text-center md:space-y-1 md:py-60 md:px-30 md:mt-28"
+      <section
+        ref="messages"
+        id="messages"
+        class="z-10 box-border relative mx-20 mt-5 py-10 h-auto text-center md:py-60 md:px-30 md:mt-28"
       >
-        <h1>Build Your <span class="text-blue-500">AI Support</span></h1>
+        <!-- Rotating messages -->
         <p
-          class="box-border relative mx-auto pt-10 mt-5 h-auto text-4xl text-center md:text-4xl md:space-y-10 md:py-30 md:px-30 lg:max-w-3xl"
+          v-if="currentMessage === 1 && !isFadingOut"
+          class="text-4xl md:text-6xl lg:text-7xl text-white opacity-0 animate-blink transition-opacity duration-2000 ease-in-out"
         >
-          Build transparency into customer feedback with
-          <!-- <span class="text-brightRed font-bold" -->
-          <span class="text-gray-500 font-bold"
-            >AI automations, Integrated ticket tracking, Automatic esclations,
-            and much more..</span
-          >
+          Search the web
         </p>
-        <a
-          href="#"
-          class="inline-block items-center text-2xl px-3 py-2 text-black bg-white font-bold rounded-lg baseline transition duration-300 relative"
-          >Book Demo</a
+        <p
+          v-if="currentMessage === 2 && !isFadingOut"
+          class="text-4xl md:text-6xl lg:text-7xl text-white opacity-0 animate-blink transition-opacity duration-2000 ease-in-out"
         >
-      </header>
+          Search your data
+        </p>
+        <p
+          v-if="currentMessage === 3 && !isFadingOut"
+          class="text-4xl md:text-6xl lg:text-7xl text-white opacity-0 animate-blink transition-opacity duration-2000 ease-in-out"
+        >
+          Automate your tasks
+        </p>
+      </section>
     </div>
   </div>
   <div>
@@ -233,10 +236,8 @@
               </h3>
               <p class="text-darkGrayishBlue text-lg md:text-xl">
                 Designed to be scalable in nature the platform grows with your
-                customers. The platform is inherently scalable, ensuring it
-                evolves alongside your customer base. Rest assured, your data
-                remains exclusively yours, securely stored in a private
-                database, and is never utilized to train our models.
+                data. Rest assured, your data remains exclusively yours,
+                securely stored in a private database.
               </p>
             </div>
           </div>
@@ -244,139 +245,31 @@
       </div>
     </section>
 
-    <!-- Use Cases -->
-    <h2 class="text-5xl mt-20 font-bold text-center md:text-6xl">Use Cases</h2>
-    <section id="Use-Cases">
-      <div
-        class="container flex flex-col px-4 mx-auto mt-10 space-y-12 md:space-y-0 md:flex-row"
+    <!-- Sign Up for Updates Section -->
+    <div
+      class="mt-12 flex flex-col items-center bg-gray-100 pt-6 pb-16 px-6 rounded-lg"
+    >
+      <h2 class="text-2xl font-bold text-brightRed mb-4">Stay Updated</h2>
+      <p class="text-darkGrayishBlue text-lg mb-4 text-center">
+        Follow progress as we build chitchat to be the best personal assistant
+      </p>
+      <form
+        class="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4"
       >
-        <div class="flex flex-col md:w-1/2">
-          <TileComponent
-            tileImage="whatsapp.jpeg"
-            title="AI Draft Composer"
-            description="Generate responses in a click, adhering to your company's brand and tone, based on expert knowledge."
-          />
-          <TileComponent
-            tileImage="89354.jpg"
-            title="Ticket Tracking"
-            description="Track tickets from creation to resolution, ensuring no customer query goes unanswered."
-          />
-        </div>
-        <div class="flex flex-col md:w-1/2">
-          <TileComponent
-            tileImage="whatsapp.jpeg"
-            title="WhatApp Business Integration"
-            description="Integrate your WhatsApp Business account to manage customer queries and feedback."
-          />
-          <TileComponent
-            tileImage="topography.svg"
-            title="Instagram Support Integration"
-            description="Integrate your Instagram account to manage customer queries and feedback."
-          />
-        </div>
-      </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section id="cta" class="hidden bg-orange-500 md:flex">
-      <!-- Flex Container -->
-      <div
-        class="container flex flex-col items-center justify-between px-6 py-24 mx-auto space-y-12 md:py-12 md:flex-row md:space-y-0"
-      >
-        <!-- Heading -->
-        <h2
-          class="text-5xl font-bold text-center text-white md:text-4xl md:max-w-xl md:text-left"
+        <input
+          type="email"
+          placeholder="Enter your email"
+          class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-brightRed md:w-80"
+          required
+        />
+        <button
+          type="submit"
+          class="px-6 py-2 text-white bg-brightRed rounded-lg hover:bg-brightRedLight focus:outline-none"
         >
-          Automate your support so you can do what you do best
-        </h2>
-        <!-- Button -->
-        <div>
-          <a
-            href="#"
-            class="p-3 px-6 pt-2 text-brightRed bg-white rounded-lg shadow-2xl baseline hover:bg-gray-900"
-            >Book Demo</a
-          >
-        </div>
-      </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-veryDarkBlue">
-      <!-- Flex Container -->
-      <div
-        class="container flex flex-col-reverse justify-between px-6 py-10 mx-auto space-y-8 md:flex-row md:space-y-0"
-      >
-        <!-- Logo and social links container -->
-        <div
-          class="flex flex-col-reverse items-center justify-between space-y-12 md:flex-col md:space-y-0 md:items-start"
-        >
-          <div class="mx-auto my-6 text-center text-white md:hidden">
-            Copyright &copy; 2022, All Rights Reserved
-          </div>
-          <!-- Logo -->
-          <div>
-            <img src="./../assets/logo-white.svg" class="h-8" alt="" />
-          </div>
-          <!-- Social Links Container -->
-          <div class="flex justify-center space-x-4">
-            <!-- Link 1 -->
-            <a href="#">
-              <img src="./../assets/icon-facebook.svg" alt="" class="h-8" />
-            </a>
-            <!-- Link 2 -->
-            <a href="#">
-              <img src="./../assets/icon-youtube.svg" alt="" class="h-8" />
-            </a>
-            <!-- Link 3 -->
-            <a href="#">
-              <img src="./../assets/icon-twitter.svg" alt="" class="h-8" />
-            </a>
-            <!-- Link 4 -->
-            <a href="#">
-              <img src="./../assets/icon-pinterest.svg" alt="" class="h-8" />
-            </a>
-            <!-- Link 5 -->
-            <a href="#">
-              <img src="./../assets/icon-instagram.svg" alt="" class="h-8" />
-            </a>
-          </div>
-        </div>
-        <!-- List Container -->
-        <div class="flex justify-around space-x-32">
-          <div class="flex flex-col space-y-3 text-white">
-            <a href="#" class="hover:text-brightRed">Home</a>
-            <a href="#" class="hover:text-brightRed">Integrations</a>
-            <a href="#" class="hover:text-brightRed">Products</a>
-          </div>
-          <div class="flex flex-col space-y-3 text-white">
-            <a href="#" class="hover:text-brightRed">About</a>
-            <a href="#" class="hover:text-brightRed">Contact</a>
-            <a href="#" class="hover:text-brightRed">Privacy Policy</a>
-          </div>
-        </div>
-
-        <!-- Input Container -->
-        <div class="flex flex-col justify-between">
-          <form>
-            <div class="flex space-x-3">
-              <input
-                type="text"
-                class="flex-1 px-4 rounded-full focus:outline-none"
-                placeholder="Updated in your inbox"
-              />
-              <button
-                class="px-6 py-2 text-white rounded-full bg-brightRed hover:bg-brightRedLight focus:outline-none"
-              >
-                Go
-              </button>
-            </div>
-          </form>
-          <div class="hidden text-white md:block">
-            Copyright &copy; 2022, All Rights Reserved
-          </div>
-        </div>
-      </div>
-    </footer>
+          Sign Up
+        </button>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -394,6 +287,14 @@ export default {
     TileComponent,
     GoogleLogin,
   },
+  data() {
+    return {
+      currentMessage: 1, // Start with the first message
+    };
+  },
+  mounted() {
+    this.startMessageRotation();
+  },
   methods: {
     toggleTheme() {
       document.body.classList.toggle("dark");
@@ -407,21 +308,59 @@ export default {
       this.$refs.menu.classList.toggle("hidden");
     },
     loginClick() {
-      google.accounts.oauth2.initCodeClient({
-        client_id: CLIENT_ID, // Your Google OAuth Client ID
-        scope: "email profile openid",
-        ux_mode: "redirect", // Redirect mode as the UX mode
-        redirect_uri: "http://localhost:3001/api/google-auth", // Point this to your backend
-        // No need for the callback here, as the backend will handle it
-      }).requestCode();
+      google.accounts.oauth2
+        .initCodeClient({
+          client_id: CLIENT_ID, // Your Google OAuth Client ID
+          scope: "email profile openid",
+          ux_mode: "redirect", // Redirect mode as the UX mode
+          redirect_uri: "http://localhost:3001/api/google-auth", // Point this to your backend
+          // No need for the callback here, as the backend will handle it
+        })
+        .requestCode();
     },
-
+    // // Rotates between messages
+    // startMessageRotation() {
+    //   setInterval(() => {
+    //     this.currentMessage = (this.currentMessage % 3) + 1;
+    //   }, 5000); // Change message every 5 seconds
+    // },
+    // Rotates between messages with minimal downtime
+    startMessageRotation() {
+      setInterval(() => {
+        // Switch to next message after fade-out
+        this.isFadingOut = true;
+        setTimeout(() => {
+          this.currentMessage = (this.currentMessage % 3) + 1;
+          this.isFadingOut = false;
+        }, 100); // Small delay before switching message (ensures no gap)
+      }, 5000); // Change message every 5 seconds
+    },
   },
 };
-
 </script>
 
 <style>
+@keyframes blink {
+  0%,
+  5% {
+    opacity: 0; /* Start invisible */
+  }
+  10%,
+  40% {
+    opacity: 1; /* Smooth fade-in */
+  }
+  80%,
+  90% {
+    opacity: 1; /* Keep visible */
+  }
+  95%,
+  100% {
+    opacity: 0; /* Quick fade-out */
+  }
+}
+.animate-blink {
+  animation: blink 5s infinite;
+}
 .custom-background {
   background-image: linear-gradient(
       to bottom,
