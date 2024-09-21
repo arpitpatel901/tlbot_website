@@ -19,7 +19,7 @@
             <a
               href="#"
               class="py-2 px-4 border-transparent border-2 hover:rounded-lg transition-all ease-in-out duration-200 hover:border-blue-300 hover:text-blue-300 hover:bg-gray-600"
-              >How it works</a
+              >Learn More</a
             >
             <a
               href="#"
@@ -81,25 +81,28 @@
       <section
         ref="messages"
         id="messages"
-        class="z-10 box-border relative mx-20 mt-5 py-10 text-center md:py-60 md:px-30 md:mt-28"
-        style="height: 100px;"
+        class="z-10 box-border relative mx-20 mt-5 py-40 text-center md:py-30 md:px-30 md:mt-28"
+        style="height: 400px;"
       >
+        <p class="text-6xl lg:text-7xl space-y-20 lg:py-10 text-white mb-4">
+          <h1><span class="text-gray-600">Build Your </span> <span class="text-blue-500">AI Assistant</span></h1>
+        </p>
         <!-- Rotating messages -->
         <p
           v-show="currentMessage === 1 && !isFadingOut"
-          class="text-4xl md:text-6xl lg:text-7xl text-white animate-blink transition-opacity duration-2000 ease-in-out"
+          class="text-5xl lg:text-6xl py-5 text-white animate-blink transition-opacity duration-2000 ease-in-out"
         >
           Search the Web
         </p>
         <p
           v-show="currentMessage === 2 && !isFadingOut"
-          class="text-4xl md:text-6xl lg:text-7xl text-white animate-blink transition-opacity duration-2000 ease-in-out"
+          class="text-5xl lg:text-6xl py-5 text-white animate-blink transition-opacity duration-2000 ease-in-out"
         >
           Search your Data
         </p>
         <p
           v-show="currentMessage === 3 && !isFadingOut"
-          class="text-4xl md:text-6xl lg:text-7xl text-white animate-blink transition-opacity duration-2000 ease-in-out"
+          class="text-5xl lg:text-6xl py-5 text-white animate-blink transition-opacity duration-2000 ease-in-out"
         >
           Automate your Tasks
         </p>
@@ -111,7 +114,7 @@
     <section id="Uniqueness">
       <!-- Flex container -->
       <div
-        class="container flex flex-col px-4 mx-auto mt-10 space-y-12 md:space-y-0 md:flex-row"
+        class="container flex flex-col px-4 mx-auto mt-10 space-y-12 py-10 md:py-40 md:space-y-0 md:flex-row"
       >
         <!-- What's Different -->
         <div class="flex flex-col space-y-4 md:w-1/2">
