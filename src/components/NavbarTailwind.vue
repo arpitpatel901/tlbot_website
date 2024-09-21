@@ -14,17 +14,12 @@
             <a
               href="#"
               class="py-2 px-4 border-transparent border-2 hover:rounded-lg transition-all ease-in-out duration-200 hover:border-blue-300 hover:text-blue-300 hover:bg-gray-600"
-              >Product</a
-            >
-            <a
-              href="#"
-              class="py-2 px-4 border-transparent border-2 hover:rounded-lg transition-all ease-in-out duration-200 hover:border-blue-300 hover:text-blue-300 hover:bg-gray-600"
               >Integrations</a
             >
             <a
               href="#"
               class="py-2 px-4 border-transparent border-2 hover:rounded-lg transition-all ease-in-out duration-200 hover:border-blue-300 hover:text-blue-300 hover:bg-gray-600"
-              >About</a
+              >How it works</a
             >
             <a
               href="#"
@@ -72,57 +67,41 @@
         </div>
       </nav>
 
-      <!-- <div class="relative"> -->
-      <!-- <div class="custom-shape-divider-bottom-1712260637 animate-sinusoid">
-          <svg
-            data-name="Layer 1"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 1200 120"
-            preserveAspectRatio="none"
-          >
-            <path
-              d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
-              class="shape-fill"
-            ></path>
-          </svg>
-        </div> -->
-      <!-- <div class="absolute spacer layer1 animate-sinusoid"></div> -->
-      <!-- <div
-          class="absolute blur-sm top-20 right-4 w-72 h-16 bg-blue-700 rounded-2xl md:left-20"
-        ></div>
-        <div
-          class="absolute blur-sm top-40 left-4 w-72 h-16 bg-green-300 rounded-2xl md:right-20"
-        ></div>
-        <div
-          class="absolute blur-sm top-60 right-4 w-72 h-16 bg-blue-700 rounded-2xl md:left-20"
-        ></div>
-        <div
-          class="absolute blur-sm top-80 left-4 w-72 h-16 bg-green-300 rounded-2xl md:right-20"
-        ></div> -->
+      <!-- Static Text Section for Testing -->
+      <!-- <section
+        id="static-section"
+        class="z-10 box-border relative mx-20 mt-5 py-10 h-auto text-center"
+      >
+        <p class="text-4xl md:text-5xl lg:text-6xl text-white">
+          Welcome to TLabs!
+        </p>
+      </section> -->
+
       <!-- Title -->
       <section
         ref="messages"
         id="messages"
-        class="z-10 box-border relative mx-20 mt-5 py-10 h-auto text-center md:py-60 md:px-30 md:mt-28"
+        class="z-10 box-border relative mx-20 mt-5 py-10 text-center md:py-60 md:px-30 md:mt-28"
+        style="height: 100px;"
       >
         <!-- Rotating messages -->
         <p
-          v-if="currentMessage === 1 && !isFadingOut"
-          class="text-4xl md:text-6xl lg:text-7xl text-white opacity-0 animate-blink transition-opacity duration-2000 ease-in-out"
+          v-show="currentMessage === 1 && !isFadingOut"
+          class="text-4xl md:text-6xl lg:text-7xl text-white animate-blink transition-opacity duration-2000 ease-in-out"
         >
-          Search the web
+          Search the Web
         </p>
         <p
-          v-if="currentMessage === 2 && !isFadingOut"
-          class="text-4xl md:text-6xl lg:text-7xl text-white opacity-0 animate-blink transition-opacity duration-2000 ease-in-out"
+          v-show="currentMessage === 2 && !isFadingOut"
+          class="text-4xl md:text-6xl lg:text-7xl text-white animate-blink transition-opacity duration-2000 ease-in-out"
         >
-          Search your data
+          Search your Data
         </p>
         <p
-          v-if="currentMessage === 3 && !isFadingOut"
-          class="text-4xl md:text-6xl lg:text-7xl text-white opacity-0 animate-blink transition-opacity duration-2000 ease-in-out"
+          v-show="currentMessage === 3 && !isFadingOut"
+          class="text-4xl md:text-6xl lg:text-7xl text-white animate-blink transition-opacity duration-2000 ease-in-out"
         >
-          Automate your tasks
+          Automate your Tasks
         </p>
       </section>
     </div>
@@ -247,29 +226,32 @@
 
     <!-- Sign Up for Updates Section -->
     <div
-      class="mt-12 flex flex-col items-center bg-gray-100 pt-6 pb-16 px-6 rounded-lg"
+    class="mt-12 flex flex-col items-center bg-gray-100 pt-6 pb-16 px-6 rounded-lg"
+  >
+    <h2 class="text-2xl font-bold text-brightRed mb-4">Stay Updated</h2>
+    <p class="text-darkGrayishBlue text-lg mb-4 text-center">
+      Follow progress as we build chitchat to be the best personal assistant
+    </p>
+    <form
+      id="signup-form"
+      class="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4"
+      @submit.prevent="submitEmail"
     >
-      <h2 class="text-2xl font-bold text-brightRed mb-4">Stay Updated</h2>
-      <p class="text-darkGrayishBlue text-lg mb-4 text-center">
-        Follow progress as we build chitchat to be the best personal assistant
-      </p>
-      <form
-        class="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4"
+      <input
+        id="email"
+        type="email"
+        placeholder="Enter your email"
+        class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-brightRed md:w-80"
+        required
+      />
+      <button
+        type="submit"
+        class="px-6 py-2 text-white bg-brightRed rounded-lg hover:bg-brightRedLight focus:outline-none"
       >
-        <input
-          type="email"
-          placeholder="Enter your email"
-          class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-brightRed md:w-80"
-          required
-        />
-        <button
-          type="submit"
-          class="px-6 py-2 text-white bg-brightRed rounded-lg hover:bg-brightRedLight focus:outline-none"
-        >
-          Sign Up
-        </button>
-      </form>
-    </div>
+        {{ buttonText }}
+      </button>
+    </form>
+  </div>
   </div>
 </template>
 
@@ -290,6 +272,8 @@ export default {
   data() {
     return {
       currentMessage: 1, // Start with the first message
+      buttonText: "Sign Up", // Make sure buttonText is defined in the data function
+      isFadingOut: false, // Start without fadeout
     };
   },
   mounted() {
@@ -327,13 +311,47 @@ export default {
     // Rotates between messages with minimal downtime
     startMessageRotation() {
       setInterval(() => {
-        // Switch to next message after fade-out
+        // Trigger fade-out before changing message
         this.isFadingOut = true;
         setTimeout(() => {
-          this.currentMessage = (this.currentMessage % 3) + 1;
-          this.isFadingOut = false;
-        }, 100); // Small delay before switching message (ensures no gap)
+          this.currentMessage = (this.currentMessage % 3) + 1; // Cycle through messages
+          this.isFadingOut = false; // After changing, allow fade-in
+        }, 100); // Minimal delay between messages to avoid flicker
       }, 5000); // Change message every 5 seconds
+    },
+    async submitEmail() {
+      const emailInput = document.getElementById("email");
+      const email = emailInput.value;
+
+      try {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbzV5eTuWK7Yr6QTbhY_NOKoLItPH28artZAYoYWN9079uilbzR00n39NcqaT5ZVmJFE/exec", {
+          method: "POST",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            email: email,
+          }),
+        });
+
+        const result = await response.json();
+        if (result.result === "success") {
+          emailInput.value = ""; // Clear the email input after successful submission
+          this.buttonText = "Thank You!"; // Update button text to "Thank You!"
+
+          // After 3 seconds, revert the button text back to "Sign Up"
+          setTimeout(() => {
+            this.buttonText = "Sign Up";
+          }, 3000);
+        } else {
+
+          alert("There was an issue with your signup. Please try again.");
+        }
+      } catch (error) {
+        console.error("Error submitting email:", error);
+        alert("An error occurred. Please try again.");
+      }
     },
   },
 };
@@ -341,20 +359,13 @@ export default {
 
 <style>
 @keyframes blink {
-  0%,
-  5% {
-    opacity: 0; /* Start invisible */
+  0%, 10% {
+    opacity: 0; /* Quick fade-in */
   }
-  10%,
-  40% {
-    opacity: 1; /* Smooth fade-in */
+  20%, 80% {
+    opacity: 1; /* Stay visible for a longer time */
   }
-  80%,
-  90% {
-    opacity: 1; /* Keep visible */
-  }
-  95%,
-  100% {
+  90%, 100% {
     opacity: 0; /* Quick fade-out */
   }
 }
