@@ -1,19 +1,20 @@
 // src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router';
 import MainDashboard from '../components/MainDashboard.vue'; // Adjust the import path as needed.
-import NavbarTailwind from '../components/NavbarTailwind.vue';
+import HomePage from '../components/HomePage.vue';
 import AuthCallback from '../components/AuthCallback.vue'
+import Contact from '../components/Contact.vue'; // Import the Contact component
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: NavbarTailwind
+    component: HomePage
   },
   {
     path: '/login',
     name: 'Login',
-    component: NavbarTailwind
+    component: HomePage
   },
   {
     path: '/main_dashboard',
@@ -24,6 +25,11 @@ const routes = [
     path: '/auth/callback',
     name: 'AuthCallback',
     component: AuthCallback,
+  },
+  {
+    path: '/contact',
+    name: 'Contact',
+    component: Contact, // Add contact page route
   }
   // other routes...
 ];
