@@ -49,7 +49,7 @@
     <!-- Uniqueness Section -->
 <section id="Uniqueness" class="py-20">
   <!-- Flex container -->
-  <div class="container flex flex-col px-10 mx-auto space-y-12 md:space-y-0 md:flex-row">
+  <div class="container flex flex-col px-10 mx-auto space-y-12 md:space-y-0 md:flex-row md:space-x-20">
     <!-- What's Different -->
     <div class="md:w-1/2 flex flex-col space-y-6">
       <h2 class="text-5xl font-bold text-center md:text-left text-gray-300">
@@ -64,7 +64,7 @@
       </p>
 
       <!-- Cool Cards instead of a list -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 mt-8">
         <div class="feature-card p-6 bg-gray-800 text-white rounded-lg shadow-lg transform hover:scale-105 transition-transform">
           <div class="icon mb-4 text-5xl text-blue-500">
             <!-- Icon (replace with an actual icon library like FontAwesome or Heroicons) -->
