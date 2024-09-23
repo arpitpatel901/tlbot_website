@@ -45,139 +45,138 @@
       </section>
     </div>
   </div>
+
   <div>
     <!-- Uniqueness Section -->
-<section id="Uniqueness" class="py-20">
-  <!-- Flex container -->
-  <div class="container flex flex-col px-10 mx-auto space-y-12 md:space-y-0 md:flex-row md:space-x-20">
-    <!-- What's Different -->
-    <div class="md:w-1/2 flex flex-col space-y-6">
-      <h2 class="text-5xl font-bold text-center md:text-left text-gray-300">
-        What's Shadow?
-      </h2>
-      <p class="text-xl text-gray-500 text-center md:text-left leading-relaxed">
-        Shadow is an AI tool designed to be your ultimate personal assistant, streamlining processes and automating tasks.
-        Shadow enhances your productivity by reducing inefficiencies and letting AI handle repetitive tasks.
-      </p>
-      <p class="text-2xl text-gray-400 text-center md:text-left leading-relaxed">
-        What can it do?
-      </p>
-
-      <!-- Cool Cards instead of a list -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 mt-8">
-        <div class="feature-card p-4 py-10 bg-gray-800 text-white rounded-lg shadow-lg transform hover:scale-105 transition-transform overflow-hidden">
-          <div class="icon mb-4 text-5xl text-blue-500">
-            <!-- Icon (replace with an actual icon library like FontAwesome or Heroicons) -->
-            🌐
-          </div>
-          <h4 class="font-bold text-xl mb-2 overflow-hidden">Quickly browse the web</h4>
-          <p class="text-gray-400">Easily navigate through the web using smart AI features.</p>
-        </div>
-
-        <div class="feature-card p-4 py-10 bg-gray-800 text-white rounded-lg shadow-lg transform hover:scale-105 transition-transform overflow-hidden">
-          <div class="icon mb-4 text-5xl text-blue-500">
-            <!-- Icon (replace with an actual icon library like FontAwesome or Heroicons) -->
-            🔍
-          </div>
-          <h4 class="font-bold text-xl mb-2 overflow-hidden">Search through your data</h4>
-          <p class="text-gray-400">Find the exact information you need, quickly and effortlessly.</p>
-        </div>
-
-        <div class="feature-card p-4 py-10 bg-gray-800 text-white rounded-lg shadow-lg transform hover:scale-105 transition-transform overflow-hidden">
-          <div class="icon mb-4 text-5xl text-blue-500">
-            <!-- Icon (replace with an actual icon library like FontAwesome or Heroicons) -->
-            🤖
-          </div>
-          <h4 class="font-bold text-xl mb-2 overflow-hidden">Automate routine tasks</h4>
-          <p class="text-gray-400">Let AI handle repetitive tasks, saving you time and effort.</p>
-        </div>
-      </div>
-
-
-
-    </div>
-
-    <!-- Numbered List -->
-    <div class="md:w-1/2 flex flex-col space-y-8">
-      <!-- List Item 1 -->
-      <div class="flex items-start space-x-6">
-        <!-- Number -->
-        <div class="bg-blue-500 rounded-full px-4 py-2 text-white font-bold">
-          01
-        </div>
-        <div>
-          <h3 class="text-2xl font-semibold text-gray-500 mb-2">
-            What are connectors?
-          </h3>
-          <p class="text-lg text-gray-500 leading-relaxed">
-            Connectors are APIs or platforms you want to automate, including Google Home, Google Office, and more. Sign up to explore the growing list of integrations.
+    <section id="Uniqueness" class="py-20">
+      <!-- Flex container -->
+      <div class="container flex flex-col px-10 mx-auto space-y-12 md:space-y-0 md:flex-row md:space-x-20">
+        <!-- What's Different -->
+        <div class="md:w-1/2 flex flex-col space-y-6">
+          <h2 class="text-5xl font-bold text-center md:text-left text-gray-300">
+            What's Shadow?
+          </h2>
+          <p class="text-xl text-gray-500 text-center md:text-left leading-relaxed">
+            Shadow is an AI tool designed to be your ultimate personal assistant, streamlining processes and automating tasks.
+            Shadow enhances your productivity by reducing inefficiencies and letting AI handle repetitive tasks.
           </p>
-        </div>
-      </div>
-
-      <!-- List Item 2 -->
-      <div class="flex items-start space-x-6">
-        <!-- Number -->
-        <div class="bg-blue-500 rounded-full px-4 py-2 text-white font-bold">
-          02
-        </div>
-        <div>
-          <h3 class="text-2xl font-semibold text-gray-500 mb-2">
-            How much does it cost?
-          </h3>
-          <p class="text-lg text-gray-500 leading-relaxed">
-            Shadow is currently free and will always offer a free tier. For commercial use, please contact us for pricing details.
+          <p class="text-2xl text-gray-400 text-center md:text-left leading-relaxed">
+            What can it do?
           </p>
-        </div>
-      </div>
 
-      <!-- List Item 3 -->
-      <div class="flex items-start space-x-6">
-        <!-- Number -->
-        <div class="bg-blue-500 rounded-full px-4 py-2 text-white font-bold">
-          03
+          <!-- Cool Cards instead of a list -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 mt-8">
+            <div class="feature-card p-4 py-10 bg-gray-800 text-white rounded-lg shadow-lg transform hover:scale-105 transition-transform overflow-hidden">
+              <div class="icon mb-4 text-5xl text-blue-500">
+                <!-- Icon (replace with an actual icon library like FontAwesome or Heroicons) -->
+                🌐
+              </div>
+              <h4 class="font-bold text-xl mb-2 overflow-hidden">Quickly browse the web</h4>
+              <p class="text-gray-400">Easily navigate through the web using smart AI features.</p>
+            </div>
+
+            <div class="feature-card p-4 py-10 bg-gray-800 text-white rounded-lg shadow-lg transform hover:scale-105 transition-transform overflow-hidden">
+              <div class="icon mb-4 text-5xl text-blue-500">
+                <!-- Icon (replace with an actual icon library like FontAwesome or Heroicons) -->
+                🔍
+              </div>
+              <h4 class="font-bold text-xl mb-2 overflow-hidden">Search through your data</h4>
+              <p class="text-gray-400">Find the exact information you need, quickly and effortlessly.</p>
+            </div>
+
+            <div class="feature-card p-4 py-10 bg-gray-800 text-white rounded-lg shadow-lg transform hover:scale-105 transition-transform overflow-hidden">
+              <div class="icon mb-4 text-5xl text-blue-500">
+                <!-- Icon (replace with an actual icon library like FontAwesome or Heroicons) -->
+                🤖
+              </div>
+              <h4 class="font-bold text-xl mb-2 overflow-hidden">Automate routine tasks</h4>
+              <p class="text-gray-400">Let AI handle repetitive tasks, saving you time and effort.</p>
+            </div>
+          </div>
         </div>
-        <div>
-          <h3 class="text-2xl font-semibold text-gray-500 mb-2">
-            How can I sign up?
-          </h3>
-          <p class="text-lg text-gray-500 leading-relaxed">
-            Shadow is currently in beta. To request access, please use our contact page and leave a message. 
-          </p>
+
+        <!-- Numbered List -->
+        <div class="md:w-1/2 flex flex-col space-y-8">
+          <!-- List Item 1 -->
+          <div class="flex items-start space-x-6">
+            <!-- Number -->
+            <div class="bg-blue-500 rounded-full px-4 py-2 text-white font-bold">
+              01
+            </div>
+            <div>
+              <h3 class="text-2xl font-semibold text-gray-500 mb-2">
+                What are connectors?
+              </h3>
+              <p class="text-lg text-gray-500 leading-relaxed">
+                Connectors are APIs or platforms you want to automate, including Google Home, Google Office, and more. Sign up to explore the growing list of integrations.
+              </p>
+            </div>
+          </div>
+
+          <!-- List Item 2 -->
+          <div class="flex items-start space-x-6">
+            <!-- Number -->
+            <div class="bg-blue-500 rounded-full px-4 py-2 text-white font-bold">
+              02
+            </div>
+            <div>
+              <h3 class="text-2xl font-semibold text-gray-500 mb-2">
+                How much does it cost?
+              </h3>
+              <p class="text-lg text-gray-500 leading-relaxed">
+                Shadow is currently free and will always offer a free tier. For commercial use, please contact us for pricing details.
+              </p>
+            </div>
+          </div>
+
+          <!-- List Item 3 -->
+          <div class="flex items-start space-x-6">
+            <!-- Number -->
+            <div class="bg-blue-500 rounded-full px-4 py-2 text-white font-bold">
+              03
+            </div>
+            <div>
+              <h3 class="text-2xl font-semibold text-gray-500 mb-2">
+                How can I sign up?
+              </h3>
+              <p class="text-lg text-gray-500 leading-relaxed">
+                Shadow is currently in beta. To request access, please use our contact page and leave a message. 
+              </p>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
     <!-- Sign Up for Updates Section -->
     <div
     class="mt-12 flex flex-col items-center bg-gray-100 pt-6 pb-16 px-6 rounded-lg"
-  >
-    <h2 class="text-2xl font-bold text-brightRed mb-4">Stay Updated</h2>
-    <p class="text-darkGrayishBlue text-lg mb-4 text-center">
-      Follow progress as we build shadow to be the best personal assistant
-    </p>
-    <form
-      id="signup-form"
-      class="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4"
-      @submit.prevent="submitEmail"
     >
-      <input
-        id="email"
-        type="email"
-        placeholder="Enter your email"
-        class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-brightRed md:w-80"
-        required
-      />
-      <button
-        type="submit"
-        class="px-6 py-2 text-white bg-brightRed rounded-lg hover:bg-brightRedLight focus:outline-none"
+      <h2 class="text-2xl font-bold text-brightRed mb-4">Stay Updated</h2>
+      <p class="text-darkGrayishBlue text-lg mb-4 text-center">
+        Follow progress as we build shadow to be the best personal assistant
+      </p>
+      <form
+        id="signup-form"
+        class="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 pb-6"
+        @submit.prevent="submitEmail"
       >
-        {{ buttonText }}
-      </button>
-    </form>
-  </div>
+        <input
+          id="email"
+          type="email"
+          placeholder="Enter your email"
+          class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-brightRed md:w-80"
+          required
+        />
+        <button
+          type="submit"
+          class="px-6 py-2 text-white bg-brightRed rounded-lg hover:bg-brightRedLight focus:outline-none"
+        >
+          {{ buttonText }}
+        </button>
+      </form>
+    </div>
+
   </div>
 </template>
 
