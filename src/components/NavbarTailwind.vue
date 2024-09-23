@@ -53,29 +53,21 @@
         class="container flex flex-col px-4 mx-auto mt-10 space-y-12 py-10 md:py-40 md:space-y-0 md:flex-row"
       >
         <!-- What's Different -->
-        <div
-          class="container"
-          >
         <div class="flex flex-col space-y-4 md:w-1/2">
           <h2 class="max-w-md text-4xl font-bold text-center md:text-left">
-            What's is Shadow?
+            What's manage ? 
           </h2>
-          <p class="max-w-sm text-xl text-center text-darkGrayishBlue md:text-left">
-            Shadow is an AI tool aimed to be the best personal assistant.          </p>
-          <p class="max-w-sm text-xl text-center text-darkGrayishBlue md:text-left">
-            What can it do?
-          </p>
-          <ul class="container list-disc list-inside text-darkGrayishBlue text-lg md:text-xl">
-            <li>It can help you browse the online web quickly</li>
-            <li>It can help you connect and search through your data</li>
-            <li>It can help you automate tasks after analyzing retrieved data</li>
-          </ul>
-          <p class="max-w-sm text-xl text-center text-darkGrayishBlue md:text-left">
-            Shadow helps your connect to your connectors and automate actions. With the help of LLMs, we are now able to read better between the lines. 
-            This allows us to automate the first layer of processing and drive efficieny in our actions. 
+          <p
+            class="max-w-sm text-xl text-center text-darkGrayishBlue md:text-left"
+          >
+            Manage is an ai tool to help you improve your productivity. 
+            It helps connect your data, search it, and automate steps based on retrieved data.  
+            With the help of AI, we can make the information retrieval process better and faster,
+            helping us make faster decisions.
+            
+            Whats different about manage ? 
           </p>
         </div>
-      </div>
 
         <!-- Numbered List -->
         <div class="flex flex-col space-y-8 md:w-1/2">
@@ -92,24 +84,20 @@
                   01
                 </div>
                 <h3 class="text-base font-bold md:mb-4 md:hidden">
-                  What is connectors ?
+                  Single platform for all your needs
                 </h3>
               </div>
             </div>
 
             <div>
               <h3 class="hidden mb-4 text-2xl font-bold md:block">
-                What is connectors ?
-
+                Single platform for all your needs
               </h3>
               <p class="text-darkGrayishBlue text-lg md:text-xl">
-                Connectors can be any place you want to automate and supports api integration.
-                Currently supported integrations:
-                * Google office - docs and sheets
-                * PDFs
-                * WhatsApp Messaging
-                Sign up to stay updated to get the latest updates, as new integrations are being added everyday. 
-
+                Handle everything from automated AI support, ticket tracking,
+                escalation management, without worrying about tweaking
+                parameters. Give your customers a platform to raise their
+                voices, and retarget them through continuous improvement.
               </p>
             </div>
           </div>
@@ -127,18 +115,19 @@
                   02
                 </div>
                 <h3 class="text-base font-bold md:mb-4 md:hidden">
-                  How much does it cost ?
+                  Cost Effectiveness
                 </h3>
               </div>
             </div>
 
             <div>
               <h3 class="hidden mb-4 text-2xl font-bold md:block">
-                How much does it cost ?
+                Cost Effectiveness
               </h3>
               <p class="text-darkGrayishBlue text-lg md:text-xl">
-                Shadow is free for use currently and will always support a free tier. 
-                If using for commercial purposes, please contact the company for pricing. 
+                Leveraging open-source models to enhance performance tailored to
+                your specific needs, ensuring you receive unparalleled value for
+                your investment.
               </p>
             </div>
           </div>
@@ -156,18 +145,19 @@
                   03
                 </div>
                 <h3 class="text-base font-bold md:mb-4 md:hidden">
-                  How can I sign up ?
+                  Scalable and Private
                 </h3>
               </div>
             </div>
 
             <div>
               <h3 class="hidden mb-4 text-2xl font-bold md:block">
-                How can I sign up ?
+                Scalable and Private
               </h3>
               <p class="text-darkGrayishBlue text-lg md:text-xl">
-                Currently shadow is in beta stage and is rolled out in invite basis.
-                To try our product, please use the contact page and leave a message.  
+                Designed to be scalable in nature the platform grows with your
+                data. Rest assured, your data remains exclusively yours,
+                securely stored in a private database.
               </p>
             </div>
           </div>
