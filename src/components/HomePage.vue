@@ -47,134 +47,82 @@
   </div>
   <div>
     <!-- Uniqueness Section -->
-    <section id="Uniqueness">
-      <!-- Flex container -->
-      <div
-        class="container flex flex-col px-4 mx-auto mt-10 space-y-12 py-10 md:py-40 md:space-y-0 md:flex-row"
-      >
-        <!-- What's Different -->
-        <div
-          class="container"
-          >
-        <div class="flex flex-col space-y-4 md:w-1/2">
-          <h2 class="max-w-md text-4xl font-bold text-center md:text-left">
-            What's is Shadow?
-          </h2>
-          <p class="max-w-sm text-xl text-center text-darkGrayishBlue md:text-left">
-            Shadow is an AI tool aimed to be the best personal assistant.          </p>
-          <p class="max-w-sm text-xl text-center text-darkGrayishBlue md:text-left">
-            What can it do?
-          </p>
-          <ul class="container list-disc list-inside text-darkGrayishBlue text-lg md:text-xl">
-            <li>It can help you browse the online web quickly</li>
-            <li>It can help you search through your data</li>
-            <li>It can help you automate tasks</li>
-          </ul>
-          <p class="max-w-sm text-xl text-center text-darkGrayishBlue md:text-left">
-            Shadow helps you automate your life, so you can
-            reduce process inefficiency, automate the first layer of processing, and 
-            use AI to do things faster. 
+<section id="Uniqueness" class="py-20">
+  <!-- Flex container -->
+  <div class="container flex flex-col px-6 mx-auto space-y-12 md:space-y-0 md:flex-row">
+    <!-- What's Different -->
+    <div class="md:w-1/2 flex flex-col space-y-6">
+      <h2 class="text-5xl font-bold text-center md:text-left text-gray-300 mb-4">
+        What's Shadow?
+      </h2>
+      <p class="text-lg text-gray-500 text-center md:text-left leading-relaxed">
+        Shadow is an AI tool designed to be your ultimate personal assistant, streamlining processes and automating tasks.
+      </p>
+      <p class="text-lg text-gray-500 text-center md:text-left leading-relaxed">
+        What can it do?
+      </p>
+      <ul class="list-disc list-inside text-gray-500 text-lg leading-relaxed">
+        <li>Quickly browse the web</li>
+        <li>Search through your data</li>
+        <li>Automate routine tasks</li>
+      </ul>
+      <p class="text-lg text-gray-500 text-center md:text-left leading-relaxed">
+        Shadow enhances your productivity by reducing inefficiencies and letting AI handle repetitive tasks.
+      </p>
+    </div>
+
+    <!-- Numbered List -->
+    <div class="md:w-1/2 flex flex-col space-y-8">
+      <!-- List Item 1 -->
+      <div class="flex items-start space-x-6">
+        <!-- Number -->
+        <div class="bg-blue-500 rounded-full px-4 py-2 text-white font-bold">
+          01
+        </div>
+        <div>
+          <h3 class="text-2xl font-semibold text-gray-500 mb-2">
+            What are connectors?
+          </h3>
+          <p class="text-lg text-gray-500 leading-relaxed">
+            Connectors are APIs or platforms you want to automate, including Google Home, Google Office, and more. Sign up to explore the growing list of integrations.
           </p>
         </div>
       </div>
 
-        <!-- Numbered List -->
-        <div class="flex flex-col space-y-8 md:w-1/2">
-          <!-- List Item 1 -->
-          <div
-            class="flex flex-col space-y-3 md:space-y-0 md:space-x-6 md:flex-row"
-          >
-            <!-- Heading -->
-            <div class="rounded-l-full bg-brightRedSupLight md:bg-transparent">
-              <div class="flex items-center space-x-2">
-                <div
-                  class="px-4 py-2 text-white rounded-full md:py-1 bg-brightRed"
-                >
-                  01
-                </div>
-                <h3 class="text-base font-bold md:mb-4 md:hidden">
-                  What is connectors ?
-                </h3>
-              </div>
-            </div>
-
-            <div>
-              <h3 class="hidden mb-4 text-2xl font-bold md:block">
-                What is connectors ?
-
-              </h3>
-              <p class="text-darkGrayishBlue text-lg md:text-xl">
-                Connectors can be any place you want to automate and supports api integration.
-                Example of connectors include:
-                * Google Home
-                * Google Office
-                * Document classes: PDFs, .docx, .jpg, .mp3, .png, .csv
-                * WhatsApp Messaging
-                Sign up to stay updated to get the latest updates, as new integrations are being added everyday. 
-              </p>
-            </div>
-          </div>
-
-          <!-- List Item 2 -->
-          <div
-            class="flex flex-col space-y-3 md:space-y-0 md:space-x-6 md:flex-row"
-          >
-            <!-- Heading -->
-            <div class="rounded-l-full bg-brightRedSupLight md:bg-transparent">
-              <div class="flex items-center space-x-2">
-                <div
-                  class="px-4 py-2 text-white rounded-full md:py-1 bg-brightRed"
-                >
-                  02
-                </div>
-                <h3 class="text-base font-bold md:mb-4 md:hidden">
-                  How much does it cost ?
-                </h3>
-              </div>
-            </div>
-
-            <div>
-              <h3 class="hidden mb-4 text-2xl font-bold md:block">
-                How much does it cost ?
-              </h3>
-              <p class="text-darkGrayishBlue text-lg md:text-xl">
-                Shadow is free for use currently and will always support a free tier. 
-                If using for commercial purposes, please contact the company for pricing. 
-              </p>
-            </div>
-          </div>
-
-          <!-- List Item 3 -->
-          <div
-            class="flex flex-col space-y-3 md:space-y-0 md:space-x-6 md:flex-row"
-          >
-            <!-- Heading -->
-            <div class="rounded-l-full bg-brightRedSupLight md:bg-transparent">
-              <div class="flex items-center space-x-2">
-                <div
-                  class="px-4 py-2 text-white rounded-full md:py-1 bg-brightRed"
-                >
-                  03
-                </div>
-                <h3 class="text-base font-bold md:mb-4 md:hidden">
-                  How can I sign up ?
-                </h3>
-              </div>
-            </div>
-
-            <div>
-              <h3 class="hidden mb-4 text-2xl font-bold md:block">
-                How can I sign up ?
-              </h3>
-              <p class="text-darkGrayishBlue text-lg md:text-xl">
-                Currently shadow is in beta stage and is thus rolled out in invite basis only.
-                To try our product, please use the contact page and leave a message.  
-              </p>
-            </div>
-          </div>
+      <!-- List Item 2 -->
+      <div class="flex items-start space-x-6">
+        <!-- Number -->
+        <div class="bg-blue-500 rounded-full px-4 py-2 text-white font-bold">
+          02
+        </div>
+        <div>
+          <h3 class="text-2xl font-semibold text-gray-500 mb-2">
+            How much does it cost?
+          </h3>
+          <p class="text-lg text-gray-500 leading-relaxed">
+            Shadow is currently free and will always offer a free tier. For commercial use, please contact us for pricing details.
+          </p>
         </div>
       </div>
-    </section>
+
+      <!-- List Item 3 -->
+      <div class="flex items-start space-x-6">
+        <!-- Number -->
+        <div class="bg-blue-500 rounded-full px-4 py-2 text-white font-bold">
+          03
+        </div>
+        <div>
+          <h3 class="text-2xl font-semibold text-gray-500 mb-2">
+            How can I sign up?
+          </h3>
+          <p class="text-lg text-gray-500 leading-relaxed">
+            Shadow is currently in beta. To request access, please use our contact page and leave a message. 
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
     <!-- Sign Up for Updates Section -->
     <div
