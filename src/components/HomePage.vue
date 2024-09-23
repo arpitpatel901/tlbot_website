@@ -67,12 +67,13 @@
           </p>
           <ul class="container list-disc list-inside text-darkGrayishBlue text-lg md:text-xl">
             <li>It can help you browse the online web quickly</li>
-            <li>It can help you connect and search through your data</li>
-            <li>It can help you automate tasks after analyzing retrieved data</li>
+            <li>It can help you search through your data</li>
+            <li>It can help you automate tasks</li>
           </ul>
           <p class="max-w-sm text-xl text-center text-darkGrayishBlue md:text-left">
-            Shadow helps your connect to your connectors and automate actions. With the help of LLMs, we are now able to read better between the lines. 
-            This allows us to automate the first layer of processing and drive efficieny in our actions. 
+            Shadow helps you automate your life, so you can
+            reduce process inefficiency, automate the first layer of processing, and 
+            use AI to do things faster. 
           </p>
         </div>
       </div>
@@ -104,12 +105,12 @@
               </h3>
               <p class="text-darkGrayishBlue text-lg md:text-xl">
                 Connectors can be any place you want to automate and supports api integration.
-                Currently supported integrations:
-                * Google office - docs and sheets
-                * PDFs
+                Example of connectors include:
+                * Google Home
+                * Google Office
+                * Document classes: PDFs, .docx, .jpg, .mp3, .png, .csv
                 * WhatsApp Messaging
                 Sign up to stay updated to get the latest updates, as new integrations are being added everyday. 
-
               </p>
             </div>
           </div>
@@ -166,7 +167,7 @@
                 How can I sign up ?
               </h3>
               <p class="text-darkGrayishBlue text-lg md:text-xl">
-                Currently shadow is in beta stage and is rolled out in invite basis.
+                Currently shadow is in beta stage and is thus rolled out in invite basis only.
                 To try our product, please use the contact page and leave a message.  
               </p>
             </div>
@@ -181,7 +182,7 @@
   >
     <h2 class="text-2xl font-bold text-brightRed mb-4">Stay Updated</h2>
     <p class="text-darkGrayishBlue text-lg mb-4 text-center">
-      Follow progress as we build chitchat to be the best personal assistant
+      Follow progress as we build shadow to be the best personal assistant
     </p>
     <form
       id="signup-form"
