@@ -10,22 +10,17 @@
       </div>
       <!-- Menu Items -->
       <div class="hidden items-center space-x-6 md:flex text-xl pt-2">
-        <a
-          href="#"
-          class="py-2 px-4 border-transparent border-2 hover:rounded-lg transition-all ease-in-out duration-200 hover:border-blue-300 hover:text-blue-300 hover:bg-gray-600"
-          >Integrations</a
-        >
-        <a
+        <!-- <a
           href="#"
           class="py-2 px-4 border-transparent border-2 hover:rounded-lg transition-all ease-in-out duration-200 hover:border-blue-300 hover:text-blue-300 hover:bg-gray-600"
           >Learn More</a
-        >
+        > -->
         <a
           href="/contact"
           class="py-2 px-4 border-transparent border-2 hover:rounded-lg transition-all ease-in-out duration-200 hover:border-blue-300 hover:text-blue-300 hover:bg-gray-600"
           >Contact</a
         >
-        <!-- Button -->
+        <!-- Button for desktop -->
         <a
           href="#"
           class="hidden p-2 px-4 text-black bg-gray-200 font-bold rounded-lg baseline hover:bg-blue-200 md:block border-transparent border-2"
@@ -34,36 +29,21 @@
         </a>
       </div>
 
-      <!-- Hamburger Icon -->
-      <button
-        @click="toggleMenuButton"
-        ref="menuButton"
-        id="menu-btn"
-        class="block hamburger md:hidden focus:outline-none"
+      <!-- Login Button for small screens -->
+      <a
+        href="#"
+        class="md:hidden p-2 px-4 text-black bg-gray-200 font-bold text-xl rounded-lg baseline hover:bg-blue-200 border-transparent border-2"
       >
-        <span class="hamburger-top"></span>
-        <span class="hamburger-middle"></span>
-        <span class="hamburger-bottom"></span>
-      </button>
-    </div>
-
-    <!-- Mobile Menu -->
-    <div class="md:hidden">
-      <div
-        ref="menu"
-        id="menu"
-        class="relative flex-col items-center text-3xl hidden self-end py-8 mt-10 space-y-6 font-bold bg-transparent sm:w-auto sm:self-center left-6 right-6 drop-shadow-md"
-      >
-        <a href="#" class="text-gray-500 hover:text-gray-300">Product</a>
-        <a href="#" class="text-gray-500 hover:text-gray-300">Integrations</a>
-        <a href="#" class="text-gray-500 hover:text-gray-300">About</a>
-        <a href="#" class="text-gray-500 hover:text-gray-300">Contact</a>
-      </div>
+        <button @click="loginClick">Login</button>
+      </a>
     </div>
   </nav>
 </template>
 
 <script>
+import { CLIENT_ID } from "@/main";
+import { CLIENT_SECRET } from "@/main";
+
 export default {
   methods: {
     loginClick() {
@@ -77,14 +57,6 @@ export default {
         })
         .requestCode();
     },
-    toggleMenuButton() {
-      console.log("toggleMenuButton triggered");
-      this.$refs.menuButton.classList.toggle("open");
-      // console.log("toggleMenu triggered");
-      // console.log(this.$refs.menu);
-      this.$refs.menu.classList.toggle("flex");
-      this.$refs.menu.classList.toggle("hidden");
-    },
   },
 };
 </script>
@@ -93,7 +65,7 @@ export default {
 .hamburger-top,
 .hamburger-middle,
 .hamburger-bottom {
-  background-color: black;
+  background-color: gray;
   display: block;
   height: 2px;
   width: 25px;
