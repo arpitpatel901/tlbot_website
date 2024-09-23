@@ -65,33 +65,34 @@
 
       <!-- Cool Cards instead of a list -->
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 mt-8">
-        <div class="feature-card p-6 bg-gray-800 text-white rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+        <div class="feature-card p-4 py-10 bg-gray-800 text-white rounded-lg shadow-lg transform hover:scale-105 transition-transform overflow-hidden">
           <div class="icon mb-4 text-5xl text-blue-500">
             <!-- Icon (replace with an actual icon library like FontAwesome or Heroicons) -->
             🌐
           </div>
-          <h4 class="font-bold text-xl mb-2">Quickly browse the web</h4>
+          <h4 class="font-bold text-xl mb-2 overflow-hidden">Quickly browse the web</h4>
           <p class="text-gray-400">Easily navigate through the web using smart AI features.</p>
         </div>
 
-        <div class="feature-card p-6 bg-gray-800 text-white rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+        <div class="feature-card p-4 py-10 bg-gray-800 text-white rounded-lg shadow-lg transform hover:scale-105 transition-transform overflow-hidden">
           <div class="icon mb-4 text-5xl text-blue-500">
             <!-- Icon (replace with an actual icon library like FontAwesome or Heroicons) -->
             🔍
           </div>
-          <h4 class="font-bold text-xl mb-2">Search through your data</h4>
+          <h4 class="font-bold text-xl mb-2 overflow-hidden">Search through your data</h4>
           <p class="text-gray-400">Find the exact information you need, quickly and effortlessly.</p>
         </div>
 
-        <div class="feature-card p-6 bg-gray-800 text-white rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+        <div class="feature-card p-4 py-10 bg-gray-800 text-white rounded-lg shadow-lg transform hover:scale-105 transition-transform overflow-hidden">
           <div class="icon mb-4 text-5xl text-blue-500">
             <!-- Icon (replace with an actual icon library like FontAwesome or Heroicons) -->
             🤖
           </div>
-          <h4 class="font-bold text-xl mb-2">Automate routine tasks</h4>
+          <h4 class="font-bold text-xl mb-2 overflow-hidden">Automate routine tasks</h4>
           <p class="text-gray-400">Let AI handle repetitive tasks, saving you time and effort.</p>
         </div>
       </div>
+
 
 
     </div>
