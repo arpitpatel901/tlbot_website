@@ -49,26 +49,51 @@
     <!-- Uniqueness Section -->
 <section id="Uniqueness" class="py-20">
   <!-- Flex container -->
-  <div class="container flex flex-col px-6 mx-auto space-y-12 md:space-y-0 md:flex-row">
+  <div class="container flex flex-col px-10 mx-auto space-y-12 md:space-y-0 md:flex-row">
     <!-- What's Different -->
     <div class="md:w-1/2 flex flex-col space-y-6">
-      <h2 class="text-5xl font-bold text-center md:text-left text-gray-300 mb-4">
+      <h2 class="text-5xl font-bold text-center md:text-left text-gray-300">
         What's Shadow?
       </h2>
-      <p class="text-lg text-gray-500 text-center md:text-left leading-relaxed">
+      <p class="text-xl text-gray-500 text-center md:text-left leading-relaxed">
         Shadow is an AI tool designed to be your ultimate personal assistant, streamlining processes and automating tasks.
-      </p>
-      <p class="text-lg text-gray-500 text-center md:text-left leading-relaxed">
-        What can it do?
-      </p>
-      <ul class="list-disc list-inside text-gray-500 text-lg leading-relaxed">
-        <li>Quickly browse the web</li>
-        <li>Search through your data</li>
-        <li>Automate routine tasks</li>
-      </ul>
-      <p class="text-lg text-gray-500 text-center md:text-left leading-relaxed">
         Shadow enhances your productivity by reducing inefficiencies and letting AI handle repetitive tasks.
       </p>
+      <p class="text-2xl text-gray-400 text-center md:text-left leading-relaxed">
+        What can it do?
+      </p>
+
+      <!-- Cool Cards instead of a list -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-8">
+        <div class="feature-card p-6 bg-gray-800 text-white rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+          <div class="icon mb-4 text-5xl text-blue-500">
+            <!-- Icon (replace with an actual icon library like FontAwesome or Heroicons) -->
+            🌐
+          </div>
+          <h4 class="font-bold text-xl mb-2">Quickly browse the web</h4>
+          <p class="text-gray-400">Easily navigate through the web using smart AI features.</p>
+        </div>
+
+        <div class="feature-card p-6 bg-gray-800 text-white rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+          <div class="icon mb-4 text-5xl text-blue-500">
+            <!-- Icon (replace with an actual icon library like FontAwesome or Heroicons) -->
+            🔍
+          </div>
+          <h4 class="font-bold text-xl mb-2">Search through your data</h4>
+          <p class="text-gray-400">Find the exact information you need, quickly and effortlessly.</p>
+        </div>
+
+        <div class="feature-card p-6 bg-gray-800 text-white rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+          <div class="icon mb-4 text-5xl text-blue-500">
+            <!-- Icon (replace with an actual icon library like FontAwesome or Heroicons) -->
+            🤖
+          </div>
+          <h4 class="font-bold text-xl mb-2">Automate routine tasks</h4>
+          <p class="text-gray-400">Let AI handle repetitive tasks, saving you time and effort.</p>
+        </div>
+      </div>
+
+
     </div>
 
     <!-- Numbered List -->
