@@ -158,7 +158,7 @@
       </p>
       <form
         id="signup-form"
-        class="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 pb-6"
+        class="flex flex-col space-y-5 md:flex-row md:space-y-2 md:space-x-4"
         @submit.prevent="submitEmail"
       >
         <input
