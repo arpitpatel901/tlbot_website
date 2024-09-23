@@ -81,6 +81,28 @@ app.get('/api/process-code', (req, res) => {
     }
 });
 
+app.post('/api/submit-form', async (req, res) => {
+  const { name, email, message } = req.body;
+
+  try {
+    // Forward the data to Google Apps Script
+    const response = await axios.post('https://script.google.com/macros/s/AKfycbzACQnXXQnFhJ-rpUpKHAAykfGLgAFxduiDdGE81dcR42-EmGABewQMRIgGXqcmYZM/exec', {
+      name,
+      email,
+      message
+    });
+
+    if (response.status === 200) {
+      res.json({ result: 'Success' });
+    } else {
+      res.status(response.status).json({ error: 'Failed to submit form' });
+    }
+  } catch (error) {
+    console.error('Error forwarding form data:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 app.listen(3001, () => {
     console.log('Server is running on http://localhost:3001');
 });
