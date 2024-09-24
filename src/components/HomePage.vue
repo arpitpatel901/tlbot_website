@@ -17,28 +17,28 @@
       <section
         ref="messages"
         id="messages"
-        class="z-10 box-border relative mx-20 mt-5 py-40 text-center md:py-30 md:px-30 md:mt-28"
+        class="z-10 box-border relative text-center mt-5 mx-4 md:mx-20 py-20 md:py-10 md:px-30 md:mt-28"
         style="height: 400px;"
       >
-        <p class="text-6xl lg:text-7xl space-y-20 lg:py-10 text-white mb-4">
+        <p class="text-6xl lg:text-7xl space-y-6 md:space-y-20 py-10 lg:py-20 text-white mb-4">
           <h1><span class="text-gray-600">Build Your </span> <span class="text-blue-500">AI Assistant</span></h1>
         </p>
         <!-- Rotating messages -->
         <p
           v-show="currentMessage === 1 && !isFadingOut"
-          class="text-5xl lg:text-6xl py-5 text-white animate-blink transition-opacity duration-2000 ease-in-out"
+          class="text-5xl lg:text-6xl py-10 md:py-5 text-white animate-blink transition-opacity duration-2000 ease-in-out"
         >
           Search the Web
         </p>
         <p
           v-show="currentMessage === 2 && !isFadingOut"
-          class="text-5xl lg:text-6xl py-5 text-white animate-blink transition-opacity duration-2000 ease-in-out"
+          class="text-5xl lg:text-6xl py-10 md:py-5 text-white animate-blink transition-opacity duration-2000 ease-in-out"
         >
           Search your Data
         </p>
         <p
           v-show="currentMessage === 3 && !isFadingOut"
-          class="text-5xl lg:text-6xl py-5 text-white animate-blink transition-opacity duration-2000 ease-in-out"
+          class="text-5xl lg:text-6xl py-10 md:py-5 text-white animate-blink transition-opacity duration-2000 ease-in-out"
         >
           Automate your Tasks
         </p>
@@ -52,7 +52,7 @@
       <!-- Flex container -->
       <div class="container flex flex-col px-10 mx-auto space-y-12 md:space-y-0 md:flex-row md:space-x-20">
         <!-- What's Different -->
-        <div class="md:w-1/2 flex flex-col space-y-6">
+        <div class="md:w-1/2 flex flex-col space-y-6 py-2">
           <h2 class="text-5xl font-bold text-center md:text-left text-gray-300">
             What's Shadow?
           </h2>
@@ -165,7 +165,7 @@
           id="email"
           type="email"
           placeholder="Enter your email"
-          class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-brightRed md:w-80"
+          class="px-4 py-2 border border-gray-300 text-black rounded-lg focus:outline-none focus:border-brightRed md:w-80"
           required
         />
         <button
