@@ -53,7 +53,7 @@
       <div class="container flex flex-col px-4 md:px-10 mx-auto space-y-4 md:space-y-0 md:flex-row md:space-x-20">
         <!-- What's Different -->
         <div class="md:w-1/2 flex flex-col space-y-6 py-6 md:py-0">
-          <h2 class="text-5xl font-bold text-center md:text-left text-gray-300">
+          <h2 class="text-4xl md:text-4xl text-center md:text-left text-gray-300">
             What's Shadow?
           </h2>
           <p class="text-xl text-gray-500 text-center md:text-left tracking-wide leading-relaxed">
