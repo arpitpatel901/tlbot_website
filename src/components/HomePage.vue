@@ -26,19 +26,19 @@
         <!-- Rotating messages -->
         <p
           v-show="currentMessage === 1 && !isFadingOut"
-          class="text-5xl lg:text-6xl py-10 md:py-5 text-white animate-blink transition-opacity duration-2000 ease-in-out"
+          class="text-5xl md:text-6xl lg:text-6xl py-10 md:py-5 text-white animate-blink transition-opacity duration-2000 ease-in-out"
         >
           Search the Web
         </p>
         <p
           v-show="currentMessage === 2 && !isFadingOut"
-          class="text-5xl lg:text-6xl py-10 md:py-5 text-white animate-blink transition-opacity duration-2000 ease-in-out"
+          class="text-5xl md:text-6xl lg:text-6xl py-10 md:py-5 text-white animate-blink transition-opacity duration-2000 ease-in-out"
         >
           Search your Data
         </p>
         <p
           v-show="currentMessage === 3 && !isFadingOut"
-          class="text-5xl lg:text-6xl py-10 md:py-5 text-white animate-blink transition-opacity duration-2000 ease-in-out"
+          class="text-5xl md:text-6xl lg:text-6xl py-10 md:py-5 text-white animate-blink transition-opacity duration-2000 ease-in-out"
         >
           Automate your Tasks
         </p>
@@ -50,17 +50,17 @@
     <!-- Uniqueness Section -->
     <section id="Uniqueness" class="py-20">
       <!-- Flex container -->
-      <div class="container flex flex-col px-10 mx-auto space-y-12 md:space-y-0 md:flex-row md:space-x-20">
+      <div class="container flex flex-col px-4 md:px-10 mx-auto space-y-4 md:space-y-0 md:flex-row md:space-x-20">
         <!-- What's Different -->
-        <div class="md:w-1/2 flex flex-col space-y-6 py-20 md:py-0">
+        <div class="md:w-1/2 flex flex-col space-y-6 py-6 md:py-0">
           <h2 class="text-5xl font-bold text-center md:text-left text-gray-300">
             What's Shadow?
           </h2>
-          <p class="text-xl text-gray-500 text-center md:text-left leading-relaxed">
+          <p class="text-xl text-gray-500 text-center md:text-left tracking-wide leading-relaxed">
             Shadow is an AI tool designed to be your ultimate personal assistant, streamlining processes and automating tasks.
             Shadow enhances your productivity by reducing inefficiencies and letting AI handle repetitive tasks.
           </p>
-          <p class="text-2xl text-gray-400 text-center md:text-left leading-relaxed">
+          <p class="text-3xl sm:text-2xl pt-10 sm:pt-0  text-gray-400 text-center md:text-left leading-relaxed">
             What can it do?
           </p>
 
