@@ -52,7 +52,7 @@
       <!-- Flex container -->
       <div class="container flex flex-col px-10 mx-auto space-y-12 md:space-y-0 md:flex-row md:space-x-20">
         <!-- What's Different -->
-        <div class="md:w-1/2 flex flex-col space-y-6 py-20">
+        <div class="md:w-1/2 flex flex-col space-y-6 py-20 md:py-0">
           <h2 class="text-5xl font-bold text-center md:text-left text-gray-300">
             What's Shadow?
           </h2>
