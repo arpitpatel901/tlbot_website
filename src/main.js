@@ -8,6 +8,8 @@ import vue3GoogleLogin from "vue3-google-login";
 import router from "./router";
 import { createPinia } from 'pinia';
 import App from "./App.vue";
+import { useUserStore } from '@/stores/userStore';
+
 
 export const CLIENT_ID = "497764252617-oau8a78f5pcolh165ntbm36e9f3d3hgh.apps.googleusercontent.com";
 export const CLIENT_SECRET = "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"
@@ -22,6 +24,10 @@ app.use(PrimeVue, {
 });
 
 app.use(createPinia());
+
+// Initialize the user store to load any persisted user data
+const userStore = useUserStore();
+userStore.initializeUser();
 
 // Google Login setup
 app.use(vue3GoogleLogin, {

@@ -4,6 +4,10 @@ import MainDashboard from '../components/MainDashboard.vue'; // Adjust the impor
 import HomePage from '../components/HomePage.vue';
 import AuthCallback from '../components/AuthCallback.vue'
 import Contact from '../components/Contact.vue'; // Import the Contact component
+import Unauthorized from '@/components/Unauthorized.vue'; // Optional: Separate page for unauthorized access
+import ProtectedLayout from '@/layouts/ProtectedLayout.vue';
+import { useUserStore } from '@/stores/userStore'; // Import the user store
+
 
 const routes = [
   {
@@ -18,8 +22,10 @@ const routes = [
   },
   {
     path: '/main_dashboard',
-    name: 'MainDashboard',
-    component: MainDashboard,
+    component: ProtectedLayout,
+    children: [
+      { path: '', component: MainDashboard, meta: { requiresAuth: true } },
+    ],
   },
   {
     path: '/auth/callback',
@@ -30,13 +36,29 @@ const routes = [
     path: '/contact',
     name: 'Contact',
     component: Contact, // Add contact page route
-  }
+  },
+  {
+    path: '/unauthorized',
+    component: Unauthorized
+  },
   // other routes...
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+// Navigation Guard
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const userStore = useUserStore();
+
+  if (requiresAuth && !userStore.user) {
+    next('/');
+  } else {
+    next();
+  }
 });
 
 export default router;
