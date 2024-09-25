@@ -100,11 +100,11 @@
         </a>
       </template>
       <template v-else>
-        <div class="flex items-center space-x-4 px-4">
+        <div class="flex flex-col items-start space-y-2 px-4">
           <span class="">{{ user.name }}</span>
           <a
             href="#"
-            class="p-2 px-4 text-black bg-gray-200 font-bold rounded-lg baseline hover:bg-blue-200 border-transparent border-2"
+            class="w-full p-2 px-4 text-center text-black bg-gray-200 font-bold rounded-lg baseline hover:bg-blue-200 border-transparent border-2"
             @click="logout"
           >
             Logout
