@@ -1,3 +1,4 @@
+<!-- src/components/Navbar.vue -->
 <template>
   <nav class="relative container mx-auto p-6">
     <!-- Flex container -->
@@ -17,13 +18,28 @@
         >
           Contact
         </a>
-        <!-- Button for desktop -->
-        <a
-          href="#"
-          class="hidden p-2 px-4 text-black bg-gray-200 font-bold rounded-lg baseline hover:bg-blue-200 md:block border-transparent border-2"
-        >
-          <button @click="loginClick">Login</button>
-        </a>
+        <!-- Conditional Rendering Based on Authentication -->
+        <template v-if="!user">
+          <!-- Button for desktop -->
+          <a
+            href="#"
+            class="hidden p-2 px-4 text-black bg-gray-200 font-bold rounded-lg baseline hover:bg-blue-200 md:block border-transparent border-2"
+          >
+            <button @click="loginClick">Login</button>
+          </a>
+        </template>
+        <template v-else>
+          <div class="flex items-center space-x-4">
+            <span class="">{{ user.name }}</span>
+            <a
+              href="#"
+              class="p-2 px-4 text-black bg-gray-200 font-bold rounded-lg baseline hover:bg-blue-200 border-transparent border-2"
+              @click="logout"
+            >
+              Logout
+            </a>
+          </div>
+        </template>
       </div>
 
       <!-- Hamburger Menu Button for Small Screens -->
@@ -74,42 +90,77 @@
       >
         Contact
       </a>
-      <a
-        href="#"
-        class="block p-2 px-4 text-black bg-gray-200 font-bold rounded-lg baseline hover:bg-blue-200 border-transparent border-2"
-        @click="toggleMenu"
-      >
-        <button @click="loginClick">Login</button>
-      </a>
+      <template v-if="!user">
+        <a
+          href="#"
+          class="block p-2 px-4 text-black bg-gray-200 font-bold rounded-lg baseline hover:bg-blue-200 border-transparent border-2"
+          @click="handleLogin"
+        >
+          Login
+        </a>
+      </template>
+      <template v-else>
+        <div class="flex items-center space-x-4 px-4">
+          <span class="">{{ user.name }}</span>
+          <a
+            href="#"
+            class="p-2 px-4 text-black bg-gray-200 font-bold rounded-lg baseline hover:bg-blue-200 border-transparent border-2"
+            @click="logout"
+          >
+            Logout
+          </a>
+        </div>
+      </template>
     </div>
   </nav>
 </template>
 
 <script>
-import { CLIENT_ID } from "@/main";
-import { CLIENT_SECRET } from "@/main";
+import { useUserStore } from '@/stores/userStore';
+import { useRouter } from 'vue-router';
+import { ref } from 'vue';
 
 export default {
-  data() {
-    return {
-      isMenuOpen: false, // State to manage menu open/close
+  name: 'Navbar',
+  setup() {
+    const userStore = useUserStore();
+    const router = useRouter();
+    const isMenuOpen = ref(false);
+
+    const toggleMenu = () => {
+      isMenuOpen.value = !isMenuOpen.value;
     };
-  },
-  methods: {
-    loginClick() {
+
+    const loginClick = () => {
+      // Initiate Google OAuth login
       google.accounts.oauth2
         .initCodeClient({
-          client_id: CLIENT_ID, // Your Google OAuth Client ID
+          client_id: import.meta.env.VITE_APP_CLIENT_ID, // Correct for Vite
           scope: "email profile openid",
-          ux_mode: "redirect", // Redirect mode as the UX mode
-          redirect_uri: "http://localhost:3001/api/google-auth", // Point this to your backend
-          // No need for the callback here, as the backend will handle it
+          ux_mode: "redirect",
+          redirect_uri: "http://localhost:3001/api/google-auth",
         })
         .requestCode();
-    },
-    toggleMenu() {
-      this.isMenuOpen = !this.isMenuOpen;
-    },
+    };
+
+    const handleLogin = () => {
+      loginClick();
+      toggleMenu(); // Close menu after clicking login
+    };
+
+    const logout = () => {
+      userStore.clearUser();
+      router.push('/');
+    };
+
+    return {
+      isMenuOpen,
+      toggleMenu,
+      loginClick,
+      handleLogin,
+      logout,
+      user: userStore.user,
+    };
   },
 };
 </script>

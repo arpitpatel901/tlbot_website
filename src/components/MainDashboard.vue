@@ -35,6 +35,13 @@ export default {
   setup() {
     // Access user information from Pinia store
     const userStore = useUserStore();
+
+    // Optionally, fetch additional data or perform actions based on user data
+    // Example:
+    // if (userStore.user) {
+    //   // Fetch user-specific data
+    // }
+
     const user = ref(userStore.userData); // Reactive reference to user data
     const router = useRouter();
 
@@ -58,7 +65,7 @@ export default {
     });
 
     return {
-      user, // Make sure to return this so it's available in the template
+      user: userStore.user,
       handleLogout
     };
   }
