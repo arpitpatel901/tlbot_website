@@ -1,18 +1,18 @@
 <!-- src/components/AuthCallback.vue -->
 <template>
-  <div class="auth-callback flex items-center justify-center min-h-screen bg-gray-100">
-    <div v-if="status === 'success'" class="text-center">
+  <div class="auth-callback flex items-center justify-center min-h-screen bg-gray-800">
+    <div v-if="status === 'success'" class="text-center text-gray-100">
       <h1 class="text-3xl font-bold mb-4">Welcome!</h1>
-      <p class="text-lg">You have successfully logged in.</p>
+      <p class="text-lg text-gray-100">You have successfully logged in.</p>
       <p v-if="userData" class="mt-2">Redirecting to your dashboard...</p>
     </div>
     <div v-else-if="status === 'unauthorized'" class="text-center">
       <h1 class="text-3xl font-bold mb-4 text-black">Access Denied</h1>
-      <p class="text-xl text-gray-800">Your email is not authorized to access this application.</p>
-      <p class="mt-2 text-lg text-gray-800">
+      <p class="text-xl text-gray-100">Your email is not authorized to access this application.</p>
+      <p class="mt-2 text-lg text-gray-100">
         Please contact support support if you believe this is a mistake.
       </p>
-      <p class="mt-2 text-lg text-gray-800">
+      <p class="mt-2 text-lg text-gray-100">
         Email: support@toucanlabs.ai
       </p>
     </div>
