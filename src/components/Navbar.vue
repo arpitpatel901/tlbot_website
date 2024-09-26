@@ -31,13 +31,14 @@
         <template v-else>
           <div class="flex items-center space-x-4">
             <span class="">{{ user.name }}</span>
-            <a
+            <!-- Logout button is now in the sidebar -->
+            <!-- <a
               href="#"
               class="p-2 px-4 text-black bg-gray-200 font-bold rounded-lg baseline hover:bg-blue-200 border-transparent border-2"
               @click="logout"
             >
               Logout
-            </a>
+            </a> -->
           </div>
         </template>
       </div>
@@ -116,12 +117,12 @@
 </template>
 
 <script>
-import { useUserStore } from '@/stores/userStore';
-import { useRouter } from 'vue-router';
-import { ref } from 'vue';
+import { useUserStore } from "@/stores/userStore";
+import { useRouter } from "vue-router";
+import { ref } from "vue";
 
 export default {
-  name: 'Navbar',
+  name: "Navbar",
   setup() {
     const userStore = useUserStore();
     const router = useRouter();

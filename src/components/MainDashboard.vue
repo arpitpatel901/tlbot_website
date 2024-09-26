@@ -1,74 +1,145 @@
+<!-- src/components/Dashboard.vue -->
 <template>
-  <div class="main-dashboard">
-    <h1>Main Dashboard</h1>
-    <p>Welcome to the Main Dashboard of the Application!</p>
-
-    <!-- Display user information if available -->
-    <div v-if="user">
-      <h2>User Information</h2>
-      <p><strong>Name:</strong> {{ user.name }}</p>
-      <p><strong>Email:</strong> {{ user.email }}</p>
-
-      <a 
-        href="#" 
-        class="hidden p-2 px-4 pt-2 text-black bg-white font-bold rounded-lg baseline hover:bg-blue-200 md:block border-transparent border-2"
-      >
-        <button @click="handleLogout">Logout</button>
-      </a>
-
+  <div class="flex h-screen bg-gray-100">
+    <!-- Sidebar -->
+    <aside
+      :class="[
+        'w-64 bg-white shadow-md transform transition-transform duration-300 ease-in-out',
+        isSidebarOpen ? 'translate-x-0' : '-translate-x-full',
+      ]"
+      class="fixed inset-y-0 left-0 z-50 md:static md:translate-x-0"
+    >
+      <div class="flex flex-col h-full">
+        <router-link
+      to="/connect-data-sources"
+      class="flex items-center px-4 py-2 text-gray-700 rounded hover:bg-gray-200"
+      active-class="bg-gray-200 font-semibold"
+      @click="closeSidebar"
+    >
+      <DatabaseIcon class="h-5 w-5 mr-3 text-gray-500" />
+      Connect Data Sources
+    </router-link>
+    <router-link
+      to="/chat"
+      class="flex items-center px-4 py-2 text-gray-700 rounded hover:bg-gray-200"
+      active-class="bg-gray-200 font-semibold"
+      @click="closeSidebar"
+    >
+      <ChatBubbleLeftRightIcon class="h-5 w-5 mr-3 text-gray-500" />
+      Chat
+    </router-link>
+    <router-link
+      to="/account-settings"
+      class="flex items-center px-4 py-2 text-gray-700 rounded hover:bg-gray-200"
+      active-class="bg-gray-200 font-semibold"
+      @click="closeSidebar"
+    >
+      <Cog6ToothIcon class="h-5 w-5 mr-3 text-gray-500" />
+      Account Settings
+    </router-link>
+    <button
+      @click="logout"
+      class="flex items-center w-full text-left px-4 py-2 text-gray-700 rounded hover:bg-gray-200"
+    >
+      <ArrowRightOnRectangleIcon class="h-5 w-5 mr-3 text-gray-500" />
+      Logout
+    </button>
+      </div>
+    </aside>
+    
+    <!-- Overlay for small screens when sidebar is open -->
+    <div
+      v-if="isSidebarOpen"
+      class="fixed inset-0 bg-black opacity-50 z-40 md:hidden"
+      @click="closeSidebar"
+    ></div>
+    
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col">
+      <!-- Top Bar -->
+      <header class="flex justify-between items-center p-4 bg-white shadow-md">
+        <!-- Sidebar Toggle Button for Small Screens -->
+        <button
+          @click="toggleSidebar"
+          class="text-gray-500 hover:text-gray-700 focus:outline-none md:hidden"
+          aria-label="Toggle sidebar"
+        >
+          <svg
+            class="h-6 w-6 fill-current"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              v-if="!isSidebarOpen"
+              fill-rule="evenodd"
+              d="M4 5h16v2H4V5zm0 6h16v2H4v-2zm0 6h16v2H4v-2z"
+              clip-rule="evenodd"
+            />
+            <path
+              v-else
+              fill-rule="evenodd"
+              d="M6 18L18 6M6 6l12 12"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </button>
+        
+        <!-- User Name Display -->
+        <span class="text-gray-700 font-medium">{{ userName }}</span>
+      </header>
       
-      <!-- Add more fields as needed -->
-    </div>
-    <div v-else>
-      <p>No user information available.</p>
+      <!-- Content -->
+      <main class="flex-1 overflow-auto p-4">
+        <router-view></router-view>
+      </main>
     </div>
   </div>
 </template>
 
 <script>
-import { onMounted, ref } from 'vue';
-import { useUserStore } from '@/stores/userStore'; // Ensure the path is correct
+import { useUserStore } from '@/stores/userStore';
 import { useRouter } from 'vue-router';
+import { computed, ref } from 'vue';
+import { ChatBubbleLeftRightIcon, Cog6ToothIcon, ArrowRightOnRectangleIcon } from '@heroicons/vue/24/outline';
+import DatabaseIcon from '@/components/DatabaseIcon.vue';
+
 
 export default {
-  name: 'MainDashboard',
+  name: 'Dashboard',
+  components: {
+    ChatBubbleLeftRightIcon,
+    Cog6ToothIcon,
+    DatabaseIcon,
+    ArrowRightOnRectangleIcon,
+  },
   setup() {
-    // Access user information from Pinia store
     const userStore = useUserStore();
-
-    // Optionally, fetch additional data or perform actions based on user data
-    // Example:
-    // if (userStore.user) {
-    //   // Fetch user-specific data
-    // }
-
-    const user = ref(userStore.userData); // Reactive reference to user data
     const router = useRouter();
+    const isSidebarOpen = ref(false);
 
-    const handleLogout = () => {
-      userStore.logout();
-      router.push('/login');
+    const logout = () => {
+      userStore.clearUser();
+      router.push('/');
     };
 
-    onMounted(() => {
-      const queryParams = new URLSearchParams(window.location.search);
-      const userDataJSON = queryParams.get('userData');
-      if (userDataJSON) {
-        try {
-          const userData = JSON.parse(decodeURIComponent(userDataJSON));
-          userStore.setUser(userData);
-          user.value = userData; // Update reactive reference
-        } catch (e) {
-          console.error('Error parsing user data from URL parameter:', e);
-        }
-      }
-    });
+    const userName = computed(() => userStore.user?.name || 'User');
+
+    const toggleSidebar = () => {
+      isSidebarOpen.value = !isSidebarOpen.value;
+    };
+
+    const closeSidebar = () => {
+      isSidebarOpen.value = false;
+    };
 
     return {
-      user: userStore.user,
-      handleLogout
+      logout,
+      userName,
+      isSidebarOpen,
+      toggleSidebar,
+      closeSidebar,
     };
-  }
+  },
 };
 </script>
 

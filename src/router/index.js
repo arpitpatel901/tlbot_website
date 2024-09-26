@@ -1,13 +1,17 @@
 // src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router';
-import MainDashboard from '../components/MainDashboard.vue'; // Adjust the import path as needed.
+import MainDashboard from '@/components/MainDashboard.vue';
+import ConnectDataSources from '@/components/ConnectDataSources.vue';
+import AccountSettings from '@/components/AccountSettings.vue';
+import Unauthorized from '@/components/Unauthorized.vue';
 import HomePage from '../components/HomePage.vue';
 import AuthCallback from '../components/AuthCallback.vue'
 import Contact from '../components/Contact.vue'; // Import the Contact component
-import Unauthorized from '@/components/Unauthorized.vue'; // Optional: Separate page for unauthorized access
 import ProtectedLayout from '@/layouts/ProtectedLayout.vue';
 import { useUserStore } from '@/stores/userStore'; // Import the user store
 
+
+const Chat = () => import('@/components/Chat.vue');
 
 const routes = [
   {
@@ -21,13 +25,6 @@ const routes = [
     component: HomePage
   },
   {
-    path: '/main_dashboard',
-    component: ProtectedLayout,
-    children: [
-      { path: '', component: MainDashboard, meta: { requiresAuth: true } },
-    ],
-  },
-  {
     path: '/auth/callback',
     name: 'AuthCallback',
     component: AuthCallback,
@@ -38,10 +35,38 @@ const routes = [
     component: Contact, // Add contact page route
   },
   {
-    path: '/unauthorized',
-    component: Unauthorized
+    path: '/',
+    name: 'MainDashboard',
+    component: MainDashboard,
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: 'connect-data-sources',
+        name: 'ConnectDataSources',
+        component: ConnectDataSources,
+      },
+      {
+        path: 'chat',
+        name: 'Chat',
+        component: Chat,
+      },
+      {
+        path: 'account-settings',
+        name: 'AccountSettings',
+        component: AccountSettings,
+      },
+    ],
   },
-  // other routes...
+  {
+    path: '/unauthorized',
+    name: 'Unauthorized',
+    component: Unauthorized,
+  },
+  // Redirect any unknown routes to MainDashboard or a 404 component
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/',
+  },
 ];
 
 const router = createRouter({
@@ -49,7 +74,7 @@ const router = createRouter({
   routes,
 });
 
-// Navigation Guard
+// Navigation Guard to protect routes
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   const userStore = useUserStore();
