@@ -1,3 +1,6 @@
+// basic-server.js
+// How to run: npm run mock-server
+// How to test without front end: curl -G http://localhost:3001/api/google-auth   --data-urlencode "code=test_code"   --data-urlencode "scope=email profile openid https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email"   --data-urlencode "authuser=0"   --data-urlencode "prompt=consent"
 import express from 'express';
 import axios from 'axios';
 import cors from 'cors';
@@ -20,6 +23,10 @@ app.use(express.json());
 app.get('/api/google-auth', async (req, res) => {
   const { code } = req.query;
   console.log("Received code:", code);
+
+  if (!code) {
+    return res.status(400).json({ error: 'No code provided' });
+  }
 
   if (code) {
     try {
