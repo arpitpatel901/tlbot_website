@@ -1,29 +1,26 @@
-// stores/userStore.js
+// src/stores/userStore.js
 import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
-export const useUserStore = defineStore('user', {
-  state: () => ({
-    userData: null, // Stores user data after authentication
-    user: null, 
-  }),
-  getters: {
-    isLoggedIn: (state) => state.userData !== null
-  },
-  actions: {
-    setUser(userData) {
-      this.user = userData;
-      // Persist user data (optional)
-      localStorage.setItem('user', JSON.stringify(userData));
-    },
-    clearUser() {
-      this.user = null;
-      localStorage.removeItem('user');
-    },
-    initializeUser() {
-      const storedUser = localStorage.getItem('user');
-      if (storedUser) {
-        this.user = JSON.parse(storedUser);
-      }
-    },
-  },
+export const useUserStore = defineStore('user', () => {
+  const user = ref(null);
+
+  const setUser = (userData) => {
+    user.value = userData;
+    localStorage.setItem('user', JSON.stringify(userData));
+  };
+
+  const clearUser = () => {
+    user.value = null;
+    localStorage.removeItem('user');
+  };
+
+  const initializeUser = () => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      user.value = JSON.parse(storedUser);
+    }
+  };
+
+  return { user, setUser, clearUser, initializeUser };
 });

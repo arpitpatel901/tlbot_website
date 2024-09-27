@@ -4,12 +4,10 @@ import MainDashboard from '@/components/MainDashboard.vue';
 import ConnectDataSources from '@/components/ConnectDataSources.vue';
 import AccountSettings from '@/components/AccountSettings.vue';
 import Unauthorized from '@/components/Unauthorized.vue';
-import HomePage from '../components/HomePage.vue';
-import AuthCallback from '../components/AuthCallback.vue'
-import Contact from '../components/Contact.vue'; // Import the Contact component
-import ProtectedLayout from '@/layouts/ProtectedLayout.vue';
-import { useUserStore } from '@/stores/userStore'; // Import the user store
-
+import HomePage from '@/components/HomePage.vue';
+import AuthCallback from '@/components/AuthCallback.vue';
+import Contact from '@/components/Contact.vue';
+import { useUserStore } from '@/stores/userStore';
 
 const Chat = () => import('@/components/Chat.vue');
 
@@ -17,12 +15,12 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: HomePage
+    component: HomePage,
   },
   {
     path: '/login',
     name: 'Login',
-    component: HomePage
+    component: HomePage,
   },
   {
     path: '/auth/callback',
@@ -32,10 +30,10 @@ const routes = [
   {
     path: '/contact',
     name: 'Contact',
-    component: Contact, // Add contact page route
+    component: Contact,
   },
   {
-    path: '/',
+    path: '/main_dashboard',
     name: 'MainDashboard',
     component: MainDashboard,
     meta: { requiresAuth: true },
@@ -44,16 +42,19 @@ const routes = [
         path: 'connect-data-sources',
         name: 'ConnectDataSources',
         component: ConnectDataSources,
+        alias: '/connect-data-sources',
       },
       {
         path: 'chat',
         name: 'Chat',
         component: Chat,
+        alias: '/chat',
       },
       {
         path: 'account-settings',
         name: 'AccountSettings',
         component: AccountSettings,
+        alias: '/account-settings',
       },
     ],
   },
@@ -62,11 +63,11 @@ const routes = [
     name: 'Unauthorized',
     component: Unauthorized,
   },
-  // Redirect any unknown routes to MainDashboard or a 404 component
-  {
-    path: '/:pathMatch(.*)*',
-    redirect: '/',
-  },
+  // // Redirect any unknown routes to Home
+  // {
+  //   path: '/:pathMatch(.*)*',
+  //   redirect: '/',
+  // },
 ];
 
 const router = createRouter({
@@ -79,7 +80,12 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   const userStore = useUserStore();
 
+  // Debugging Logs
+  console.log('Navigating to:', to.fullPath);
+  console.log('User Store State:', userStore.user);
+
   if (requiresAuth && !userStore.user) {
+    console.log('User not authenticated. Redirecting to Home.');
     next('/');
   } else {
     next();

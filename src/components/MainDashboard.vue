@@ -1,4 +1,3 @@
-<!-- src/components/Dashboard.vue -->
 <template>
   <div class="flex h-screen bg-gray-100">
     <!-- Sidebar -->
@@ -10,40 +9,41 @@
       class="fixed inset-y-0 left-0 z-50 md:static md:translate-x-0"
     >
       <div class="flex flex-col h-full">
+        <!-- Use relative paths here -->
         <router-link
-      to="/connect-data-sources"
-      class="flex items-center px-4 py-2 text-gray-700 rounded hover:bg-gray-200"
-      active-class="bg-gray-200 font-semibold"
-      @click="closeSidebar"
-    >
-      <DatabaseIcon class="h-5 w-5 mr-3 text-gray-500" />
-      Connect Data Sources
-    </router-link>
-    <router-link
-      to="/chat"
-      class="flex items-center px-4 py-2 text-gray-700 rounded hover:bg-gray-200"
-      active-class="bg-gray-200 font-semibold"
-      @click="closeSidebar"
-    >
-      <ChatBubbleLeftRightIcon class="h-5 w-5 mr-3 text-gray-500" />
-      Chat
-    </router-link>
-    <router-link
-      to="/account-settings"
-      class="flex items-center px-4 py-2 text-gray-700 rounded hover:bg-gray-200"
-      active-class="bg-gray-200 font-semibold"
-      @click="closeSidebar"
-    >
-      <Cog6ToothIcon class="h-5 w-5 mr-3 text-gray-500" />
-      Account Settings
-    </router-link>
-    <button
-      @click="logout"
-      class="flex items-center w-full text-left px-4 py-2 text-gray-700 rounded hover:bg-gray-200"
-    >
-      <ArrowRightOnRectangleIcon class="h-5 w-5 mr-3 text-gray-500" />
-      Logout
-    </button>
+          :to="{ name: 'ConnectDataSources' }"
+          class="flex items-center px-4 py-2 text-gray-800 rounded hover:bg-gray-200"
+          active-class="bg-gray-200 font-semibold"
+          @click="closeSidebar"
+        >
+          <DatabaseIcon class="h-5 w-5 mr-3 text-gray-800" />
+          Connect Data Sources
+        </router-link>
+        <router-link
+          :to="{ name: 'Chat' }"
+          class="flex items-center px-4 py-2 text-gray-800 rounded hover:bg-gray-200"
+          active-class="bg-gray-200 font-semibold"
+          @click="closeSidebar"
+        >
+          <ChatBubbleLeftRightIcon class="h-5 w-5 mr-3 text-gray-800" />
+          Chat
+        </router-link>
+        <router-link
+        :to="{ name: 'AccountSettings' }"
+          class="flex items-center px-4 py-2 text-gray-800 rounded hover:bg-gray-200"
+          active-class="bg-gray-200 font-semibold"
+          @click="closeSidebar"
+        >
+          <Cog6ToothIcon class="h-5 w-5 mr-3 text-gray-800" />
+          Account Settings
+        </router-link>
+        <button
+          @click="logout"
+          class="flex items-center w-full text-left px-4 py-2 text-gray-800 rounded hover:bg-gray-200"
+        >
+          <ArrowRightOnRectangleIcon class="h-5 w-5 mr-3 text-gray-800" />
+          Logout
+        </button>
       </div>
     </aside>
     
@@ -64,6 +64,7 @@
           class="text-gray-500 hover:text-gray-700 focus:outline-none md:hidden"
           aria-label="Toggle sidebar"
         >
+          <!-- Hamburger Icon -->
           <svg
             class="h-6 w-6 fill-current"
             viewBox="0 0 24 24"
@@ -103,9 +104,8 @@ import { computed, ref } from 'vue';
 import { ChatBubbleLeftRightIcon, Cog6ToothIcon, ArrowRightOnRectangleIcon } from '@heroicons/vue/24/outline';
 import DatabaseIcon from '@/components/DatabaseIcon.vue';
 
-
 export default {
-  name: 'Dashboard',
+  name: 'MainDashboard',
   components: {
     ChatBubbleLeftRightIcon,
     Cog6ToothIcon,
