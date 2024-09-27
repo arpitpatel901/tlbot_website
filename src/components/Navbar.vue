@@ -32,13 +32,13 @@
           <div class="flex items-center space-x-4">
             <span class="">{{ user.name }}</span>
             <!-- Logout button is now in the sidebar -->
-            <!-- <a
+            <a
               href="#"
               class="p-2 px-4 text-black bg-gray-200 font-bold rounded-lg baseline hover:bg-blue-200 border-transparent border-2"
               @click="logout"
             >
               Logout
-            </a> -->
+            </a>
           </div>
         </template>
       </div>
@@ -150,6 +150,7 @@ export default {
     };
 
     const logout = () => {
+      console.log('Logout button clicked');
       userStore.clearUser();
       router.push('/');
     };
@@ -175,6 +176,10 @@ export default {
   height: 2px;
   width: 25px;
   margin: 4px 0;
+}
+
+button {
+  z-index: 10;
 }
 
 /* Optional: Add transition for smooth menu toggle */
