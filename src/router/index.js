@@ -10,6 +10,8 @@ import Contact from '@/components/Contact.vue';
 import { useUserStore } from '@/stores/userStore';
 
 const Chat = () => import('@/components/Chat.vue');
+const NotFound = () => import('@/components/NotFound.vue'); // Import the NotFound component
+
 
 const routes = [
   {
@@ -42,19 +44,19 @@ const routes = [
         path: 'connect-data-sources',
         name: 'ConnectDataSources',
         component: ConnectDataSources,
-        alias: '/connect-data-sources',
+        // alias: '/connect-data-sources',
       },
       {
         path: 'chat',
         name: 'Chat',
         component: Chat,
-        alias: '/chat',
+        // alias: '/chat',
       },
       {
         path: 'account-settings',
         name: 'AccountSettings',
         component: AccountSettings,
-        alias: '/account-settings',
+        // alias: '/account-settings',
       },
     ],
   },
@@ -63,11 +65,12 @@ const routes = [
     name: 'Unauthorized',
     component: Unauthorized,
   },
-  // // Redirect any unknown routes to Home
-  // {
-  //   path: '/:pathMatch(.*)*',
-  //   redirect: '/',
-  // },
+  // Catch-all route for unknown paths
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: NotFound, // Use the NotFound component
+  },
 ];
 
 const router = createRouter({
