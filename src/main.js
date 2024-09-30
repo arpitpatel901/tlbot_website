@@ -12,7 +12,6 @@ import { useUserStore } from '@/stores/userStore';
 
 
 export const CLIENT_ID = "497764252617-oau8a78f5pcolh165ntbm36e9f3d3hgh.apps.googleusercontent.com";
-export const CLIENT_SECRET = "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"
 
 const app = createApp(App);
 

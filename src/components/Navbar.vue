@@ -120,11 +120,14 @@
 import { useUserStore } from "@/stores/userStore";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
+import { storeToRefs } from "pinia"; // Import storeToRefs
+
 
 export default {
   name: "Navbar",
   setup() {
     const userStore = useUserStore();
+    const { user } = storeToRefs(userStore); // Destructure using storeToRefs
     const router = useRouter();
     const isMenuOpen = ref(false);
 
@@ -161,7 +164,7 @@ export default {
       loginClick,
       handleLogin,
       logout,
-      user: userStore.user,
+      user, // Reactive reference to userStore.user
     };
   },
 };
