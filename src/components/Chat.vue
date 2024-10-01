@@ -23,14 +23,21 @@
         <div class="flex-1 p-4 overflow-y-auto" ref="chatArea">
           <!-- Messages List -->
           <div v-if="messageHistory.length > 0" class="space-y-4">
-            <AIMessage
-              v-for="(message, index) in messageHistory"
-              :key="message.messageId"
-              :message="message"
-              @feedback="handleFeedback"
-              @edit="editMessage"
-              @showDocs="showDocuments"
-            />
+            <template v-for="(message, index) in messageHistory" :key="message.messageId">
+              <AssistantMessage
+                v-if="message.type === 'assistant'"
+                :message="message"
+                @feedback="handleFeedback"
+                @showDocs="showDocuments"
+              />
+              <UserMessage
+                v-else-if="message.type === 'user'"
+                :message="message"
+              />
+              <div v-else class="p-2 bg-red-100 text-black rounded shadow">
+                Unknown message type.
+              </div>
+            </template>
             <div v-if="isStreaming" class="flex justify-center my-4">
               <ThreeDots
                 height="30"
@@ -74,7 +81,8 @@ import { useUserStore } from '@/stores/userStore.js';
 import ChatSidebar from '@/components/chat/ChatSidebar.vue';
 import HealthCheckBanner from '@/components/health/HealthCheckBanner.vue';
 import InstantSSRAutoRefresh from '@/components/SSRAutoRefresh.vue';
-import AIMessage from '@/components/chat/AIMessage.vue';
+import AssistantMessage from '@/components/chat/AssistantMessage.vue';
+import UserMessage from '@/components/chat/UserMessage.vue';
 import ChatInputBar from '@/components/chat/ChatInputBar.vue';
 import ChatIntro from '@/components/chat/ChatIntro.vue';
 import { ThreeDots } from 'vue3-spinner';
@@ -114,7 +122,7 @@ const messageHistory = computed(() => {
   const session = selectedChatSession.value;
   console.log("Session is :", session)
   if (!session) return [];
-  
+
   console.log("Complete message map:", chatStore.completeMessageMap)
   const messages = chatStore.completeMessageMap;
   if (messages && typeof messages === 'object') {
@@ -196,29 +204,6 @@ const sendMessage = async () => {
       });
     }
 
-    // // Replace with your actual backend API endpoint
-    // const response = await axios.post('http://localhost:3001/api/chat', {
-    //   message_content: messageContent,
-    //   message_id: messageId,
-    //   transaction_id: txn_id,
-    //   user_id: user_id,
-    //   extra: {}, // Additional metadata
-    // });
-
-    // // Add AI response to the store
-    // if (response.data && response.data.ai_response) {
-    //   const aiMessageId = uuidv4();
-    //   chatStore.addMessage({
-    //     messageId: aiMessageId,
-    //     message: response.data.ai_response,
-    //     type: 'assistant',
-    //     timestamp: new Date().toISOString(),
-    //     transaction_id: txn_id,
-    //     sources: response.data.sources || {}, // Reference sources
-    //     extras: response.data.extras || {}, // Additional data
-    //   });
-    // }    
-
   } catch (error) {
     console.error("Error sending message:", error);
     // Optionally, add an error message to the chat
@@ -254,20 +239,6 @@ const cancelStreaming = () => {
 const handleFeedback = (type, messageId) => {
   console.log(`Feedback received: ${type} for message ID: ${messageId}`);
   // Implement feedback handling logic (e.g., send to backend)
-};
-
-/**
- * Edits a user's message.
- * @param {string} messageId - The ID of the message to edit.
- * @param {string} newContent - The new content for the message.
- */
-const editMessage = (messageId, newContent) => {
-  const message = chatStore.completeMessageMap[messageId];
-  if (message) {
-    chatStore.completeMessageMap[messageId].message = newContent;
-    console.log(`Message edited: ${messageId}`, newContent);
-    // Optionally, persist the change or notify the backend
-  }
 };
 
 /**
@@ -378,11 +349,5 @@ onMounted(() => {
 }
 
 /* Optionally, add different styles for user and AI messages */
-.bg-blue-500 {
-  /* User messages */
-}
-
-.bg-gray-300 {
-  /* AI messages */
-}
+/* Styles are now handled within the message components */
 </style>
