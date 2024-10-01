@@ -1,3 +1,4 @@
+// src/main.js
 import "./assets/main.css";
 
 import { createApp } from "vue";
@@ -9,7 +10,7 @@ import router from "./router";
 import { createPinia } from "pinia";
 import App from "./App.vue";
 import { useUserStore } from "@/stores/userStore";
-import { useChatStore } from "@/stores/chatStore";
+// import { useChatStore } from "@/stores/chatStore"; // Remove this import if not needed
 
 export const CLIENT_ID =
   "497764252617-oau8a78f5pcolh165ntbm36e9f3d3hgh.apps.googleusercontent.com";
@@ -37,11 +38,11 @@ const userStore = useUserStore();
 userStore.initializeUser();
 
 // Initialize the chat store and set user_id if logged in
-const chatStore = useChatStore();
-chatStore.initializeChat();
+// const chatStore = useChatStore();
+// chatStore.initializeChat(); // Remove this line
 
 if (userStore.user) {
-  chatStore.setUserId(userStore.user.id); // Assuming user has an 'id' property
+  // chatStore.setUserId(userStore.user.id); // Remove or adjust if chatStore is not initialized here
 }
 
 app.mount("#app");
