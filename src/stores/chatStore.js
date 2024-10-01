@@ -1,181 +1,112 @@
 // src/stores/chatStore.js
 import { defineStore } from 'pinia';
 import { ref, watch } from 'vue';
-import { v4 as uuidv4 } from 'uuid'; // Ensure this is installed: npm install uuid
+import { v4 as uuidv4 } from 'uuid';
 
 export const useChatStore = defineStore('chat', () => {
-  // === Original State ===
-  const transactions = ref([]);
-  const activeTransactionId = ref(null);
-
-  // === New State ===
+  // === State ===
   const chatSessions = ref([]);
   const activeChatSessionId = ref(null);
   const completeMessageMap = ref({});
   const availablePersonas = ref([]);
 
-  // === Original Actions ===
-  
-  /**
-   * Add a new chat transaction.
-   * Generates a unique transaction ID and initializes messages.
-   */
-  const addTransaction = () => {
-    const newTransaction = {
-      transaction_id: uuidv4(),
-      user_id: null, // To be set upon user login
-      messages: [],
+  // === Actions ===
+  const addChatSession = () => {
+    const newSession = {
+      id: uuidv4(),
+      date: new Date().toISOString().split('T')[0], // Group by date
+      lastMessageTimestamp: null,
+      lastMessage: '',
+      persona_id: null, // Assign a persona if applicable
+      sharedStatus: 'Private',
     };
-    transactions.value.push(newTransaction);
-    activeTransactionId.value = newTransaction.transaction_id;
-    return newTransaction.transaction_id;
+    chatSessions.value.push(newSession);
+    activeChatSessionId.value = newSession.id;
+    console.log("Added new chat session:", newSession);
+    return newSession.id;
   };
 
-  /**
-   * Set the user ID for all existing transactions.
-   * @param {string} userId - The ID of the user.
-   */
-  const setUserId = (userId) => {
-    transactions.value.forEach((txn) => {
-      txn.user_id = userId;
-    });
-  };
-
-  /**
-   * Add a message to a specific transaction.
-   * @param {string} transaction_id - The ID of the transaction.
-   * @param {string} message - The message content.
-   * @param {string} sender - The sender ('user' or 'ai').
-   */
-  const addMessageToTransaction = (transaction_id, message, sender = 'user') => {
-    const txn = transactions.value.find(t => t.transaction_id === transaction_id);
-    if (txn) {
-      txn.messages.push({
-        message_id: uuidv4(),
-        sender,
-        message,
-        timestamp: new Date(),
-      });
-    }
-  };
-
-  /**
-   * Retrieve a transaction by its ID.
-   * @param {string} transaction_id - The ID of the transaction.
-   * @returns {object|null} - The transaction object or null if not found.
-   */
-  const getTransaction = (transaction_id) => {
-    return transactions.value.find(t => t.transaction_id === transaction_id) || null;
-  };
-
-  /**
-   * Initialize chat sessions from localStorage or start a new one.
-   */
-  const initializeChat = () => {
-    const storedChats = localStorage.getItem('chats');
-    if (storedChats) {
-      transactions.value = JSON.parse(storedChats);
-      if (transactions.value.length > 0) {
-        activeTransactionId.value = transactions.value[transactions.value.length -1].transaction_id;
-      }
-    } else {
-      addTransaction();
-    }
-  };
-
-  // === New Actions ===
-  
-  /**
-   * Set the active chat session.
-   * @param {number} sessionId - The ID of the chat session.
-   */
   const setActiveChatSession = (sessionId) => {
     activeChatSessionId.value = sessionId;
-    // Additional logic to fetch messages can be added here
+    console.log("Set activeChatSessionId to:", sessionId);
   };
 
   /**
-   * Add a new chat session.
-   * @param {object} session - The chat session object.
-   */
-  const addChatSession = (session) => {
-    chatSessions.value.push(session);
-  };
-
-  /**
-   * Add a message to the completeMessageMap.
-   * @param {object} message - The message object.
+   * Adds a message to the completeMessageMap.
+   * @param {Object} message - The message object to add.
    */
   const addMessage = (message) => {
     if (message && message.messageId) {
-      completeMessageMap.value[message.messageId] = message;
+      console.log("Adding message to store:", message);
+      // Ensure reactivity by creating a new object
+      completeMessageMap.value = {
+        ...completeMessageMap.value,
+        [message.messageId]: message,
+      };
+
+      // Update the last message of the session
+      const session = chatSessions.value.find(s => s.id === message.transaction_id);
+      if (session) {
+        session.lastMessage = message.message;
+        session.lastMessageTimestamp = message.timestamp;
+      }
     }
   };
 
-  /**
-   * Set the selected persona.
-   * @param {object} persona - The persona object.
-   */
-  const setSelectedPersona = (persona) => {
-    // Implement logic to set selected persona
-    // For example, you might set a currentPersona property or similar
-  };
-
-  /**
-   * Update the shared status of a chat session.
-   * @param {number} sessionId - The ID of the chat session.
-   * @param {boolean} shared - The new shared status.
-   */
-  const updateChatSessionSharedStatus = (sessionId, shared) => {
-    const session = chatSessions.value.find(s => s.id === sessionId);
-    if (session) {
-      session.sharedStatus = shared ? 'Public' : 'Private';
+  const initializeChat = () => {
+    const storedSessions = localStorage.getItem('chatSessions');
+    if (storedSessions) {
+      try {
+        chatSessions.value = JSON.parse(storedSessions);
+        if (chatSessions.value.length > 0) {
+          activeChatSessionId.value = chatSessions.value[chatSessions.value.length -1].id;
+          console.log("Initialized chat with existing sessions. Active session ID:", activeChatSessionId.value);
+        }
+      } catch (error) {
+        console.error("Failed to parse chatSessions from localStorage:", error);
+        chatSessions.value = [];
+        addChatSession();
+      }
+    } else {
+      addChatSession();
+    }
+  
+    const storedMessages = localStorage.getItem('completeMessageMap');
+    if (storedMessages) {
+      try {
+        const parsedMessages = JSON.parse(storedMessages);
+        completeMessageMap.value = parsedMessages || {};
+        console.log("Initialized completeMessageMap with stored messages.");
+      } catch (error) {
+        console.error("Failed to parse completeMessageMap from localStorage:", error);
+        completeMessageMap.value = {};
+      }
+    } else {
+      completeMessageMap.value = {};
     }
   };
 
   // === Watchers ===
-  
-  /**
-   * Watch for changes in transactions and persist them to localStorage.
-   */
-  watch(transactions, (newVal) => {
-    localStorage.setItem('chats', JSON.stringify(newVal));
+  watch(chatSessions, (newVal) => {
+    localStorage.setItem('chatSessions', JSON.stringify(newVal));
   }, { deep: true });
 
-  /**
-   * Watch for changes in completeMessageMap and persist them to localStorage.
-   */
   watch(completeMessageMap, (newVal) => {
     localStorage.setItem('completeMessageMap', JSON.stringify(newVal));
   }, { deep: true });
 
-  // === Initialize Chat on Store Creation ===
-  
+  // === Initialize ===
   initializeChat();
 
-  // === Return State and Actions ===
-  
+  // === Return ===
   return {
-    // === Original State ===
-    transactions,
-    activeTransactionId,
-    addTransaction,
-    setUserId,
-    addMessageToTransaction,
-    getTransaction,
-    initializeChat,
-
-    // === New State ===
     chatSessions,
     activeChatSessionId,
     completeMessageMap,
     availablePersonas,
 
-    // === New Actions ===
-    setActiveChatSession,
     addChatSession,
+    setActiveChatSession,
     addMessage,
-    setSelectedPersona,
-    updateChatSessionSharedStatus,
   };
 });
