@@ -1,247 +1,335 @@
 <!-- src/components/Chat.vue -->
 <template>
-  <div class="flex flex-col h-full text-black">
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-2xl font-semibold">Chat</h2>
-      <button
-        @click="startNewTransaction"
-        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        aria-label="Start a new chat"
-      >
-        New Chat
-      </button>
-    </div>
+  <div class="flex flex-col h-screen bg-gray-100">
+    <!-- Health Check and Auto Refresh -->
+    <HealthCheckBanner />
+    <InstantSSRAutoRefresh />
 
-    <div class="flex flex-1">
-      <!-- Transactions List -->
-      <div class="w-1/4 border-r p-2 overflow-auto">
-        <h3 class="text-xl font-semibold mb-2">Chats</h3>
-        <ul>
-          <li
-            v-for="(txn, index) in transactions"
-            :key="txn.transaction_id"
-            :class="[
-              'p-2 mb-2 rounded cursor-pointer',
-              activeTransactionId === txn.transaction_id
-                ? 'bg-blue-100'
-                : 'hover:bg-gray-100',
-            ]"
-            @click="selectTransaction(txn.transaction_id)"
-          >
-            Transaction {{ index + 1 }}
-          </li>
-        </ul>
-      </div>
+    <!-- Main Layout -->
+    <div class="flex flex-1 overflow-hidden">
+      <!-- Chat Sidebar -->
+      <ChatSidebar
+        :chatSessions="chatSessions"
+        :currentChatSession="selectedChatSession"
+        :folders="folders"
+        :openedFolders="openedFolders"
+        @selectSession="handleSelectSession"
+        @startNewChat="initializeNewChat"
+      />
 
-      <!-- Chat Area -->
-      <div class="flex-1 flex flex-col">
-        <div class="flex-1 p-4 overflow-auto" ref="chatArea">
-          <div v-if="activeTransaction" class="space-y-4">
-            <div
-              v-for="msg in activeTransaction.messages"
-              :key="msg.message_id"
-              :class="[
-                'max-w-lg p-3 rounded',
-                msg.sender === 'user'
-                  ? 'bg-blue-500 text-white self-end'
-                  : 'bg-gray-300 text-gray-800 self-start',
-              ]"
-            >
-              <div class="message-content">
-                {{ msg.message }}
+      <!-- Chat Content -->
+      <main class="flex-1 flex flex-col bg-gray-50">
+        <!-- Messages Area -->
+        <div class="flex-1 p-4 overflow-y-auto" ref="chatArea">
+          <!-- Messages List -->
+          <div v-if="messageHistory.length > 0" class="space-y-4">
+            <template v-for="(message, index) in messageHistory" :key="message.messageId">
+              <AssistantMessage
+                v-if="message.type === 'assistant'"
+                :message="message"
+                @feedback="handleFeedback"
+                @showDocs="showDocuments"
+              />
+              <UserMessage
+                v-else-if="message.type === 'user'"
+                :message="message"
+              />
+              <div v-else class="p-2 bg-red-100 text-black rounded shadow">
+                Unknown message type.
               </div>
-              <div class="text-xs text-gray-600 mt-1">
-                {{ formatTimestamp(msg.timestamp) }}
-              </div>
-            </div>
-            <div v-if="isLoading" class="flex justify-center my-2">
-              <div class="loader"></div>
+            </template>
+            <div v-if="isStreaming" class="flex justify-center my-4">
+              <ThreeDots
+                height="30"
+                width="50"
+                color="#3b82f6"
+                ariaLabel="loading"
+              />
             </div>
           </div>
-          <div v-else class="text-center text-gray-500">
-            Select a chat or start a new one.
+          <div v-else class="flex items-center justify-center h-full">
+            <ChatIntro 
+              :availableSources="finalAvailableSources" 
+              :availablePersonas="filteredAssistants" 
+              :selectedPersona="selectedPersona" 
+            />
           </div>
         </div>
 
         <!-- Message Input -->
-        <div class="p-4 border-t">
-          <form @submit.prevent="sendMessage" class="flex space-x-2">
-            <input
-              v-model="newMessage"
-              type="text"
-              placeholder="Type your message..."
-              class="flex-1 p-2 border rounded"
-              :disabled="!activeTransaction || isLoading"
-              required
-            />
-            <button
-              type="submit"
-              class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-              :disabled="!activeTransaction || isLoading"
-            >
-              Send
-            </button>
-          </form>
-        </div>
-      </div>
+        <footer class="p-4 bg-white border-t">
+          <ChatInputBar
+            v-model="newMessage"
+            :isStreaming="isStreaming"
+            :disabled="!selectedChatSession || isStreaming"
+            @send="sendMessage"
+            @cancel="cancelStreaming"
+          />
+        </footer>
+      </main>
     </div>
   </div>
 </template>
 
-<script>
-import { useChatStore } from "@/stores/chatStore";
-import { useUserStore } from "@/stores/userStore";
+<script setup lang="ts">
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
-// import axios from "axios";
+import { useRouter, useRoute } from 'vue-router';
+import { useChatStore } from '@/stores/chatStore.js';
+import { useUserStore } from '@/stores/userStore.js';
 
-export default {
-  name: "Chat",
-  setup() {
-    const chatStore = useChatStore();
-    const userStore = useUserStore();
-    const newMessage = ref("");
-    const isLoading = ref(false);
-    const chatArea = ref(null);
+// Import Components
+import ChatSidebar from '@/components/chat/ChatSidebar.vue';
+import HealthCheckBanner from '@/components/health/HealthCheckBanner.vue';
+import InstantSSRAutoRefresh from '@/components/SSRAutoRefresh.vue';
+import AssistantMessage from '@/components/chat/AssistantMessage.vue';
+import UserMessage from '@/components/chat/UserMessage.vue';
+import ChatInputBar from '@/components/chat/ChatInputBar.vue';
+import ChatIntro from '@/components/chat/ChatIntro.vue';
+import { ThreeDots } from 'vue3-spinner';
 
-    // Start a new transaction on component mount if none exist
-    onMounted(() => {
-      if (chatStore.transactions.length === 0) {
-        chatStore.addTransaction();
-      }
-    });
+// Import uuidv4
+import { v4 as uuidv4 } from 'uuid';
 
-    const formatTimestamp = (timestamp) => {
-      const date = new Date(timestamp);
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    };
+const finalAvailableSources = ref([]);
+const filteredAssistants = ref([]);
+const selectedPersona = ref(null);
 
-    // Computed property for transactions
-    const transactions = computed(() => chatStore.transactions);
+// Initialize Stores
+const chatStore = useChatStore();
+const userStore = useUserStore();
 
-    // Computed property for active transaction
-    const activeTransaction = computed(() => {
-      return chatStore.getTransaction(chatStore.activeTransactionId);
-    });
+// Router Setup
+const router = useRouter();
+const route = useRoute();
 
-    // Function to start a new chat transaction
-    const startNewTransaction = () => {
-      chatStore.addTransaction();
-    };
+// Computed Properties
+const chatSessions = computed(() => chatStore.chatSessions);
+const selectedChatSession = computed(() => {
+  const chatId = route.query.chatId;
+  const session = chatStore.chatSessions.find(session => session.id === chatId) || null;
+  console.log("Computed selectedChatSession:", session);
+  return session;
+});
+const folders = ref([]); // Placeholder for folders
+const openedFolders = ref([]); // Placeholder for opened folders
 
-    // Function to select a transaction
-    const selectTransaction = (transaction_id) => {
-      chatStore.activeTransactionId = transaction_id;
-    };
+// Reactive State
+const newMessage = ref('');
+const isStreaming = ref(false);
 
-    // Function to send a message
-    const sendMessage = async () => {
-      if (!newMessage.value.trim()) return;
+// Computed Properties
+const messageHistory = computed(() => {
+  const session = selectedChatSession.value;
+  console.log("Session is :", session)
+  if (!session) return [];
 
-      const txn_id = chatStore.activeTransactionId;
-      const user_id = userStore.user.id; // Assuming user has an 'id'
+  console.log("Complete message map:", chatStore.completeMessageMap)
+  const messages = chatStore.completeMessageMap;
+  if (messages && typeof messages === 'object') {
+    const filtered = Object.values(messages)
+      .filter(msg => msg.transaction_id === session.id)
+      .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+    console.log("Computed messageHistory:", filtered);
+    return filtered;
+  } else {
+    console.log("No messages found for the active session.");
+    return [];
+  }
+});
 
-      // Add user message to store
-      chatStore.addMessage(txn_id, newMessage.value, "user");
+// Reference to the chat area for scrolling
+const chatArea = ref(null);
 
-      // Scroll to bottom
-      scrollToBottom();
-
-      // Prepare payload
-      const payload = {
-        message: newMessage.value,
-        message_id: generateUUID(),
-        transaction_id: txn_id,
-        user_id: user_id,
-      };
-
-      // Reset input and set loading
-      newMessage.value = "";
-      isLoading.value = true;
-
-      try {
-        // Send request to backend (mocked for now)
-        const response = await mockBackendRequest(payload);
-        // Add AI response to store
-        if (response && response.data) {
-          chatStore.addMessage(txn_id, response.data.reply, "ai");
-        }
-
-        // // Replace mockBackendRequest with real API call
-        // const response = await axios.post('https://your-backend-api.com/chat', payload);
-        // if (response.data && response.data.reply) {
-        //   chatStore.addMessage(txn_id, response.data.reply, 'ai');
-        // }
-      } catch (error) {
-        console.error("Error sending message:", error);
-        // Optionally, add an error message to the chat
-        chatStore.addMessage(
-          txn_id,
-          "Sorry, something went wrong. Please try again.",
-          "ai"
-        );
-      } finally {
-        isLoading.value = false;
-        scrollToBottom();
-      }
-    };
-
-    // Function to generate UUID (if not using 'uuid' library in frontend)
-    const generateUUID = () => {
-      // Simple UUID generator (for demonstration purposes)
-      return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
-        /[xy]/g,
-        function (c) {
-          const r = (Math.random() * 16) | 0,
-            v = c === "x" ? r : (r & 0x3) | 0x8;
-          return v.toString(16);
-        }
-      );
-    };
-
-    // Mock backend request function
-    const mockBackendRequest = (payload) => {
-      // Simulate network delay
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            data: {
-              reply: `Echo: ${payload.message}`,
-            },
-          });
-        }, 1500); // 1.5 seconds delay
-      });
-    };
-
-    // Scroll to bottom of chat area
-    const scrollToBottom = () => {
-      if (chatArea.value) {
-        chatArea.value.scrollTop = chatArea.value.scrollHeight;
-      }
-    };
-
-    // Watch for activeTransaction changes to scroll
-    watch(activeTransaction, () => {
-      nextTick(() => {
-        scrollToBottom();
-      });
-    });
-
-    return {
-      transactions,
-      activeTransaction,
-      newMessage,
-      sendMessage,
-      isLoading,
-      startNewTransaction,
-      selectTransaction,
-      chatArea,
-      formatTimestamp,
-    };
-  },
+// Placeholder User Data
+const user = {
+  name: 'John Doe',
+  avatar: 'https://via.placeholder.com/150', // Placeholder avatar
 };
+
+// Functions
+
+/**
+ * Sends a message from the user and handles the AI response.
+ */
+const sendMessage = async () => {
+  if (!newMessage.value.trim()) return;
+
+  const messageContent = newMessage.value.trim();
+  const messageId = uuidv4();
+  const txn_id = chatStore.activeChatSessionId; // Access directly without .value
+  const user_id = userStore.user?.id || 'unknown_user'; // Handle undefined user_id
+
+  console.log("Sending message:", messageContent, "Transaction ID:", txn_id);
+  console.log("Current activeChatSessionId:", txn_id);
+
+  // Add user's message to the store
+  chatStore.addMessage({
+    messageId: messageId,
+    message: messageContent,
+    type: 'user',
+    timestamp: new Date().toISOString(),
+    transaction_id: txn_id,
+    user_id: user_id,
+    extra: {}, // Add any additional metadata if needed
+  });
+
+  // Clear the input and set loading
+  newMessage.value = '';
+  isStreaming.value = true;
+
+  // Scroll to bottom
+  scrollToBottom();
+
+  try {
+    // Mock backend request (replace with actual API call)
+    const response = await mockBackendRequest({
+      message_content: messageContent,
+      message_id: messageId,
+      transaction_id: txn_id,
+      user_id: user_id,
+      extra: {}, // Additional metadata
+    });
+
+    // Add AI response to the store
+    if (response && response.ai_response) {
+      const aiMessageId = uuidv4();
+      chatStore.addMessage({
+        messageId: aiMessageId,
+        message: response.ai_response,
+        type: 'assistant',
+        timestamp: new Date().toISOString(),
+        transaction_id: txn_id,
+        sources: response.sources || {}, // Reference sources
+        extras: response.extras || {}, // Additional data
+      });
+    }
+
+  } catch (error) {
+    console.error("Error sending message:", error);
+    // Optionally, add an error message to the chat
+    const errorMessageId = uuidv4();
+    chatStore.addMessage({
+      messageId: errorMessageId,
+      message: "Sorry, something went wrong. Please try again.",
+      type: 'assistant',
+      timestamp: new Date().toISOString(),
+      transaction_id: txn_id,
+      sources: {},
+      extras: {},
+    });
+  } finally {
+    isStreaming.value = false;
+    scrollToBottom();
+  }
+};
+
+/**
+ * Cancels the ongoing message streaming.
+ */
+const cancelStreaming = () => {
+  isStreaming.value = false;
+  // Implement cancellation logic if applicable
+};
+
+/**
+ * Handles feedback events from AI messages.
+ * @param {string} type - The type of feedback (e.g., 'positive', 'negative').
+ * @param {string} messageId - The ID of the message being fed back on.
+ */
+const handleFeedback = (type, messageId) => {
+  console.log(`Feedback received: ${type} for message ID: ${messageId}`);
+  // Implement feedback handling logic (e.g., send to backend)
+};
+
+/**
+ * Shows documents or additional information related to a message.
+ * @param {string} messageId - The ID of the message.
+ */
+const showDocuments = (messageId) => {
+  console.log(`Show documents for message ID: ${messageId}`);
+  // Implement document display logic
+};
+
+/**
+ * Handles the selection of a chat session.
+ * @param {string} sessionId - The ID of the selected chat session.
+ */
+const handleSelectSession = (sessionId) => {
+  chatStore.setActiveChatSession(sessionId);
+  // Navigate to the selected chat
+  router.push({ query: { chatId: sessionId } });
+};
+
+/**
+ * Initializes a new chat session.
+ */
+const initializeNewChat = () => {
+  const newSessionId = uuidv4();
+  const newSession = {
+    id: newSessionId,
+    date: new Date().toISOString().split('T')[0], // 'YYYY-MM-DD'
+    lastMessageTimestamp: null,
+    lastMessage: '',
+    persona_id: null, // Assign a persona if applicable
+    sharedStatus: 'Private',
+    // Add other necessary properties
+  };
+  chatStore.addChatSession(newSession);
+  chatStore.setActiveChatSession(newSession.id);
+  router.push({ query: { chatId: newSession.id } });
+};
+
+/**
+ * Mock backend request function to simulate AI response.
+ * @param {object} payload - The data sent to the backend.
+ * @returns {Promise<object>} The simulated backend response.
+ */
+const mockBackendRequest = (payload) => {
+  // Simulate network delay and response
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        ai_response: `Echo: ${payload.message_content}`,
+        response_id: uuidv4(),
+        transaction_id: payload.transaction_id,
+        sources: {}, // Populate with reference sources as needed
+        extras: {}, // Additional data
+      });
+    }, 1500); // 1.5 seconds delay
+  });
+};
+
+/**
+ * Scrolls the chat area to the bottom to show the latest message.
+ */
+const scrollToBottom = () => {
+  if (chatArea.value) {
+    chatArea.value.scrollTop = chatArea.value.scrollHeight;
+  }
+};
+
+// Watch for changes in messageHistory to auto-scroll
+watch(messageHistory, () => {
+  nextTick(() => {
+    scrollToBottom();
+  });
+});
+
+// Set activeChatSessionId based on the route on mount
+onMounted(() => {
+  if (selectedChatSession.value) {
+    chatStore.setActiveChatSession(selectedChatSession.value.id);
+  }
+
+  if (!route.query.chatId && chatStore.activeChatSessionId) {
+    router.replace({ query: { chatId: chatStore.activeChatSessionId } });
+  }
+});
 </script>
 
 <style scoped>
+/* Loader Styles (if using CSS loader) */
+/* Remove if using vue3-spinner */
 .loader {
   border: 4px solid #f3f3f3;
   border-top: 4px solid #3498db;
@@ -252,12 +340,8 @@ export default {
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .message-content {
@@ -265,11 +349,5 @@ export default {
 }
 
 /* Optionally, add different styles for user and AI messages */
-.bg-blue-500 {
-  /* User messages */
-}
-
-.bg-gray-300 {
-  /* AI messages */
-}
+/* Styles are now handled within the message components */
 </style>
