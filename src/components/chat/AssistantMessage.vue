@@ -1,16 +1,13 @@
-<!-- src/components/chat/AIMessage.vue -->
+<!-- src/components/chat/AssistantMessage.vue -->
 <template>
     <div :class="messageClasses">
       <div class="message-content">
         {{ message.message }}
       </div>
-      <!-- Edit button removed -->
-      <!-- <button @click="editMessage" class="edit-button">Edit</button> -->
-      <!-- Feedback and showDocs buttons -->
       <div class="actions">
-        <button @click="feedback('positive')" class="feedback-button">👍</button>
-        <button @click="feedback('negative')" class="feedback-button">👎</button>
-        <button @click="showDocs(message.messageId)" class="docs-button">📄</button>
+        <button @click="feedback('positive')" class="feedback-button" aria-label="Positive Feedback">👍</button>
+        <button @click="feedback('negative')" class="feedback-button" aria-label="Negative Feedback">👎</button>
+        <button @click="showDocs(message.messageId)" class="docs-button" aria-label="Show Documents">📄</button>
       </div>
     </div>
   </template>
@@ -35,7 +32,7 @@
     return [
       'p-2 rounded shadow',
       props.message.type === 'user' ? 'bg-blue-100 text-black' : 'bg-gray-100 text-black',
-      // Add any additional classes as needed
+      // Additional classes can be added here
     ];
   });
   
@@ -94,7 +91,5 @@
   .shadow {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
-  
-  /* Remove styles related to the edit button if any */
   </style>
   

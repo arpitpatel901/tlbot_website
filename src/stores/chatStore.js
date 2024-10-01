@@ -49,6 +49,8 @@ export const useChatStore = defineStore('chat', () => {
       if (session) {
         session.lastMessage = message.message;
         session.lastMessageTimestamp = message.timestamp;
+      } else {
+        console.log(`No session found with id: ${message.transaction_id}`);
       }
     }
   };
@@ -70,7 +72,7 @@ export const useChatStore = defineStore('chat', () => {
     } else {
       addChatSession();
     }
-  
+
     const storedMessages = localStorage.getItem('completeMessageMap');
     if (storedMessages) {
       try {

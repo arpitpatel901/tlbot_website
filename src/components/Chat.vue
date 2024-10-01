@@ -78,7 +78,6 @@ import AIMessage from '@/components/chat/AIMessage.vue';
 import ChatInputBar from '@/components/chat/ChatInputBar.vue';
 import ChatIntro from '@/components/chat/ChatIntro.vue';
 import { ThreeDots } from 'vue3-spinner';
-// import axios from 'axios'; # Needed for real backend
 
 // Import uuidv4
 import { v4 as uuidv4 } from 'uuid';
@@ -113,9 +112,11 @@ const isStreaming = ref(false);
 // Computed Properties
 const messageHistory = computed(() => {
   const session = selectedChatSession.value;
+  console.log("Session is :", session)
   if (!session) return [];
   
-  const messages = chatStore.completeMessageMap.value;
+  console.log("Complete message map:", chatStore.completeMessageMap)
+  const messages = chatStore.completeMessageMap;
   if (messages && typeof messages === 'object') {
     const filtered = Object.values(messages)
       .filter(msg => msg.transaction_id === session.id)
@@ -142,15 +143,16 @@ const user = {
 /**
  * Sends a message from the user and handles the AI response.
  */
- const sendMessage = async () => {
+const sendMessage = async () => {
   if (!newMessage.value.trim()) return;
 
   const messageContent = newMessage.value.trim();
   const messageId = uuidv4();
-  const txn_id = chatStore.activeChatSessionId.value; // Correctly access the ref value
+  const txn_id = chatStore.activeChatSessionId; // Access directly without .value
   const user_id = userStore.user?.id || 'unknown_user'; // Handle undefined user_id
 
   console.log("Sending message:", messageContent, "Transaction ID:", txn_id);
+  console.log("Current activeChatSessionId:", txn_id);
 
   // Add user's message to the store
   chatStore.addMessage({
@@ -259,14 +261,14 @@ const handleFeedback = (type, messageId) => {
  * @param {string} messageId - The ID of the message to edit.
  * @param {string} newContent - The new content for the message.
  */
- const editMessage = (messageId, newContent) => {
-  const message = chatStore.completeMessageMap.value[messageId];
+const editMessage = (messageId, newContent) => {
+  const message = chatStore.completeMessageMap[messageId];
   if (message) {
-    chatStore.completeMessageMap.value[messageId].message = newContent;
+    chatStore.completeMessageMap[messageId].message = newContent;
     console.log(`Message edited: ${messageId}`, newContent);
     // Optionally, persist the change or notify the backend
   }
-};;
+};
 
 /**
  * Shows documents or additional information related to a message.
