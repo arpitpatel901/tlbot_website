@@ -1,86 +1,62 @@
 <!-- src/components/Chat.vue -->
 <template>
-  <div class="flex flex-col h-screen bg-gray-100">
-    <!-- Health Check and Auto Refresh -->
-    <HealthCheckBanner />
-    <InstantSSRAutoRefresh />
-
-    <!-- Main Layout -->
-    <div class="flex flex-1 overflow-hidden">
-      <!-- Chat Sidebar -->
-      <ChatSidebar
-        :chatSessions="chatSessions"
-        :currentChatSession="selectedChatSession"
-        :folders="folders"
-        :openedFolders="openedFolders"
-        @selectSession="handleSelectSession"
-        @startNewChat="initializeNewChat"
-      />
-
-      <!-- Chat Content -->
-      <main class="flex-1 flex flex-col bg-gray-50">
-        <!-- Messages Area -->
-        <div class="flex-1 p-4 overflow-y-auto" ref="chatArea">
-          <!-- Messages List -->
-          <div v-if="messageHistory.length > 0" class="space-y-4">
-            <template v-for="(message, index) in messageHistory" :key="message.messageId">
-              <AssistantMessage
-                v-if="message.type === 'assistant'"
-                :message="message"
-                @feedback="handleFeedback"
-                @showDocs="showDocuments"
-              />
-              <UserMessage
-                v-else-if="message.type === 'user'"
-                :message="message"
-              />
-              <div v-else class="p-2 bg-red-100 text-black rounded shadow">
-                Unknown message type.
-              </div>
-            </template>
-            <div v-if="isStreaming" class="flex justify-center my-4">
-              <ThreeDots
-                height="30"
-                width="50"
-                color="#3b82f6"
-                ariaLabel="loading"
-              />
-            </div>
-          </div>
-          <div v-else class="flex items-center justify-center h-full">
-            <ChatIntro 
-              :availableSources="finalAvailableSources" 
-              :availablePersonas="filteredAssistants" 
-              :selectedPersona="selectedPersona" 
-            />
-          </div>
-        </div>
-
-        <!-- Message Input -->
-        <footer class="p-4 bg-white border-t">
-          <ChatInputBar
-            v-model="newMessage"
-            :isStreaming="isStreaming"
-            :disabled="!selectedChatSession || isStreaming"
-            @send="sendMessage"
-            @cancel="cancelStreaming"
+  <div class="flex flex-col h-full">
+    <!-- Messages Area -->
+    <div class="flex-1 p-2 sm:p-4 overflow-y-auto" ref="chatArea">
+      <!-- Messages List -->
+      <div v-if="messageHistory.length > 0" class="space-y-4">
+        <template v-for="(message, index) in messageHistory" :key="message.messageId">
+          <AssistantMessage
+            v-if="message.type === 'assistant'"
+            :message="message"
+            @feedback="handleFeedback"
+            @showDocs="showDocuments"
           />
-        </footer>
-      </main>
+          <UserMessage
+            v-else-if="message.type === 'user'"
+            :message="message"
+          />
+          <div v-else class="p-2 bg-red-100 text-black rounded shadow">
+            Unknown message type.
+          </div>
+        </template>
+        <div v-if="isStreaming" class="flex justify-center my-4">
+          <ThreeDots
+            height="30"
+            width="50"
+            color="#3b82f6"
+            ariaLabel="loading"
+          />
+        </div>
+      </div>
+      <div v-else class="flex items-center justify-center h-full">
+        <ChatIntro 
+          :availableSources="finalAvailableSources" 
+          :availablePersonas="filteredAssistants" 
+          :selectedPersona="selectedPersona" 
+        />
+      </div>
     </div>
+
+    <!-- Message Input -->
+    <footer class="p-2 sm:p-4 bg-white border-t">
+      <ChatInputBar
+        v-model="newMessage"
+        :isStreaming="isStreaming"
+        :disabled="!selectedChatSession || isStreaming"
+        @send="sendMessage"
+        @cancel="cancelStreaming"
+      />
+    </footer>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { useChatStore } from '@/stores/chatStore.js';
 import { useUserStore } from '@/stores/userStore.js';
 
 // Import Components
-import ChatSidebar from '@/components/chat/ChatSidebar.vue';
-import HealthCheckBanner from '@/components/health/HealthCheckBanner.vue';
-import InstantSSRAutoRefresh from '@/components/SSRAutoRefresh.vue';
 import AssistantMessage from '@/components/chat/AssistantMessage.vue';
 import UserMessage from '@/components/chat/UserMessage.vue';
 import ChatInputBar from '@/components/chat/ChatInputBar.vue';
@@ -95,7 +71,6 @@ const filteredAssistants = ref([]);
 const selectedPersona = ref(null);
 
 // Initialize Stores
-const chatStore = useChatStore();
 const userStore = useUserStore();
 
 // Router Setup
@@ -103,15 +78,12 @@ const router = useRouter();
 const route = useRoute();
 
 // Computed Properties
-const chatSessions = computed(() => chatStore.chatSessions);
 const selectedChatSession = computed(() => {
   const chatId = route.query.chatId;
-  const session = chatStore.chatSessions.find(session => session.id === chatId) || null;
+  const session = userStore.chatSessions.find(session => session.id === chatId) || null;
   console.log("Computed selectedChatSession:", session);
   return session;
 });
-const folders = ref([]); // Placeholder for folders
-const openedFolders = ref([]); // Placeholder for opened folders
 
 // Reactive State
 const newMessage = ref('');
@@ -120,31 +92,17 @@ const isStreaming = ref(false);
 // Computed Properties
 const messageHistory = computed(() => {
   const session = selectedChatSession.value;
-  console.log("Session is :", session)
+  console.log("Session is :", session);
   if (!session) return [];
 
-  console.log("Complete message map:", chatStore.completeMessageMap)
-  const messages = chatStore.completeMessageMap;
-  if (messages && typeof messages === 'object') {
-    const filtered = Object.values(messages)
-      .filter(msg => msg.transaction_id === session.id)
-      .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-    console.log("Computed messageHistory:", filtered);
-    return filtered;
-  } else {
-    console.log("No messages found for the active session.");
-    return [];
-  }
+  // Retrieve messages array from the session
+  const messages = session.messages || [];
+  console.log("Computed messageHistory:", messages);
+  return messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 });
 
 // Reference to the chat area for scrolling
 const chatArea = ref(null);
-
-// Placeholder User Data
-const user = {
-  name: 'John Doe',
-  avatar: 'https://via.placeholder.com/150', // Placeholder avatar
-};
 
 // Functions
 
@@ -155,23 +113,14 @@ const sendMessage = async () => {
   if (!newMessage.value.trim()) return;
 
   const messageContent = newMessage.value.trim();
-  const messageId = uuidv4();
-  const txn_id = chatStore.activeChatSessionId; // Access directly without .value
+  const txn_id = userStore.activeChatSessionId; // Access directly without .value
   const user_id = userStore.user?.id || 'unknown_user'; // Handle undefined user_id
 
   console.log("Sending message:", messageContent, "Transaction ID:", txn_id);
   console.log("Current activeChatSessionId:", txn_id);
 
   // Add user's message to the store
-  chatStore.addMessage({
-    messageId: messageId,
-    message: messageContent,
-    type: 'user',
-    timestamp: new Date().toISOString(),
-    transaction_id: txn_id,
-    user_id: user_id,
-    extra: {}, // Add any additional metadata if needed
-  });
+  userStore.addMessageToSession(txn_id, messageContent, 'user');
 
   // Clear the input and set loading
   newMessage.value = '';
@@ -184,7 +133,6 @@ const sendMessage = async () => {
     // Mock backend request (replace with actual API call)
     const response = await mockBackendRequest({
       message_content: messageContent,
-      message_id: messageId,
       transaction_id: txn_id,
       user_id: user_id,
       extra: {}, // Additional metadata
@@ -192,31 +140,13 @@ const sendMessage = async () => {
 
     // Add AI response to the store
     if (response && response.ai_response) {
-      const aiMessageId = uuidv4();
-      chatStore.addMessage({
-        messageId: aiMessageId,
-        message: response.ai_response,
-        type: 'assistant',
-        timestamp: new Date().toISOString(),
-        transaction_id: txn_id,
-        sources: response.sources || {}, // Reference sources
-        extras: response.extras || {}, // Additional data
-      });
+      userStore.addMessageToSession(txn_id, response.ai_response, 'assistant');
     }
 
   } catch (error) {
     console.error("Error sending message:", error);
     // Optionally, add an error message to the chat
-    const errorMessageId = uuidv4();
-    chatStore.addMessage({
-      messageId: errorMessageId,
-      message: "Sorry, something went wrong. Please try again.",
-      type: 'assistant',
-      timestamp: new Date().toISOString(),
-      transaction_id: txn_id,
-      sources: {},
-      extras: {},
-    });
+    userStore.addMessageToSession(txn_id, "Sorry, something went wrong. Please try again.", 'assistant');
   } finally {
     isStreaming.value = false;
     scrollToBottom();
@@ -248,35 +178,6 @@ const handleFeedback = (type, messageId) => {
 const showDocuments = (messageId) => {
   console.log(`Show documents for message ID: ${messageId}`);
   // Implement document display logic
-};
-
-/**
- * Handles the selection of a chat session.
- * @param {string} sessionId - The ID of the selected chat session.
- */
-const handleSelectSession = (sessionId) => {
-  chatStore.setActiveChatSession(sessionId);
-  // Navigate to the selected chat
-  router.push({ query: { chatId: sessionId } });
-};
-
-/**
- * Initializes a new chat session.
- */
-const initializeNewChat = () => {
-  const newSessionId = uuidv4();
-  const newSession = {
-    id: newSessionId,
-    date: new Date().toISOString().split('T')[0], // 'YYYY-MM-DD'
-    lastMessageTimestamp: null,
-    lastMessage: '',
-    persona_id: null, // Assign a persona if applicable
-    sharedStatus: 'Private',
-    // Add other necessary properties
-  };
-  chatStore.addChatSession(newSession);
-  chatStore.setActiveChatSession(newSession.id);
-  router.push({ query: { chatId: newSession.id } });
 };
 
 /**
@@ -314,40 +215,20 @@ watch(messageHistory, () => {
     scrollToBottom();
   });
 });
-
-// Set activeChatSessionId based on the route on mount
-onMounted(() => {
-  if (selectedChatSession.value) {
-    chatStore.setActiveChatSession(selectedChatSession.value.id);
-  }
-
-  if (!route.query.chatId && chatStore.activeChatSessionId) {
-    router.replace({ query: { chatId: chatStore.activeChatSessionId } });
-  }
-});
 </script>
 
 <style scoped>
-/* Loader Styles (if using CSS loader) */
-/* Remove if using vue3-spinner */
-.loader {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  animation: spin 1s linear infinite;
+/* Ensure the chat area occupies the full height on mobile */
+@media (max-width: 767px) {
+  .flex-1 {
+    height: calc(100vh - 64px); /* Adjust based on header/footer height */
+  }
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+/* Adjust padding for mobile */
+@media (max-width: 639px) {
+  .p-2 {
+    padding: 0.5rem;
+  }
 }
-
-.message-content {
-  white-space: pre-wrap;
-}
-
-/* Optionally, add different styles for user and AI messages */
-/* Styles are now handled within the message components */
 </style>
