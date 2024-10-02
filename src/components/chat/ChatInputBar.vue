@@ -1,33 +1,26 @@
 <!-- src/components/chat/ChatInputBar.vue -->
 <template>
-  <form @submit.prevent="handleSubmit" class="text-black flex items-center space-x-4">
+  <div class="flex items-center space-x-2 text-black">
     <input
-      v-model="localMessage"
+      v-model="inputMessage"
       type="text"
       placeholder="Type your message..."
-      class="flex-1 px-4 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-      :disabled="disabled"
-      required
-      aria-label="Type your message"
+      class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      @keyup.enter="send"
     />
     <button
-      type="submit"
-      class="flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-full shadow hover:bg-green-700 transition-colors disabled:opacity-50"
       :disabled="disabled"
-      aria-label="Send message"
+      @click="send"
+      class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none disabled:bg-indigo-300 transition-colors duration-200"
     >
-      <!-- Send Icon -->
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-      </svg>
+      Send
     </button>
-  </form>
+  </div>
 </template>
 
 <script setup>
-import { ref, watch, defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits, ref, watch } from 'vue';
 
-// Define props
 const props = defineProps({
   modelValue: {
     type: String,
@@ -43,40 +36,30 @@ const props = defineProps({
   },
 });
 
-// Define emits
 const emit = defineEmits(['update:modelValue', 'send', 'cancel']);
 
-// Local message state
-const localMessage = ref(props.modelValue);
+const inputMessage = ref(props.modelValue);
 
-// Watch for external changes to modelValue
-watch(
-  () => props.modelValue,
-  (newVal) => {
-    localMessage.value = newVal;
-  }
-);
+// Sync with parent component
+watch(inputMessage, (newVal) => {
+  emit('update:modelValue', newVal);
+});
 
-// Watch for localMessage changes and emit 'update:modelValue'
-watch(
-  () => localMessage.value,
-  (newVal) => {
-    emit('update:modelValue', newVal);
-  }
-);
-
-// Handle form submission
-const handleSubmit = () => {
-  if (props.isStreaming) {
-    // Emit a cancel event if streaming is in progress
-    emit('cancel');
-  } else {
-    // Emit a send event
-    emit('send');
-  }
+const send = () => {
+  console.log("reached send", inputMessage.value)
+  if (!inputMessage.value.trim()) return;
+  console.log("emitting send")
+  emit('send');
 };
 </script>
 
 <style scoped>
-/* Optional: Add any specific styles here */
+/* Ensure the input and button are touch-friendly */
+input {
+  font-size: 1rem;
+}
+
+button {
+  font-size: 1rem;
+}
 </style>
