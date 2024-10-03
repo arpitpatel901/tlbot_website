@@ -191,6 +191,7 @@ export default {
     // Initialize user data when the component is mounted
     onMounted(() => {
       userStore.initializeUser();
+      console.log("MainDashboard: User Store State:", userStore.$state);
     });
 
     const logout = () => {
@@ -218,7 +219,9 @@ export default {
      * @param {string} sessionId - The ID of the selected chat session.
      */
     const handleSelectSession = (sessionId) => {
+      console.log(`MainDashboard: Selecting chat session ID: ${sessionId}`);
       userStore.setActiveChatSession(sessionId);
+      console.log(`MainDashboard: activeChatSessionId is now: ${userStore.activeChatSessionId}`);
       // Navigate to the selected chat
       router.push({ name: 'Chat', query: { chatId: sessionId } });
       closeSidebar();
@@ -230,6 +233,7 @@ export default {
     const initializeNewChat = () => {
       userStore.initializeNewChat();
       const newSessionId = userStore.activeChatSessionId;
+      console.log(`MainDashboard: Initialized new chat session with ID: ${newSessionId}`);
       router.push({ name: 'Chat', query: { chatId: newSessionId } });
       closeSidebar();
     };

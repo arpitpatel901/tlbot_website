@@ -1,4 +1,4 @@
-<!-- src/components/Chat.vue -->
+<!-- src/components/chat/Chat.vue -->
 <template>
   <div class="flex flex-col h-full">
     <!-- Messages Area -->
@@ -77,19 +77,63 @@ const userStore = useUserStore();
 const router = useRouter();
 const route = useRoute();
 
+// Reactive State
+const newMessage = ref('');
+const isStreaming = ref(false);
+
+// Reference to the chat area for scrolling
+const chatArea = ref(null);
+
+// Synchronize store's activeChatSessionId with route's chatId
+const syncChatSession = () => {
+  const chatId = route.query.chatId;
+  if (chatId) {
+      const sessionExists = userStore.chatSessions.some(session => session.id === chatId);
+      if (sessionExists) {
+        userStore.setActiveChatSession(chatId);
+        console.log(`Active chat session set to ID: ${chatId}`);
+      } else {
+        console.error(`Chat session with ID ${chatId} does not exist.`);
+        // Optionally, initialize a new chat session or redirect
+        // For example, initialize a new chat:
+        userStore.initializeNewChat();
+        const newSessionId = userStore.activeChatSessionId;
+        router.replace({ name: 'Chat', query: { chatId: newSessionId } });
+      }
+    } else {
+      console.warn("No chatId provided in the route.");
+      // Optionally, initialize a new chat session
+      userStore.initializeNewChat();
+      const newSessionId = userStore.activeChatSessionId;
+      router.replace({ name: 'Chat', query: { chatId: newSessionId } });
+    }
+
+};
+
+// Call syncChatSession on mount
+onMounted(() => {
+  syncChatSession();
+});
+
+// Watch for changes in route's chatId
+watch(
+  () => route.query.chatId,
+  (newChatId) => {
+    console.log(`Chat.vue: Detected route change to chatId=${newChatId}`);
+    syncChatSession();
+  },
+  { immediate: true }
+);
+
 // Computed Properties
 const selectedChatSession = computed(() => {
+  // const chatId = userStore.activeChatSessionId;
   const chatId = route.query.chatId;
   const session = userStore.chatSessions.find(session => session.id === chatId) || null;
   console.log("Computed selectedChatSession:", session);
   return session;
 });
 
-// Reactive State
-const newMessage = ref('');
-const isStreaming = ref(false);
-
-// Computed Properties
 const messageHistory = computed(() => {
   const session = selectedChatSession.value;
   console.log("Session is :", session);
@@ -100,9 +144,6 @@ const messageHistory = computed(() => {
   console.log("Computed messageHistory:", messages);
   return messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 });
-
-// Reference to the chat area for scrolling
-const chatArea = ref(null);
 
 // Functions
 
@@ -118,6 +159,12 @@ const sendMessage = async () => {
 
   console.log("Sending message:", messageContent, "Transaction ID:", txn_id);
   console.log("Current activeChatSessionId:", txn_id);
+
+  if (!txn_id) {
+    console.error("Cannot send message: activeChatSessionId is null.");
+    // Optionally, show a user-friendly error message
+    return;
+  }
 
   // Add user's message to the store
   userStore.addMessageToSession(txn_id, messageContent, 'user');
