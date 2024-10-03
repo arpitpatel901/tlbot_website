@@ -98,27 +98,38 @@ export const useUserStore = defineStore('user', () => {
    */
   const addMessageToSession = (sessionId, message, type = 'user') => {
     console.log(`Attempting to add message to session ID: ${sessionId}`);
+    
+    if (!sessionId) {
+      console.error("addMessageToSession: sessionId is null or undefined.");
+      return;
+    }
+
     const session = chatSessions.value.find(s => s.id === sessionId);
+    
     if (session) {
       console.log(`Session found:`, session);
+      
       // Defensive coding: Initialize 'messages' if undefined
       if (!session.messages || !Array.isArray(session.messages)) {
         console.warn(`addMessageToSession: 'messages' array missing for session ID ${sessionId}. Initializing it.`);
         session.messages = [];
         console.log(`Initialized 'messages' array for session ID ${sessionId}. Current messages:`, session.messages);
       }
-  
+
       const newMessage = {
         messageId: uuidv4(),
         message: message,
         type: type, // 'user' or 'assistant'
         timestamp: new Date().toISOString(),
       };
+      
       console.log(`Adding message to session ${sessionId}:`, newMessage);
       session.messages.push(newMessage);
       console.log(`Current messages in session ${sessionId}:`, session.messages);
+      
       session.lastMessage = message;
       session.lastMessageTimestamp = newMessage.timestamp;
+      
       persistChatSessions();
     } else {
       console.error(`addMessageToSession: No session found with ID ${sessionId}`);

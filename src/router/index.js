@@ -50,6 +50,7 @@ const routes = [
         path: 'chat',
         name: 'Chat',
         component: Chat,
+        props: route => ({ chatId: route.query.chatId }),
         // alias: '/chat',
       },
       {
