@@ -8,8 +8,17 @@
 </template>
 
 <script>
+import { onMounted } from 'vue';
+import { useUserStore } from '@/stores/userStore';
+
 export default {
-  name: 'App'
+  name: 'App',
+  setup() {
+    const userStore = useUserStore();
+    onMounted(() => {
+      userStore.initializeUser();
+    });
+  },
 };
 </script>
 
