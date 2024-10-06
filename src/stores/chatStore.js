@@ -23,20 +23,14 @@ export const useUserStore = defineStore('user', () => {
 
     const storedChatSessions = localStorage.getItem('chatSessions');
     if (storedChatSessions) {
-      try {
-        chatSessions.value = JSON.parse(storedChatSessions);
-        // Ensure each chatSession has a 'messages' array
-        chatSessions.value.forEach(session => {
-          if (!session.messages || !Array.isArray(session.messages)) {
-            console.warn(`Chat session ${session.id} is missing 'messages' array. Initializing it.`);
-            session.messages = [];
-          }
-        });
-        persistChatSessions(); // Persist any changes made
-      } catch (error) {
-        console.error("Error parsing chatSessions from localStorage:", error);
-        chatSessions.value = [];
-      }
+      chatSessions.value = JSON.parse(storedChatSessions);
+      // Ensure each chatSession has a 'messages' array
+      chatSessions.value.forEach(session => {
+        if (!session.messages || !Array.isArray(session.messages)) {
+          session.messages = [];
+        }
+      });
+      persistChatSessions(); // Persist any changes made
     }
 
     const storedActiveChatSessionId = localStorage.getItem('activeChatSessionId');
@@ -141,17 +135,15 @@ export const useUserStore = defineStore('user', () => {
       console.error(`addMessageToSession: No session found with ID ${sessionId}`);
     }
   };
+  
+  
 
   /**
    * Persists chat sessions to localStorage.
    */
   const persistChatSessions = () => {
-    try {
-      localStorage.setItem('chatSessions', JSON.stringify(chatSessions.value));
-      localStorage.setItem('activeChatSessionId', activeChatSessionId.value);
-    } catch (error) {
-      console.error("Error persisting chatSessions to localStorage:", error);
-    }
+    localStorage.setItem('chatSessions', JSON.stringify(chatSessions.value));
+    localStorage.setItem('activeChatSessionId', activeChatSessionId.value);
   };
 
   return {
