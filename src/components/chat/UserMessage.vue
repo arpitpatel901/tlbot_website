@@ -4,7 +4,6 @@
     <div class="message-content">
       {{ message.message }}
     </div>
-    <!-- No actions for user messages -->
   </div>
 </template>
 
@@ -24,29 +23,17 @@ const props = defineProps({
  */
 const messageClasses = computed(() => {
   return [
-    'p-2 rounded shadow bg-blue-100 text-black',
-    // Additional classes can be added here
+    'flex flex-col p-4 rounded-lg shadow-md max-w-md',
+    props.message.type === 'user' ? 'bg-blue-100 text-black ml-auto' : 'bg-gray-100 text-black',
+    'transition-transform duration-300 ease-in-out',
   ];
 });
 </script>
 
 <style scoped>
 .message-content {
-  /* Ensure the text is black */
-  color: black;
-  /* Other styling as needed */
-}
-
-/* Optional: Style the message container */
-.p-2 {
-  padding: 0.5rem;
-}
-
-.rounded {
-  border-radius: 0.25rem;
-}
-
-.shadow {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-size: 1rem;
 }
 </style>

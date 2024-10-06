@@ -5,9 +5,27 @@
       {{ message.message }}
     </div>
     <div class="actions">
-      <button @click="feedback('positive')" class="feedback-button" aria-label="Positive Feedback">👍</button>
-      <button @click="feedback('negative')" class="feedback-button" aria-label="Negative Feedback">👎</button>
-      <button @click="showDocs(message.messageId)" class="docs-button" aria-label="Show Documents">📄</button>
+      <button
+        @click="feedback('positive')"
+        class="feedback-button"
+        aria-label="Give positive feedback"
+      >
+        👍
+      </button>
+      <button
+        @click="feedback('negative')"
+        class="feedback-button"
+        aria-label="Give negative feedback"
+      >
+        👎
+      </button>
+      <button
+        @click="showDocs(message.messageId)"
+        class="docs-button"
+        aria-label="Show Documents"
+      >
+        📄
+      </button>
     </div>
   </div>
 </template>
@@ -30,9 +48,9 @@ const emit = defineEmits(['feedback', 'showDocs']);
  */
 const messageClasses = computed(() => {
   return [
-    'p-2 rounded shadow',
-    props.message.type === 'user' ? 'bg-blue-100 text-black' : 'bg-gray-100 text-black',
-    // Additional classes can be added here
+    'flex flex-col p-4 rounded-lg shadow-md max-w-md',
+    props.message.type === 'user' ? 'bg-blue-100 text-black ml-auto' : 'bg-gray-100 text-black',
+    'transition-transform duration-300 ease-in-out',
   ];
 });
 
@@ -55,11 +73,12 @@ const showDocs = (messageId) => {
 
 <style scoped>
 .message-content {
-  /* Ensure the text is black */
-  color: black;
-  /* Other styling as needed */
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-size: 1rem;
 }
 
+/* Action Buttons */
 .actions {
   margin-top: 0.5rem;
   display: flex;
@@ -72,23 +91,12 @@ const showDocs = (messageId) => {
   border: none;
   cursor: pointer;
   font-size: 1.2rem;
+  transition: transform 0.2s, color 0.2s;
 }
 
 .feedback-button:hover,
 .docs-button:hover {
-  opacity: 0.7;
-}
-
-/* Optional: Style the message container */
-.p-2 {
-  padding: 0.5rem;
-}
-
-.rounded {
-  border-radius: 0.25rem;
-}
-
-.shadow {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transform: scale(1.2);
+  color: #2563eb; /* Indigo-600 */
 }
 </style>
