@@ -142,7 +142,7 @@ export default {
           client_id: import.meta.env.VITE_APP_CLIENT_ID, // Correct for Vite
           scope: "email profile openid",
           ux_mode: "redirect",
-          redirect_uri: "http://localhost:3001/api/google-auth",
+          redirect_uri: `${import.meta.env.VITE_API_URL}/api/google-auth`,
         })
         .requestCode();
     };
