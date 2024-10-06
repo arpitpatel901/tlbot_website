@@ -12,8 +12,7 @@ import App from "./App.vue";
 import { useUserStore } from "@/stores/userStore";
 // import { useChatStore } from "@/stores/chatStore"; // Remove this import if not needed
 
-export const CLIENT_ID =
-  "497764252617-oau8a78f5pcolh165ntbm36e9f3d3hgh.apps.googleusercontent.com";
+const CLIENT_ID = import.meta.env.VITE_APP_CLIENT_ID;
 
 const app = createApp(App);
 const pinia = createPinia();
