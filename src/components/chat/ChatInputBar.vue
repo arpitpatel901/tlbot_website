@@ -50,6 +50,7 @@ const props = defineProps({
 
 // Debug logs when ChatInputBar is loaded
 console.log("ChatInputBar component loaded");
+
 // Define the emit
 const emit = defineEmits(["send", "update:modelValue"]);
 
@@ -75,6 +76,7 @@ watch(inputMessage, (newVal) => {
 const send = () => {
   if (!inputMessage.value.trim()) {
     alert("Cannot send an empty message.");
+    console.log("ChatInputBar: Attempted to send empty message");
     return;
   }
   console.log("ChatInputBar: Sending message:", inputMessage.value); // Log when sending a message
@@ -86,8 +88,13 @@ const placeholder = computed(() => {
     ? "Select a chat session to start messaging."
     : "Type your message here...";
 });
-</script>
 
+// Optional: Implement cancel functionality if needed
+const cancel = () => {
+  console.log("ChatInputBar: Cancel sending message");
+  // Implement cancel logic if applicable
+};
+</script>
 
 <style scoped>
 /* Ensure the input and button are touch-friendly */

@@ -52,8 +52,8 @@
 
       <!-- Content -->
       <main class="flex-1 overflow-auto">
-        <!-- Render child routes here -->
         <router-view></router-view>
+        <!-- Render child routes here -->
       </main>
     </div>
   </div>
@@ -93,7 +93,7 @@ export default {
 
     const logout = async () => {
       await userStore.logout();
-      router.push({ name: "Home" }); // Changed to 'Home' to match route name
+      router.push({ name: "HomeRedirect" }); // Redirect to HomeRedirect after logout
     };
 
     const userName = computed(() => userStore.user?.name || "User");
@@ -125,8 +125,8 @@ export default {
       console.log(
         `MainDashboard: activeChatSessionId is now: ${userStore.activeChatSessionId}`
       );
-      // Navigate to the Chat route
-      router.push({ name: "Chat", params: { channelId: sessionId } }); // Ensure channelId matches route
+      // Navigate to the Chat route with channelId as a route param
+      router.push({ name: "Chat", params: { channelId: sessionId } });
       closeSidebar();
     };
 
@@ -139,7 +139,7 @@ export default {
       console.log(
         `MainDashboard: Initialized new chat session with ID: ${newSessionId}`
       );
-      router.push({ name: "Chat", params: { channelId: newSessionId } }); // Ensure channelId matches route
+      router.push({ name: "Chat", params: { channelId: newSessionId } });
       closeSidebar();
     };
 

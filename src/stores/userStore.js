@@ -19,13 +19,27 @@ export const useUserStore = defineStore('user', () => {
   // User initialization and authentication
   const initializeUser = async () => {
     try {
-      const response = await axios.get('/api/protected/user');
-      user.value = response.data;
-      console.log("userStore: User initialized:", user.value);
+      // First, check if user data exists in localStorage
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        user.value = JSON.parse(storedUser);
+        console.log("userStore: User loaded from localStorage:", user.value);
+      } else {
+        // If not in localStorage, try to fetch from backend
+        const response = await axios.get('/api/protected/user');
+        user.value = response.data;
+        console.log("userStore: User initialized from backend:", user.value);
+        localStorage.setItem('user', JSON.stringify(user.value));
+      }
       await fetchChannels();
     } catch (error) {
-      console.error('userStore: User not authenticated:', error);
-      user.value = null;
+      console.error('userStore: Error initializing user:', error);
+      // If user was loaded from localStorage but backend is down, retain the user state
+      if (!user.value) {
+        user.value = null;
+        clearUser(); // clear localStorage if no user is present
+      }
+      // If user was loaded from localStorage, do not clear it
     }
   };
 
@@ -46,7 +60,7 @@ export const useUserStore = defineStore('user', () => {
     messages.value = [];
     chatSessions.value = [];
     activeChatSessionId.value = null;
-    localStorage.clear();
+    localStorage.removeItem('user'); // Remove only user data
     console.log("userStore: User state cleared");
   };
 
