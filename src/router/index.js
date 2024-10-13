@@ -51,6 +51,7 @@ const routes = [
         name: 'Chat',
         component: Chat,
         props: route => ({ chatId: route.query.chatId }),
+        meta: { requiresAuth: true },
         // alias: '/chat',
       },
       {
@@ -80,17 +81,17 @@ const router = createRouter({
 });
 
 // Navigation Guard to protect routes
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   const userStore = useUserStore();
 
-  // Debugging Logs
-  console.log('Navigating to:', to.fullPath);
-  console.log('User Store State:', userStore.user);
+  // If user is not initialized, fetch user data
+  if (userStore.user === null) {
+    await userStore.initializeUser();
+  }
 
   if (requiresAuth && !userStore.user) {
-    console.log('User not authenticated. Redirecting to Home.');
-    next('/');
+    next({ name: 'Login' });
   } else {
     next();
   }

@@ -5,17 +5,17 @@
     <div class="flex-1 p-2 sm:p-4 overflow-y-auto" ref="chatArea">
       <!-- Messages List -->
       <div v-if="messageHistory.length > 0" class="space-y-4">
-        <template v-for="(message, index) in messageHistory" :key="message.messageId">
+        <template
+          v-for="(message, index) in messageHistory"
+          :key="message.messageId"
+        >
           <AssistantMessage
             v-if="message.type === 'assistant'"
             :message="message"
             @feedback="handleFeedback"
             @showDocs="showDocuments"
           />
-          <UserMessage
-            v-else-if="message.type === 'user'"
-            :message="message"
-          />
+          <UserMessage v-else-if="message.type === 'user'" :message="message" />
           <div v-else class="p-2 bg-red-100 text-black rounded shadow">
             Unknown message type.
           </div>
@@ -30,10 +30,10 @@
         </div>
       </div>
       <div v-else class="flex items-center justify-center h-full">
-        <ChatIntro 
-          :availableSources="finalAvailableSources" 
-          :availablePersonas="filteredAssistants" 
-          :selectedPersona="selectedPersona" 
+        <ChatIntro
+          :availableSources="finalAvailableSources"
+          :availablePersonas="filteredAssistants"
+          :selectedPersona="selectedPersona"
         />
       </div>
     </div>
@@ -52,19 +52,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, nextTick } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { useUserStore } from '@/stores/userStore.js';
+import { ref, computed, onMounted, watch, nextTick } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useUserStore } from "@/stores/userStore.js";
 
 // Import Components
-import AssistantMessage from '@/components/chat/AssistantMessage.vue';
-import UserMessage from '@/components/chat/UserMessage.vue';
-import ChatInputBar from '@/components/chat/ChatInputBar.vue';
-import ChatIntro from '@/components/chat/ChatIntro.vue';
-import { ThreeDots } from 'vue3-spinner';
+import AssistantMessage from "@/components/chat/AssistantMessage.vue";
+import UserMessage from "@/components/chat/UserMessage.vue";
+import ChatInputBar from "@/components/chat/ChatInputBar.vue";
+import ChatIntro from "@/components/chat/ChatIntro.vue";
+import { ThreeDots } from "vue3-spinner";
 
 // Import uuidv4
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 const finalAvailableSources = ref([]);
 const filteredAssistants = ref([]);
@@ -78,7 +78,7 @@ const router = useRouter();
 const route = useRoute();
 
 // Reactive State
-const newMessage = ref('');
+const newMessage = ref("");
 const isStreaming = ref(false);
 
 // Reference to the chat area for scrolling
@@ -88,26 +88,23 @@ const chatArea = ref(null);
 const syncChatSession = () => {
   const chatId = route.query.chatId;
   if (chatId) {
-      const sessionExists = userStore.chatSessions.some(session => session.id === chatId);
-      if (sessionExists) {
-        userStore.setActiveChatSession(chatId);
-        console.log(`Active chat session set to ID: ${chatId}`);
-      } else {
-        console.error(`Chat session with ID ${chatId} does not exist.`);
-        // Optionally, initialize a new chat session or redirect
-        // For example, initialize a new chat:
-        userStore.initializeNewChat();
-        const newSessionId = userStore.activeChatSessionId;
-        router.replace({ name: 'Chat', query: { chatId: newSessionId } });
-      }
+    const sessionExists = userStore.chatSessions.some(
+      (session) => session.id === chatId
+    );
+    if (sessionExists) {
+      userStore.setActiveChatSession(chatId);
     } else {
-      console.warn("No chatId provided in the route.");
-      // Optionally, initialize a new chat session
-      userStore.initializeNewChat();
-      const newSessionId = userStore.activeChatSessionId;
-      router.replace({ name: 'Chat', query: { chatId: newSessionId } });
+      // If the chat session doesn't exist, create it
+      userStore.initializeNewChat(chatId);
     }
-
+  } else {
+    // If no chatId is provided, create a new chat session
+    userStore.initializeNewChat();
+    router.replace({
+      name: "Chat",
+      query: { chatId: userStore.activeChatSessionId },
+    });
+  }
 };
 
 // Call syncChatSession on mount
@@ -119,17 +116,16 @@ onMounted(() => {
 watch(
   () => route.query.chatId,
   (newChatId) => {
-    console.log(`Chat.vue: Detected route change to chatId=${newChatId}`);
     syncChatSession();
-  },
-  { immediate: true }
+  }
 );
 
 // Computed Properties
 const selectedChatSession = computed(() => {
   // const chatId = userStore.activeChatSessionId;
   const chatId = route.query.chatId;
-  const session = userStore.chatSessions.find(session => session.id === chatId) || null;
+  const session =
+    userStore.chatSessions.find((session) => session.id === chatId) || null;
   console.log("Computed selectedChatSession:", session);
   return session;
 });
@@ -154,23 +150,19 @@ const sendMessage = async () => {
   if (!newMessage.value.trim()) return;
 
   const messageContent = newMessage.value.trim();
-  const txn_id = userStore.activeChatSessionId; // Access directly without .value
-  const user_id = userStore.user?.id || 'unknown_user'; // Handle undefined user_id
-
-  console.log("Sending message:", messageContent, "Transaction ID:", txn_id);
-  console.log("Current activeChatSessionId:", txn_id);
+  const txn_id = selectedChatSession.value?.id;
+  const user_id = userStore.user?.id || "unknown_user"; // Handle undefined user_id
 
   if (!txn_id) {
-    console.error("Cannot send message: activeChatSessionId is null.");
-    // Optionally, show a user-friendly error message
+    console.error("Cannot send message: No active chat session.");
     return;
   }
 
   // Add user's message to the store
-  userStore.addMessageToSession(txn_id, messageContent, 'user');
+  userStore.addMessageToSession(txn_id, messageContent, "user");
 
   // Clear the input and set loading
-  newMessage.value = '';
+  newMessage.value = "";
   isStreaming.value = true;
 
   // Scroll to bottom
@@ -187,13 +179,15 @@ const sendMessage = async () => {
 
     // Add AI response to the store
     if (response && response.ai_response) {
-      userStore.addMessageToSession(txn_id, response.ai_response, 'assistant');
+      userStore.addMessageToSession(txn_id, response.ai_response, "assistant");
     }
-
   } catch (error) {
     console.error("Error sending message:", error);
-    // Optionally, add an error message to the chat
-    userStore.addMessageToSession(txn_id, "Sorry, something went wrong. Please try again.", 'assistant');
+    userStore.addMessageToSession(
+      txn_id,
+      "Sorry, something went wrong. Please try again.",
+      "assistant"
+    );
   } finally {
     isStreaming.value = false;
     scrollToBottom();

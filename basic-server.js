@@ -1,12 +1,19 @@
 // basic-server.js
 // How to run: npm run mock-server
 // How to test without front end: curl -G http://localhost:3001/api/google-auth   --data-urlencode "code=test_code"   --data-urlencode "scope=email profile openid https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email"   --data-urlencode "authuser=0"   --data-urlencode "prompt=consent"
+
 import express from 'express';
 import axios from 'axios';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import session from 'express-session';
+import mongoose from 'mongoose';
+
+// Import the User model from src/stores
+import User from './src/stores/User.js'; // Adjusted import path
+import { authenticateUser } from './src/middleware/auth.js';
 
 // If using ES modules, set __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -21,29 +28,56 @@ dotenv.config({ path: path.resolve(__dirname, '.env') });
 // Load environment-specific .env and override base variables
 const envFile = `.env.${NODE_ENV}`;
 dotenv.config({ path: path.resolve(__dirname, envFile), override: true });
-console.log("Redirect URI is",process.env.REDIRECT_URI)
+console.log("Redirect URI is", process.env.REDIRECT_URI)
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const authorizedEmails = process.env.AUTHORIZED_EMAILS.split(',');
-const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',');
+const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : [];
 const siteURL = process.env.SITE_URL;
 
 const app = express();
+
+// Use express-session middleware
+console.log('SESSION_SECRET:', process.env.SESSION_SECRET);
+app.use(session({
+  secret: process.env.SESSION_SECRET, // Ensure this is defined
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false, // Set to true if using HTTPS
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000, // Session expires after 1 day
+  },
+}));
+
+// CORS
 app.use(cors({
-  origin: function(origin, callback){
+  origin: function (origin, callback) {
+    console.log('Incoming request from origin:', origin);
+    console.log('Allowed Origins:', allowedOrigins);
     // Allow requests with no origin (like mobile apps or curl)
-    if(!origin) return callback(null, true);
-    if(!allowedOrigins.includes(origin)){
+    if (!origin) return callback(null, true);
+    if (!allowedOrigins.includes(origin)) {
       const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
       return callback(new Error(msg), false);
     }
     return callback(null, true);
-  }
+  },
+  credentials: true, // Allow cookies to be sent
 }));
 
 app.use(express.json());
 
+// Connect to MongoDB
+mongoose.connect('mongodb://localhost:27017/tlabs_website_db')
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.error('MongoDB connection error:', err));
+
+
+// ROUTES
+
+// Unprotected route
 app.get('/api/google-auth', async (req, res) => {
   const { code } = req.query;
   console.log("Received code:", code);
@@ -76,16 +110,24 @@ app.get('/api/google-auth', async (req, res) => {
         const userEmail = userResponse.data.email;
         console.log('User Email:', userEmail);
 
-        // Check if the email is authorized
-        if (authorizedEmails.includes(userEmail)) {
-          // User is authorized
-          console.log('User is authorized. Redirecting to callback.');
-          res.redirect(`${siteURL}/auth/callback?status=success&userData=${encodeURIComponent(JSON.stringify(userResponse.data))}`);
-        } else {
-          // User is not authorized
-          console.warn('Unauthorized user attempted to log in.');
-          res.redirect(`${siteURL}auth/callback?status=unauthorized`);
+        // Check if the user exists in MongoDB
+        let user = await User.findOne({ email: userEmail });
+
+        if (!user) {
+          // Create a new user
+          user = new User({
+            name: userResponse.data.name,
+            email: userEmail,
+            avatar: userResponse.data.picture,
+          });
+          await user.save();
         }
+
+        // Create a session
+        req.session.userId = user._id;
+
+        // Redirect to the frontend application
+        res.redirect(`${siteURL}/auth/callback?status=success`);
       } else {
         console.error('Failed to fetch user data');
         res.status(500).json({ error: "Failed to fetch user data" });
@@ -95,6 +137,19 @@ app.get('/api/google-auth', async (req, res) => {
     console.error('Error during Google Auth process:', error);
     res.status(500).json({ error: "Server error during the auth process" });
   }
+});
+
+// Apply authentication middleware to routes that require authentication
+app.use('/api/protected', authenticateUser);
+
+// Example protected route
+app.get('/api/protected/user', (req, res) => {
+  res.json({
+    id: req.user._id,
+    name: req.user.name,
+    email: req.user.email,
+    avatar: req.user.avatar,
+  });
 });
 
 // Add a new route for processing the code
@@ -114,6 +169,17 @@ app.get('/api/process-code', (req, res) => {
     console.error("No code received, or code was empty.");
     res.status(400).json({ error: "Invalid code received" });
   }
+});
+
+app.post('/api/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.error('Error destroying session:', err);
+      return res.status(500).json({ error: 'Failed to logout' });
+    }
+    res.clearCookie('connect.sid'); // Replace 'connect.sid' with your session cookie name if different
+    res.json({ message: 'Logged out successfully' });
+  });
 });
 
 app.post('/api/submit-form', async (req, res) => {

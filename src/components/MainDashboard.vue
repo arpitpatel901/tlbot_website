@@ -19,10 +19,19 @@
             aria-label="Close sidebar"
           >
             <!-- Close Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-                 viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M6 18L18 6M6 6l12 12"/>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -77,10 +86,19 @@
               aria-label="Start New Chat"
             >
               <!-- Plus Icon -->
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                   viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M12 4v16m8-8H4" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4v16m8-8H4"
+                />
               </svg>
             </button>
           </div>
@@ -97,21 +115,23 @@
               >
                 <!-- Chat Session Icon -->
                 <ChatBubbleLeftRightIcon class="h-4 w-4 mr-2 text-indigo-600" />
-                <span class="truncate">{{ session.lastMessage || 'New Chat' }}</span>
+                <span class="truncate">{{
+                  session.lastMessage || "New Chat"
+                }}</span>
               </button>
             </li>
           </ul>
         </div>
       </div>
     </aside>
-    
+
     <!-- Overlay for small screens when sidebar is open -->
     <div
       v-if="isSidebarOpen"
       class="fixed inset-0 bg-black opacity-30 z-40 md:hidden"
       @click="closeSidebar"
     ></div>
-    
+
     <!-- Main Content Area -->
     <div class="flex-1 flex flex-col">
       <!-- Top Bar -->
@@ -142,7 +162,7 @@
             />
           </svg>
         </button>
-        
+
         <!-- User Profile -->
         <div class="flex items-center space-x-4">
           <span class="text-gray-700 font-medium">{{ userName }}</span>
@@ -159,7 +179,7 @@
           </div>
         </div>
       </header>
-      
+
       <!-- Content -->
       <main class="flex-1 overflow-auto">
         <router-view></router-view>
@@ -169,14 +189,18 @@
 </template>
 
 <script>
-import { useUserStore } from '@/stores/userStore';
-import { useRouter } from 'vue-router';
-import { ref, computed, onMounted } from 'vue';
-import { ChatBubbleLeftRightIcon, Cog6ToothIcon, ArrowRightOnRectangleIcon } from '@heroicons/vue/24/outline';
-import DatabaseIcon from '@/components/DatabaseIcon.vue';
+import { useUserStore } from "@/stores/userStore";
+import { useRouter } from "vue-router";
+import { ref, computed, onMounted } from "vue";
+import {
+  ChatBubbleLeftRightIcon,
+  Cog6ToothIcon,
+  ArrowRightOnRectangleIcon,
+} from "@heroicons/vue/24/outline";
+import DatabaseIcon from "@/components/DatabaseIcon.vue";
 
 export default {
-  name: 'MainDashboard',
+  name: "MainDashboard",
   components: {
     ChatBubbleLeftRightIcon,
     Cog6ToothIcon,
@@ -194,13 +218,15 @@ export default {
       console.log("MainDashboard: User Store State:", userStore.$state);
     });
 
-    const logout = () => {
-      userStore.clearUser();
-      router.push('/');
+    const logout = async () => {
+      await userStore.logout();
+      router.push({ name: "Login" });
     };
 
-    const userName = computed(() => userStore.user?.name || 'User');
-    const userAvatar = computed(() => userStore.user?.avatar || 'https://via.placeholder.com/150');
+    const userName = computed(() => userStore.user?.name || "User");
+    const userAvatar = computed(
+      () => userStore.user?.avatar || "https://via.placeholder.com/150"
+    );
 
     const toggleSidebar = () => {
       isSidebarOpen.value = !isSidebarOpen.value;
@@ -221,9 +247,11 @@ export default {
     const handleSelectSession = (sessionId) => {
       console.log(`MainDashboard: Selecting chat session ID: ${sessionId}`);
       userStore.setActiveChatSession(sessionId);
-      console.log(`MainDashboard: activeChatSessionId is now: ${userStore.activeChatSessionId}`);
+      console.log(
+        `MainDashboard: activeChatSessionId is now: ${userStore.activeChatSessionId}`
+      );
       // Navigate to the selected chat
-      router.push({ name: 'Chat', query: { chatId: sessionId } });
+      router.push({ name: "Chat", query: { chatId: sessionId } });
       closeSidebar();
     };
 
@@ -233,8 +261,10 @@ export default {
     const initializeNewChat = () => {
       userStore.initializeNewChat();
       const newSessionId = userStore.activeChatSessionId;
-      console.log(`MainDashboard: Initialized new chat session with ID: ${newSessionId}`);
-      router.push({ name: 'Chat', query: { chatId: newSessionId } });
+      console.log(
+        `MainDashboard: Initialized new chat session with ID: ${newSessionId}`
+      );
+      router.push({ name: "Chat", query: { chatId: newSessionId } });
       closeSidebar();
     };
 
