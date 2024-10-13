@@ -2,135 +2,7 @@
 <template>
   <div class="flex h-screen bg-gray-100">
     <!-- Sidebar -->
-    <aside
-      :class="[
-        'fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out',
-        isSidebarOpen ? 'translate-x-0' : '-translate-x-full',
-        'md:translate-x-0 md:static md:z-auto md:shadow-none',
-      ]"
-    >
-      <div class="flex flex-col h-full">
-        <!-- Sidebar Header -->
-        <div class="flex items-center justify-between p-4 bg-indigo-600">
-          <h2 class="text-lg font-semibold text-white">Dashboard</h2>
-          <button
-            @click="closeSidebar"
-            class="text-white md:hidden focus:outline-none"
-            aria-label="Close sidebar"
-          >
-            <!-- Close Icon -->
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
-        <!-- Sidebar Navigation -->
-        <nav class="flex-1 px-2 py-4 space-y-1 bg-white">
-          <router-link
-            :to="{ name: 'ConnectDataSources' }"
-            class="flex items-center px-4 py-2 text-gray-700 rounded hover:bg-indigo-50 transition-colors duration-200"
-            active-class="bg-indigo-100 font-semibold"
-            @click="closeSidebar"
-          >
-            <DatabaseIcon class="h-5 w-5 mr-3 text-indigo-600" />
-            Connect Data Sources
-          </router-link>
-          <router-link
-            :to="{ name: 'Chat' }"
-            class="flex items-center px-4 py-2 text-gray-700 rounded hover:bg-indigo-50 transition-colors duration-200"
-            active-class="bg-indigo-100 font-semibold"
-            @click="closeSidebar"
-          >
-            <ChatBubbleLeftRightIcon class="h-5 w-5 mr-3 text-indigo-600" />
-            Chat
-          </router-link>
-          <router-link
-            :to="{ name: 'AccountSettings' }"
-            class="flex items-center px-4 py-2 text-gray-700 rounded hover:bg-indigo-50 transition-colors duration-200"
-            active-class="bg-indigo-100 font-semibold"
-            @click="closeSidebar"
-          >
-            <Cog6ToothIcon class="h-5 w-5 mr-3 text-indigo-600" />
-            Account Settings
-          </router-link>
-          <button
-            @click="logout"
-            class="flex items-center w-full text-left px-4 py-2 text-gray-700 rounded hover:bg-indigo-50 transition-colors duration-200"
-          >
-            <ArrowRightOnRectangleIcon class="h-5 w-5 mr-3 text-indigo-600" />
-            Logout
-          </button>
-        </nav>
-
-        <!-- Horizontal Separator -->
-        <hr class="my-2 border-gray-300" />
-
-        <!-- Chat Sessions Section -->
-        <div class="px-2 py-4">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-gray-700 font-semibold">Chat Sessions</span>
-            <button
-              @click="initializeNewChat"
-              class="text-indigo-600 hover:text-indigo-800 focus:outline-none"
-              aria-label="Start New Chat"
-            >
-              <!-- Plus Icon -->
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-            </button>
-          </div>
-          <ul class="space-y-1">
-            <li v-for="session in chatSessions" :key="session.id">
-              <button
-                @click="handleSelectSession(session.id)"
-                :class="[
-                  'flex items-center w-full px-2 py-1 text-left rounded transition-colors duration-200',
-                  activeChatSessionId === session.id
-                    ? 'bg-indigo-100 text-indigo-700 font-semibold'
-                    : 'text-gray-600 hover:bg-indigo-50',
-                ]"
-              >
-                <!-- Chat Session Icon -->
-                <ChatBubbleLeftRightIcon class="h-4 w-4 mr-2 text-indigo-600" />
-                <span class="truncate">{{
-                  session.lastMessage || "New Chat"
-                }}</span>
-              </button>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </aside>
-
-    <!-- Overlay for small screens when sidebar is open -->
-    <div
-      v-if="isSidebarOpen"
-      class="fixed inset-0 bg-black opacity-30 z-40 md:hidden"
-      @click="closeSidebar"
-    ></div>
+    <ChatSideBar />
 
     <!-- Main Content Area -->
     <div class="flex-1 flex flex-col">
@@ -174,14 +46,13 @@
                 class="h-8 w-8 rounded-full object-cover"
               />
             </button>
-            <!-- Dropdown Menu (Optional) -->
-            <!-- You can implement a dropdown menu here if needed -->
           </div>
         </div>
       </header>
 
       <!-- Content -->
       <main class="flex-1 overflow-auto">
+        <!-- Render child routes here -->
         <router-view></router-view>
       </main>
     </div>
@@ -198,10 +69,12 @@ import {
   ArrowRightOnRectangleIcon,
 } from "@heroicons/vue/24/outline";
 import DatabaseIcon from "@/components/DatabaseIcon.vue";
+import ChatSideBar from "@/components/chat/ChatSideBar.vue";
 
 export default {
   name: "MainDashboard",
   components: {
+    ChatSideBar, // Register the ChatSideBar component
     ChatBubbleLeftRightIcon,
     Cog6ToothIcon,
     ArrowRightOnRectangleIcon,
@@ -220,7 +93,7 @@ export default {
 
     const logout = async () => {
       await userStore.logout();
-      router.push({ name: "Login" });
+      router.push({ name: "Home" }); // Changed to 'Home' to match route name
     };
 
     const userName = computed(() => userStore.user?.name || "User");
@@ -230,10 +103,12 @@ export default {
 
     const toggleSidebar = () => {
       isSidebarOpen.value = !isSidebarOpen.value;
+      console.log("MainDashboard: Toggling sidebar to", isSidebarOpen.value);
     };
 
     const closeSidebar = () => {
       isSidebarOpen.value = false;
+      console.log("MainDashboard: Closing sidebar");
     };
 
     // Chat Sessions from the store
@@ -250,8 +125,8 @@ export default {
       console.log(
         `MainDashboard: activeChatSessionId is now: ${userStore.activeChatSessionId}`
       );
-      // Navigate to the selected chat
-      router.push({ name: "Chat", query: { chatId: sessionId } });
+      // Navigate to the Chat route
+      router.push({ name: "Chat", params: { channelId: sessionId } }); // Ensure channelId matches route
       closeSidebar();
     };
 
@@ -264,7 +139,7 @@ export default {
       console.log(
         `MainDashboard: Initialized new chat session with ID: ${newSessionId}`
       );
-      router.push({ name: "Chat", query: { chatId: newSessionId } });
+      router.push({ name: "Chat", params: { channelId: newSessionId } }); // Ensure channelId matches route
       closeSidebar();
     };
 
@@ -285,6 +160,12 @@ export default {
 </script>
 
 <style scoped>
+/* Ensure the text color is black */
+input,
+textarea {
+  color: black;
+}
+
 /* Ensure the main content area doesn't get hidden under the fixed sidebar */
 @media (min-width: 768px) {
   aside {

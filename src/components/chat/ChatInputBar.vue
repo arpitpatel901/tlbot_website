@@ -29,13 +29,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
-import { defineProps, defineEmits } from 'vue';
+import { ref, computed, watch } from "vue";
+import { defineProps, defineEmits } from "vue";
 
+// Define the props
 const props = defineProps({
   modelValue: {
     type: String,
-    default: '',
+    default: "",
   },
   isStreaming: {
     type: Boolean,
@@ -47,38 +48,46 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['send', 'cancel', 'update:modelValue']);
+// Debug logs when ChatInputBar is loaded
+console.log("ChatInputBar component loaded");
+// Define the emit
+const emit = defineEmits(["send", "update:modelValue"]);
 
+// Manage the input message state
 const inputMessage = ref(props.modelValue);
 
 // Watch for external changes to modelValue
-watch(() => props.modelValue, (newVal) => {
-  inputMessage.value = newVal;
-});
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    inputMessage.value = newVal;
+    console.log("ChatInputBar: modelValue updated:", newVal); // Log when modelValue changes
+  }
+);
 
 // Emit updates to modelValue
 watch(inputMessage, (newVal) => {
-  emit('update:modelValue', newVal);
+  console.log("ChatInputBar: inputMessage updated:", newVal); // Log when inputMessage changes
+  emit("update:modelValue", newVal);
 });
 
+// Send the message
 const send = () => {
   if (!inputMessage.value.trim()) {
     alert("Cannot send an empty message.");
     return;
   }
-  console.log("ChatInputBar: reached send", inputMessage.value);
-  emit('send');
-};
-
-const cancel = () => {
-  console.log("ChatInputBar: cancel sending");
-  emit('cancel');
+  console.log("ChatInputBar: Sending message:", inputMessage.value); // Log when sending a message
+  emit("send");
 };
 
 const placeholder = computed(() => {
-  return props.disabled ? "Select a chat session to start messaging." : "Type your message here...";
+  return props.disabled
+    ? "Select a chat session to start messaging."
+    : "Type your message here...";
 });
 </script>
+
 
 <style scoped>
 /* Ensure the input and button are touch-friendly */

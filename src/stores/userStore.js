@@ -7,86 +7,134 @@ import axios from 'axios';
 export const useUserStore = defineStore('user', () => {
   // State
   const user = ref(null);
+  const channels = ref([]);
+  const activeChannelId = ref(null);
+  const messages = ref([]);
+
   const chatSessions = ref([]);
   const activeChatSessionId = ref(null);
 
   // Actions
 
-  /**
-   * Initializes the user from localStorage if available.
-   * Ensures each chat session has a 'messages' array.
-   */
+  // User initialization and authentication
   const initializeUser = async () => {
     try {
       const response = await axios.get('/api/protected/user');
       user.value = response.data;
+      console.log("userStore: User initialized:", user.value);
+      await fetchChannels();
     } catch (error) {
-      console.error('User not authenticated:', error);
+      console.error('userStore: User not authenticated:', error);
       user.value = null;
     }
   };
 
-  /**
-   * Clears the user data and removes it from localStorage.
-   */
-  const clearUser = () => {
-    user.value = null;
-    // Optionally, send a request to the server to destroy the session
-    axios.post('/api/logout');
-  };
   const logout = async () => {
     try {
       await axios.post('/api/logout');
+      console.log("userStore: User logged out");
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error('userStore: Error during logout:', error);
     }
     clearUser();
   };
 
-  /**
-   * Sets the active chat session by its ID.
-   * @param {string} sessionId - The ID of the chat session to set as active.
-   */
-  const setActiveChatSession = (sessionId) => {
-    activeChatSessionId.value = sessionId;
-    localStorage.setItem('activeChatSessionId', sessionId);
+  const clearUser = () => {
+    user.value = null;
+    channels.value = [];
+    activeChannelId.value = null;
+    messages.value = [];
+    chatSessions.value = [];
+    activeChatSessionId.value = null;
+    localStorage.clear();
+    console.log("userStore: User state cleared");
   };
 
-  /**
-   * Initializes a new chat session and sets it as active.
-   * @param {string} [sessionId] - Optional session ID.
-   */
-  const initializeNewChat = (sessionId) => {
-    const newSessionId = sessionId || uuidv4();
+  // Channel-related functions
+  const fetchChannels = async () => {
+    try {
+      const response = await axios.get('/api/channels');
+      channels.value = response.data;
+      console.log("userStore: Channels fetched:", channels.value);
+    } catch (error) {
+      console.error('userStore: Error fetching channels:', error);
+    }
+  };
+
+  const createChannel = async (name, description) => {
+    try {
+      console.log("userStore: Creating channel:", name);
+      const response = await axios.post('/api/channels', { name, description });
+      channels.value.push(response.data);
+      console.log("userStore: Channel created:", response.data);
+      await setActiveChannel(response.data._id);
+    } catch (error) {
+      console.error('userStore: Error creating channel:', error);
+    }
+  };
+
+  const setActiveChannel = async (channelId) => {
+    activeChannelId.value = channelId;
+    console.log(`userStore: Active channel set to ID: ${channelId}`);
+    await fetchMessages(channelId);
+  };
+
+  const fetchMessages = async (channelId) => {
+    try {
+      console.log(`userStore: Fetching messages for channel ID: ${channelId}`);
+      const response = await axios.get(`/api/channels/${channelId}/messages`);
+      messages.value = response.data;
+      console.log("userStore: Messages fetched:", messages.value);
+    } catch (error) {
+      console.error('userStore: Error fetching messages:', error);
+    }
+  };
+
+  const sendMessage = async (content) => {
+    if (!activeChannelId.value) {
+      console.log("userStore: No active channel selected");
+      return;
+    }
+
+    try {
+      console.log("userStore: Sending message to channel:", activeChannelId.value);
+      const response = await axios.post(`/api/channels/${activeChannelId.value}/messages`, { content });
+      messages.value.push(response.data);  // Add the new message to the messages array
+      console.log("userStore: Message sent:", response.data);
+    } catch (error) {
+      console.error("userStore: Error sending message:", error);
+    }
+  };
+
+  // Chat session-related functions
+  const initializeNewChat = () => {
+    const newSessionId = uuidv4();
     const newSession = {
       id: newSessionId,
-      date: new Date().toISOString().split('T')[0], // 'YYYY-MM-DD'
+      date: new Date().toISOString().split('T')[0],
       lastMessageTimestamp: null,
       lastMessage: '',
-      persona_id: null, // Assign a persona if applicable
-      sharedStatus: 'Private',
-      messages: [], // Initialize messages array
-      // Add other necessary properties
+      messages: [],
     };
     chatSessions.value.push(newSession);
     setActiveChatSession(newSessionId);
     persistChatSessions();
+    console.log("userStore: New chat session initialized:", newSession);
   };
 
-  /**
-   * Adds a message to a specific chat session.
-   * Initializes the 'messages' array if it's missing.
-   * @param {string} sessionId - The ID of the chat session.
-   * @param {string} message - The message content.
-   * @param {string} type - The type of the message ('user' or 'assistant').
-   */
+  const setActiveChatSession = (sessionId) => {
+    activeChatSessionId.value = sessionId;
+    localStorage.setItem('activeChatSessionId', sessionId);
+    console.log(`userStore: Active chat session set to ID: ${sessionId}`);
+  };
+
   const addMessageToSession = (sessionId, message, type = 'user') => {
     if (!sessionId) {
-      console.error("addMessageToSession: sessionId is null or undefined.");
+      console.error('userStore: addMessageToSession: sessionId is null or undefined.');
       return;
     }
 
-    const session = chatSessions.value.find(s => s.id === sessionId);
+    const session = chatSessions.value.find((s) => s.id === sessionId);
 
     if (session) {
       if (!session.messages || !Array.isArray(session.messages)) {
@@ -96,7 +144,7 @@ export const useUserStore = defineStore('user', () => {
       const newMessage = {
         messageId: uuidv4(),
         message: message,
-        type: type, // 'user' or 'assistant'
+        type: type,
         timestamp: new Date().toISOString(),
       };
 
@@ -105,33 +153,57 @@ export const useUserStore = defineStore('user', () => {
       session.lastMessageTimestamp = newMessage.timestamp;
 
       persistChatSessions();
+      console.log(`userStore: Message added to session ${sessionId}:`, newMessage);
     } else {
-      console.error(`addMessageToSession: No session found with ID ${sessionId}`);
+      console.error(`userStore: addMessageToSession: No session found with ID ${sessionId}`);
     }
   };
 
-
-  /**
-   * Persists chat sessions to localStorage.
-   */
   const persistChatSessions = () => {
     try {
       localStorage.setItem('chatSessions', JSON.stringify(chatSessions.value));
       localStorage.setItem('activeChatSessionId', activeChatSessionId.value);
+      console.log("userStore: Chat sessions persisted to localStorage");
     } catch (error) {
-      console.error("Error persisting chatSessions to localStorage:", error);
+      console.error('userStore: Error persisting chatSessions to localStorage:', error);
     }
   };
 
+  const initializeChatSessions = () => {
+    const storedChatSessions = localStorage.getItem('chatSessions');
+    if (storedChatSessions) {
+      chatSessions.value = JSON.parse(storedChatSessions);
+      console.log("userStore: Chat sessions loaded from localStorage:", chatSessions.value);
+    }
+
+    const storedActiveChatSessionId = localStorage.getItem('activeChatSessionId');
+    if (storedActiveChatSessionId) {
+      activeChatSessionId.value = storedActiveChatSessionId;
+      console.log(`userStore: Active chat session loaded from localStorage: ${activeChatSessionId.value}`);
+    }
+  };
+
+  // Call initializeChatSessions when store is created
+  initializeChatSessions();
+
+  // Return all necessary state and actions
   return {
     user,
+    channels,
+    activeChannelId,
+    messages,
     chatSessions,
     activeChatSessionId,
     initializeUser,
-    clearUser,
-    setActiveChatSession,
-    initializeNewChat,
-    addMessageToSession,
     logout,
+    clearUser,
+    fetchChannels,
+    createChannel,
+    setActiveChannel,
+    fetchMessages,
+    sendMessage,
+    initializeNewChat,
+    setActiveChatSession,
+    addMessageToSession,
   };
 });

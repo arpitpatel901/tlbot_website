@@ -10,6 +10,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import session from 'express-session';
 import mongoose from 'mongoose';
+import Channel from './src/models/Channel.js';
+import Message from './src/models/Message.js';
 
 // Import the User model from src/stores
 import User from './src/stores/User.js'; // Adjusted import path
@@ -76,7 +78,6 @@ mongoose.connect('mongodb://localhost:27017/tlabs_website_db')
 
 
 // ROUTES
-
 // Unprotected route
 app.get('/api/google-auth', async (req, res) => {
   const { code } = req.query;
@@ -171,6 +172,7 @@ app.get('/api/process-code', (req, res) => {
   }
 });
 
+// Logout
 app.post('/api/logout', (req, res) => {
   req.session.destroy(err => {
     if (err) {
@@ -182,6 +184,68 @@ app.post('/api/logout', (req, res) => {
   });
 });
 
+// GET /api/channels: Returns the list of channels the user is a member of.
+// POST /api/channels: Creates a new channel.
+// GET /api/channels/:channelId/messages: Returns messages in a channel.
+// POST /api/channels/:channelId/messages: Sends a new message in a channel.
+// Get all channels that the user is a member of
+app.post('/api/channels', async (req, res) => {
+  const { name, description } = req.body;
+  console.log("Received request to create channel:", name, description);
+
+  try {
+    const newChannel = new Channel({ name, description });
+    await newChannel.save();
+    console.log("Channel saved to database:", newChannel);
+    res.status(201).json(newChannel);
+  } catch (error) {
+    console.error('Error creating channel:', error);
+    res.status(500).json({ error: 'Failed to create channel' });
+  }
+});
+app.get('/api/channels', async (req, res) => {
+  try {
+    const channels = await Channel.find();  // Ensure 'Channel' is imported correctly
+    res.json(channels);
+  } catch (error) {
+    console.error('Error fetching channels:', error);
+    res.status(500).json({ error: 'Failed to fetch channels' });
+  }
+});
+
+// Get messages in a specific channel
+app.get('/api/channels/:channelId/messages', authenticateUser, async (req, res) => {
+  const { channelId } = req.params;
+  try {
+    const messages = await Message.find({ channelId }).populate('userId', 'name');
+    res.json(messages);
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+    res.status(500).json({ error: 'Failed to fetch messages' });
+  }
+});
+
+// Send a new message in a channel
+app.post('/api/channels/:channelId/messages', authenticateUser, async (req, res) => {
+  const { channelId } = req.params;
+  const { content } = req.body;
+
+  try {
+    const newMessage = new Message({
+      channelId,
+      userId: req.user._id,
+      content,
+    });
+    await newMessage.save();
+    res.status(201).json(newMessage);
+  } catch (error) {
+    console.error('Error sending message:', error);
+    res.status(500).json({ error: 'Failed to send message' });
+  }
+});
+
+
+// Other
 app.post('/api/submit-form', async (req, res) => {
   const { name, email, message } = req.body;
 

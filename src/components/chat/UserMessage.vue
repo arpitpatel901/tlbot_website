@@ -2,15 +2,16 @@
 <template>
   <div :class="messageClasses">
     <div class="message-content">
-      {{ message.message }}
+      {{ message.content }}
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { defineProps } from 'vue';
+import { computed } from "vue";
+import { defineProps } from "vue";
 
+// Define the props
 const props = defineProps({
   message: {
     type: Object,
@@ -18,14 +19,14 @@ const props = defineProps({
   },
 });
 
-/**
- * Computes the classes for the message container based on message type.
- */
+// Debug log to ensure component is loaded
+console.log("UserMessage.vue: Loaded with message:", props.message);
+
 const messageClasses = computed(() => {
   return [
-    'flex flex-col p-4 rounded-lg shadow-md max-w-md',
-    props.message.type === 'user' ? 'bg-blue-100 text-black ml-auto' : 'bg-gray-100 text-black',
-    'transition-transform duration-300 ease-in-out',
+    "flex flex-col p-4 rounded-lg shadow-md max-w-md",
+    "bg-blue-100 text-black ml-auto",
+    "transition-transform duration-300 ease-in-out",
   ];
 });
 </script>

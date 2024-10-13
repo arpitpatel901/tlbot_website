@@ -42,12 +42,4 @@ app.use(vue3GoogleLogin, {
 const userStore = useUserStore();
 userStore.initializeUser();
 
-// Initialize the chat store and set user_id if logged in
-// const chatStore = useChatStore();
-// chatStore.initializeChat(); // Remove this line
-
-if (userStore.user) {
-  // chatStore.setUserId(userStore.user.id); // Remove or adjust if chatStore is not initialized here
-}
-
 app.mount("#app");

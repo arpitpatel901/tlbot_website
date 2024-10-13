@@ -1,5 +1,7 @@
 // src/router/index.js
+
 import { createRouter, createWebHistory } from 'vue-router';
+import HomeRedirect from '@/components/HomeRedirect.vue';
 import MainDashboard from '@/components/MainDashboard.vue';
 import ConnectDataSources from '@/components/ConnectDataSources.vue';
 import AccountSettings from '@/components/AccountSettings.vue';
@@ -7,17 +9,16 @@ import Unauthorized from '@/components/Unauthorized.vue';
 import HomePage from '@/components/HomePage.vue';
 import AuthCallback from '@/components/AuthCallback.vue';
 import Contact from '@/components/Contact.vue';
-import { useUserStore } from '@/stores/userStore';
+import NotFound from '@/components/NotFound.vue';
 
-const Chat = () => import('@/components/Chat.vue');
-const NotFound = () => import('@/components/NotFound.vue'); // Import the NotFound component
-
+// Lazy-loaded components
+const Chat = () => import('@/components/chat/Chat.vue');
 
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: HomePage,
+    name: 'HomeRedirect',
+    component: HomeRedirect,
   },
   {
     path: '/login',
@@ -44,21 +45,18 @@ const routes = [
         path: 'connect-data-sources',
         name: 'ConnectDataSources',
         component: ConnectDataSources,
-        // alias: '/connect-data-sources',
       },
       {
-        path: 'chat',
+        path: 'chat/:channelId', // Dynamic segment for channelId
         name: 'Chat',
         component: Chat,
-        props: route => ({ chatId: route.query.chatId }),
+        props: true, // Pass channelId as a prop
         meta: { requiresAuth: true },
-        // alias: '/chat',
       },
       {
         path: 'account-settings',
         name: 'AccountSettings',
         component: AccountSettings,
-        // alias: '/account-settings',
       },
     ],
   },
@@ -71,7 +69,7 @@ const routes = [
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
-    component: NotFound, // Use the NotFound component
+    component: NotFound,
   },
 ];
 
@@ -82,16 +80,18 @@ const router = createRouter({
 
 // Navigation Guard to protect routes
 router.beforeEach(async (to, from, next) => {
+  console.log('Navigating from', from.fullPath, 'to', to.fullPath);
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   const userStore = useUserStore();
 
-  // If user is not initialized, fetch user data
+  // Initialize user if not already done
   if (userStore.user === null) {
     await userStore.initializeUser();
   }
 
   if (requiresAuth && !userStore.user) {
-    next({ name: 'Login' });
+    console.log('Route requires auth, but user is not authenticated. Redirecting to HomeRedirect.');
+    next({ name: 'HomeRedirect' }); // Redirect to HomeRedirect component
   } else {
     next();
   }
