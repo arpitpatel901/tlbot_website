@@ -76,7 +76,13 @@ export const useUserStore = defineStore('user', () => {
   const fetchChannels = async () => {
     try {
       const response = await axios.get('/api/channels');
-      channels.value = response.data;
+      if (user.value?.role === 'admin') {
+        // Admins can see all channels, including archived
+        channels.value = response.data;
+      } else {
+        // Regular users see only active channels (API already filters)
+        channels.value = response.data;
+      }
       console.log("userStore: Channels fetched:", channels.value);
     } catch (error) {
       console.error('userStore: Error fetching channels:', error);

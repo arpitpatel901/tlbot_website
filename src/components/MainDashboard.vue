@@ -1,5 +1,4 @@
 <!-- src/components/MainDashboard.vue -->
-<!-- src/components/MainDashboard.vue -->
 <template>
   <div class="flex h-screen bg-gray-50">
     <aside
@@ -214,4 +213,18 @@ textarea {
 /* aside {
   transition: transform 0.3s ease-in-out;
 } */
+
+/* Optional: Customize scrollbar appearance */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+}
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 4px;
+  border: 2px solid #f1f1f1;
+}
 </style>

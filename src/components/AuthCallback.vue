@@ -6,7 +6,7 @@
     <div v-if="status === 'success'" class="text-center text-gray-100">
       <h1 class="text-3xl font-bold mb-4">Welcome!</h1>
       <p class="text-lg text-gray-100">You have successfully logged in.</p>
-      <p v-if="user" class="mt-2">Redirecting to your dashboard...</p>
+      <p v-if="userStore.user" class="mt-2">Redirecting to your dashboard...</p>
     </div>
     <div v-else-if="status === 'unauthorized'" class="text-center">
       <h1 class="text-3xl font-bold mb-4 text-red-500">Access Denied</h1>
@@ -40,7 +40,6 @@ export default {
     const userStore = useUserStore();
     const router = useRouter();
     const status = ref(null);
-    const user = ref(null);
 
     onMounted(async () => {
       const urlParams = new URLSearchParams(window.location.search);
@@ -51,7 +50,6 @@ export default {
         await userStore.initializeUser();
 
         if (userStore.user) {
-          user.value = userStore.user;
           // Redirect to dashboard after a short delay
           setTimeout(() => {
             router.push({ name: "MainDashboard" });
@@ -73,7 +71,7 @@ export default {
 
     return {
       status,
-      user,
+      userStore, // Expose userStore if needed in the template
     };
   },
 };

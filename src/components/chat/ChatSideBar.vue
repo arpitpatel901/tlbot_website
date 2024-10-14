@@ -28,11 +28,70 @@
         <li
           v-for="channel in channels"
           :key="channel.id"
-          @click="selectChannel(channel.id)"
-          class="text-black px-4 py-2 hover:bg-gray-200 cursor-pointer flex justify-between items-center"
+          class="flex justify-between items-center px-4 py-2 hover:bg-gray-200 cursor-pointer text-black"
         >
-          <span>{{ channel.name }}</span>
-          <!-- Archive/Delete button for admins will be added later -->
+          <span @click="selectChannel(channel.id)" class="flex-1">{{
+            channel.name
+          }}</span>
+          <div class="relative">
+            <!-- Three Dots Button -->
+            <button
+              @click.stop="toggleChannelMenu(channel.id)"
+              class="text-gray-600 hover:text-gray-800 focus:outline-none"
+              aria-label="Channel options"
+            >
+              <!-- Three Dots Icon -->
+              <svg
+                class="h-5 w-5"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M6 10a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0z"
+                />
+              </svg>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div
+              v-if="activeChannelMenu === channel.id"
+              @click.stop
+              class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10"
+            >
+              <!-- Non-Admin User Options -->
+              <div v-if="!isAdmin">
+                <a
+                  @click="viewChannelDetails(channel)"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                >
+                  Details
+                </a>
+              </div>
+
+              <!-- Admin User Options -->
+              <div v-if="isAdmin">
+                <a
+                  @click="viewChannelDetails(channel)"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                >
+                  Details
+                </a>
+                <a
+                  @click="toggleArchiveChannel(channel)"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                >
+                  {{ channel.archived ? "Unarchive" : "Archive" }}
+                </a>
+                <a
+                  @click="deleteChannel(channel.id)"
+                  class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 cursor-pointer"
+                >
+                  Delete
+                </a>
+              </div>
+            </div>
+          </div>
         </li>
       </ul>
     </div>
@@ -91,6 +150,7 @@ import { ref, computed } from "vue";
 import { useUserStore } from "@/stores/userStore";
 import CreateChannelModal from "./CreateChannelModal.vue";
 import { useRouter } from "vue-router";
+import axios from "axios";
 
 const userStore = useUserStore();
 const router = useRouter();
@@ -99,13 +159,85 @@ const activeChannelId = computed(() => userStore.activeChannelId);
 const organizationName = computed(
   () => userStore.user?.organizationId?.name || "Organization"
 );
+const users = computed(() => userStore.users);
+const isAdmin = computed(() => userStore.user.value?.role === "admin");
+
+// Comprehensive Logging
+console.log("userStore.user.value:", userStore.user.value);
+console.log("User is Admin:", isAdmin.value);
 
 const selectChannel = (channelId) => {
   userStore.setActiveChannel(channelId);
   router.push({ name: "Chat", params: { channelId } });
 };
-const users = computed(() => userStore.users);
 
+// Three-Dot Menu State
+const activeChannelMenu = ref(null);
+
+// Toggle the channel-specific dropdown menu
+const toggleChannelMenu = (channelId) => {
+  if (activeChannelMenu.value === channelId) {
+    activeChannelMenu.value = null;
+  } else {
+    activeChannelMenu.value = channelId;
+  }
+};
+
+// Delete Channel (Admin Only)
+const deleteChannel = async (channelId) => {
+  if (
+    !confirm(
+      "Are you sure you want to delete this channel? This action cannot be undone."
+    )
+  )
+    return;
+  try {
+    await axios.delete(`/api/channels/${channelId}`);
+    // Refresh channels list
+    await userStore.fetchChannels();
+    // If the deleted channel was active, reset activeChannelId
+    if (userStore.activeChannelId === channelId) {
+      userStore.setActiveChannel(null);
+    }
+    alert("Channel deleted successfully.");
+  } catch (error) {
+    console.error("Error deleting channel:", error);
+    alert("Failed to delete channel.");
+  }
+};
+
+// Archive/Unarchive Channel (Admin Only)
+const toggleArchiveChannel = async (channel) => {
+  try {
+    await axios.patch(`/api/channels/${channel.id}/archive`, {
+      archived: !channel.archived,
+    });
+    // Refresh channels list
+    await userStore.fetchChannels();
+    alert(
+      `Channel ${channel.archived ? "archived" : "unarchived"} successfully.`
+    );
+  } catch (error) {
+    console.error("Error archiving/unarchiving channel:", error);
+    alert("Failed to archive/unarchive channel.");
+  }
+};
+
+// View Channel Details (Non-Admin)
+const viewChannelDetails = (channel) => {
+  // Close the dropdown menu before showing the alert
+  activeChannelMenu.value = null;
+
+  // Implement details view as needed
+  // For example, open a modal with channel information
+  alert(
+    `Channel Details:\nName: ${channel.name}\nDescription: ${
+      channel.description || "N/A"
+    }`
+  );
+};
+
+// Sidebar and Settings Menu States
 const isCreateChannelModalOpen = ref(false);
 const isSettingsMenuOpen = ref(false);
 
@@ -132,16 +264,23 @@ const navigateToDataConnectors = () => {
 </script>
 
 <style scoped>
-/* Optional: Add custom styles if needed */
+/* Optional: Customize scrollbar appearance */
 .overflow-y-auto::-webkit-scrollbar {
   width: 8px;
 }
 .overflow-y-auto::-webkit-scrollbar-track {
-  background: #2d3748; /* Gray-800 */
+  background: #f1f1f1;
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb {
-  background-color: #4a5568; /* Gray-700 */
+  background-color: #888;
   border-radius: 4px;
+  border: 2px solid #f1f1f1;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 </style>

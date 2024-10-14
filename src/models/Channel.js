@@ -1,12 +1,11 @@
 // src/models/Channel.js
-
 import mongoose from 'mongoose';
 
 const channelSchema = new mongoose.Schema({
     name: { type: String, required: true },
     description: { type: String },
     organizationId: { type: mongoose.Schema.Types.ObjectId, ref: 'Organization', required: true },
-    // Add any other fields as necessary
+    archived: { type: Boolean, default: false }, // New field
 }, { timestamps: true });
 
 // Transform _id to id

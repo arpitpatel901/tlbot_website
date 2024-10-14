@@ -4,6 +4,7 @@
 
 import express from 'express';
 import axios from 'axios';
+import axiosRetry from 'axios-retry';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -83,10 +84,21 @@ app.use(session({
   },
 }));
 
+// Axios Retry Configuration
+axiosRetry(axios, {
+  retries: 3,
+  retryDelay: axiosRetry.exponentialDelay,
+  retryCondition: (error) => {
+    return axiosRetry.isNetworkOrIdempotentRequestError(error) || error.code === 'EAI_AGAIN';
+  }
+});
+
 // ROUTES
 // Unprotected route
+// basic-server.js
+
+// ... [Existing imports and setup code]
 app.get('/api/google-auth', async (req, res) => {
-  const { token } = req.body;
   const { code } = req.query;
   console.log("Received code:", code);
 
@@ -124,6 +136,7 @@ app.get('/api/google-auth', async (req, res) => {
         if (!user) {
           // Check if any organization exists
           const existingOrganizations = await Organization.find();
+          console.log("Existing Organizations Count:", existingOrganizations.length);
           let organization;
           if (existingOrganizations.length === 0) {
             // Create a new organization if none exist
@@ -136,13 +149,17 @@ app.get('/api/google-auth', async (req, res) => {
             console.log('Assigned to existing organization:', organization);
           }
 
+          // Count users in the organization
+          const userCount = await User.countDocuments({ organizationId: organization._id });
+          console.log(`Users in organization ${organization.id}: ${userCount}`);
+
           // Create the new user and associate with the organization
           user = new User({
             name: userResponse.data.name,
             email: userEmail,
             avatar: userResponse.data.picture,
-            organizationId: organization.id, // Using string id
-            role: existingOrganizations.length === 0 ? 'admin' : 'member', // Assign admin to first user
+            organizationId: organization._id, // Use _id instead of id
+            role: userCount === 0 ? 'admin' : 'member', // Assign admin if no users yet
           });
           await user.save();
           console.log('New user created:', user);
@@ -282,9 +299,21 @@ app.post('/api/channels', authenticateUser, async (req, res) => {
     res.status(500).json({ error: 'Failed to create channel' });
   }
 });
-app.get('/api/channels', async (req, res) => {
+app.get('/api/channels', authenticateUser, async (req, res) => {
   try {
-    const channels = await Channel.find();  // Ensure 'Channel' is imported correctly
+    let channels;
+    if (req.user.role !== 'admin') {
+      // Fetch channels belonging to the user's organization and not archived
+      channels = await Channel.find({
+        organizationId: req.user.organizationId,
+        archived: false
+      });
+    } else {
+      // Admins can see all channels, including archived
+      channels = await Channel.find({
+        organizationId: req.user.organizationId,
+      });
+    }
     res.json(channels);
   } catch (error) {
     console.error('Error fetching channels:', error);
@@ -328,6 +357,60 @@ app.post('/api/channels/:channelId/messages', authenticateUser, async (req, res)
   } catch (error) {
     console.error('Error sending message:', error);
     res.status(500).json({ error: 'Failed to send message' });
+  }
+});
+// DELETE /api/channels/:channelId - Permanently delete a channel (Admin only)
+app.delete('/api/channels/:channelId', authenticateUser, async (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Forbidden: Only admins can delete channels' });
+  }
+
+  const { channelId } = req.params;
+
+  try {
+    const channel = await Channel.findById(channelId);
+    if (!channel) {
+      return res.status(404).json({ error: 'Channel not found' });
+    }
+
+    // Optionally, delete all messages associated with the channel
+    await Message.deleteMany({ channelId: channel.id });
+
+    await Channel.findByIdAndDelete(channelId);
+    console.log(`Channel deleted: ${channelId}`);
+    res.json({ message: 'Channel deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting channel:', error);
+    res.status(500).json({ error: 'Failed to delete channel' });
+  }
+});
+// PATCH /api/channels/:channelId/archive - Archive or unarchive a channel (Admin only)
+app.patch('/api/channels/:channelId/archive', authenticateUser, async (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Forbidden: Only admins can archive channels' });
+  }
+
+  const { channelId } = req.params;
+  const { archived } = req.body; // Boolean: true to archive, false to unarchive
+
+  if (typeof archived !== 'boolean') {
+    return res.status(400).json({ error: 'Invalid value for archived' });
+  }
+
+  try {
+    const channel = await Channel.findById(channelId);
+    if (!channel) {
+      return res.status(404).json({ error: 'Channel not found' });
+    }
+
+    channel.archived = archived;
+    await channel.save();
+
+    console.log(`Channel ${channelId} archived: ${archived}`);
+    res.json({ message: `Channel ${archived ? 'archived' : 'unarchived'} successfully` });
+  } catch (error) {
+    console.error('Error archiving/unarchiving channel:', error);
+    res.status(500).json({ error: 'Failed to archive/unarchive channel' });
   }
 });
 
