@@ -4,7 +4,7 @@
     class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
   >
     <div class="bg-white rounded-lg p-6 w-96">
-      <h2 class="text-xl font-semibold mb-4">Create New Channel</h2>
+      <h2 class="text-xl font-semibold mb-4 text-black">Create New Channel</h2>
       <div class="mb-4">
         <label class="block text-gray-700">Channel Name</label>
         <input

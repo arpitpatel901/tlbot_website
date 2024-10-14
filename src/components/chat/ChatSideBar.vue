@@ -23,23 +23,19 @@
     </div>
 
     <!-- Channels List -->
-    <nav class="flex-1 overflow-y-auto">
+    <div class="flex-1 overflow-y-auto">
       <ul>
         <li
           v-for="channel in channels"
           :key="channel.id"
           @click="selectChannel(channel.id)"
-          :class="[
-            'flex items-center px-4 py-2 cursor-pointer',
-            activeChannelId === channel.id
-              ? 'bg-gray-200'
-              : 'hover:bg-gray-100',
-          ]"
+          class="text-black px-4 py-2 hover:bg-gray-200 cursor-pointer flex justify-between items-center"
         >
-          <span class="text-gray-700"># {{ channel.name }}</span>
+          <span>{{ channel.name }}</span>
+          <!-- Archive/Delete button for admins will be added later -->
         </li>
       </ul>
-    </nav>
+    </div>
 
     <!-- Footer with Dropdown Menu -->
     <div class="px-4 py-4 border-t">
@@ -63,7 +59,7 @@
         <!-- Settings Menu -->
         <div
           v-if="isSettingsMenuOpen"
-          @click.away="isSettingsMenuOpen = false"
+          @click="isSettingsMenuOpen = false"
           class="absolute bottom-14 left-4 w-56 bg-white border border-gray-200 rounded-md shadow-lg py-1 z-20"
         >
           <a
@@ -137,4 +133,15 @@ const navigateToDataConnectors = () => {
 
 <style scoped>
 /* Optional: Add custom styles if needed */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+}
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #2d3748; /* Gray-800 */
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: #4a5568; /* Gray-700 */
+  border-radius: 4px;
+}
 </style>
