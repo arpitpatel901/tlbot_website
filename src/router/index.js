@@ -16,7 +16,6 @@ const Chat = () => import('@/components/chat/Chat.vue');
 
 // Import Pinia and the user store
 import { useUserStore } from '@/stores/userStore';
-import { getActivePinia } from 'pinia';
 
 const routes = [
   {
@@ -87,15 +86,7 @@ router.beforeEach(async (to, from, next) => {
   console.log('Navigating from', from.fullPath, 'to', to.fullPath);
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 
-  // Initialize Pinia instance
-  const pinia = getActivePinia();
-  if (!pinia) {
-    console.error('Pinia instance not found!');
-    next({ name: 'HomeRedirect' }); // Redirect to HomeRedirect if Pinia is not available
-    return;
-  }
-
-  const userStore = useUserStore(pinia);
+  const userStore = useUserStore(); // No pinia parameter
 
   // Initialize user if not already done
   if (userStore.user === null) {

@@ -12,9 +12,11 @@ import session from 'express-session';
 import mongoose from 'mongoose';
 import Channel from './src/models/Channel.js';
 import Message from './src/models/Message.js';
+import Organization from './src/models/Organization.js';
+import connectMongo from 'connect-mongo';
 
 // Import the User model from src/stores
-import User from './src/stores/User.js'; // Adjusted import path
+import User from './src/models/User.js'; // Adjusted import path
 import { authenticateUser } from './src/middleware/auth.js';
 
 // If using ES modules, set __dirname
@@ -40,18 +42,10 @@ const siteURL = process.env.SITE_URL;
 
 const app = express();
 
-// Use express-session middleware
-console.log('SESSION_SECRET:', process.env.SESSION_SECRET);
-app.use(session({
-  secret: process.env.SESSION_SECRET, // Ensure this is defined
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: false, // Set to true if using HTTPS
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000, // Session expires after 1 day
-  },
-}));
+// Connect to MongoDB
+mongoose.connect('mongodb://localhost:27017/tlabs_website_db')
+  .then(() => console.log('✅ Connected to MongoDB'))
+  .catch(err => console.error('❌ MongoDB connection error:', err));
 
 // CORS
 app.use(cors({
@@ -71,15 +65,28 @@ app.use(cors({
 
 app.use(express.json());
 
-// Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/tlabs_website_db')
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB connection error:', err));
-
+// Use express-session middleware
+const MongoStore = connectMongo.create({
+  mongoUrl: 'mongodb://localhost:27017/tlabs_website_db',
+  collectionName: 'sessions',
+});
+console.log('SESSION_SECRET:', process.env.SESSION_SECRET);
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your-secret-key', // Use a secure secret in production
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore, // Use MongoDB to store sessions
+  cookie: {
+    secure: NODE_ENV === 'production', // Use HTTPS in production
+    httpOnly: true,
+    maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days in milliseconds
+  },
+}));
 
 // ROUTES
 // Unprotected route
 app.get('/api/google-auth', async (req, res) => {
+  const { token } = req.body;
   const { code } = req.query;
   console.log("Received code:", code);
 
@@ -115,18 +122,35 @@ app.get('/api/google-auth', async (req, res) => {
         let user = await User.findOne({ email: userEmail });
 
         if (!user) {
-          // Create a new user
+          // Check if any organization exists
+          const existingOrganizations = await Organization.find();
+          let organization;
+          if (existingOrganizations.length === 0) {
+            // Create a new organization if none exist
+            organization = new Organization({ name: 'Default Organization' });
+            await organization.save();
+            console.log('Default organization created:', organization);
+          } else {
+            // Assign the user to the first existing organization
+            organization = existingOrganizations[0];
+            console.log('Assigned to existing organization:', organization);
+          }
+
+          // Create the new user and associate with the organization
           user = new User({
             name: userResponse.data.name,
             email: userEmail,
             avatar: userResponse.data.picture,
+            organizationId: organization.id, // Using string id
+            role: existingOrganizations.length === 0 ? 'admin' : 'member', // Assign admin to first user
           });
           await user.save();
+          console.log('New user created:', user);
         }
 
         // Create a session
-        req.session.userId = user._id;
-
+        req.session.userId = user.id;
+        console.log(`User authenticated: ${user.email}`);
         // Redirect to the frontend application
         res.redirect(`${siteURL}/auth/callback?status=success`);
       } else {
@@ -144,13 +168,64 @@ app.get('/api/google-auth', async (req, res) => {
 app.use('/api/protected', authenticateUser);
 
 // Example protected route
-app.get('/api/protected/user', (req, res) => {
-  res.json({
-    id: req.user._id,
-    name: req.user.name,
-    email: req.user.email,
-    avatar: req.user.avatar,
-  });
+app.get('/api/protected/user', authenticateUser, async (req, res) => {
+  try {
+    console.log(`GET /api/protected/user: Returning user data for user ID ${req.user.id}`);
+    res.json({
+      id: req.user.id,
+      name: req.user.name,
+      email: req.user.email,
+      avatar: req.user.avatar,
+      organizationId: req.user.organizationId,
+      role: req.user.role,
+    });
+  } catch (error) {
+    console.error('Error in /api/protected/user:', error);
+    res.status(500).json({ error: 'Failed to fetch user data' });
+  }
+});
+
+// GET /api/users: Returns the list of users in the authenticated user's organization
+app.get('/api/users', authenticateUser, async (req, res) => {
+  try {
+    console.log(`GET /api/users: Fetching users for organization ID ${req.user.organizationId}`);
+    const users = await User.find({ organizationId: req.user.organizationId }).select('-password');
+    res.json(users); // Removed .toJSON()
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }
+});
+
+// POST /api/organizations: Create a new organization
+app.post('/api/organizations', authenticateUser, async (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Forbidden: Only admins can create organizations' });
+  }
+  const { name } = req.body;
+
+  if (!name) {
+    return res.status(400).json({ error: 'Organization name is required' });
+  }
+
+  try {
+    // Check if organization already exists
+    const existingOrg = await Organization.findOne({ name });
+    if (existingOrg) {
+      return res.status(400).json({ error: 'Organization already exists' });
+    }
+
+    const newOrg = new Organization({ name });
+    await newOrg.save();
+
+    // Optionally, assign the user to the new organization
+    await User.findByIdAndUpdate(req.user.id, { organizationId: newOrg.id });
+
+    res.status(201).json(newOrg);
+  } catch (error) {
+    console.error('Error creating organization:', error);
+    res.status(500).json({ error: 'Failed to create organization' });
+  }
 });
 
 // Add a new route for processing the code
@@ -189,12 +264,16 @@ app.post('/api/logout', (req, res) => {
 // GET /api/channels/:channelId/messages: Returns messages in a channel.
 // POST /api/channels/:channelId/messages: Sends a new message in a channel.
 // Get all channels that the user is a member of
-app.post('/api/channels', async (req, res) => {
+app.post('/api/channels', authenticateUser, async (req, res) => {
   const { name, description } = req.body;
   console.log("Received request to create channel:", name, description);
 
   try {
-    const newChannel = new Channel({ name, description });
+    const newChannel = new Channel({
+      name,
+      description,
+      organizationId: req.user.organizationId // Set organizationId from authenticated user
+    });
     await newChannel.save();
     console.log("Channel saved to database:", newChannel);
     res.status(201).json(newChannel);
@@ -213,18 +292,26 @@ app.get('/api/channels', async (req, res) => {
   }
 });
 
+
 // Get messages in a specific channel
 app.get('/api/channels/:channelId/messages', authenticateUser, async (req, res) => {
   const { channelId } = req.params;
   try {
-    const messages = await Message.find({ channelId }).populate('userId', 'name');
-    res.json(messages);
+    console.log(`GET /api/channels/${channelId}/messages: Fetching messages for channel ID ${channelId}`);
+    // Verify that the channel belongs to the user's organization
+    const channel = await Channel.findOne({ _id: channelId, organizationId: req.user.organizationId });
+    if (!channel) {
+      console.log('Channel not found or does not belong to the user\'s organization');
+      return res.status(404).json({ error: 'Channel not found' });
+    }
+
+    const messages = await Message.find({ channelId });
+    res.json(messages); // Removed .toJSON()
   } catch (error) {
     console.error('Error fetching messages:', error);
     res.status(500).json({ error: 'Failed to fetch messages' });
   }
 });
-
 // Send a new message in a channel
 app.post('/api/channels/:channelId/messages', authenticateUser, async (req, res) => {
   const { channelId } = req.params;
@@ -233,7 +320,7 @@ app.post('/api/channels/:channelId/messages', authenticateUser, async (req, res)
   try {
     const newMessage = new Message({
       channelId,
-      userId: req.user._id,
+      userId: req.user.id,
       content,
     });
     await newMessage.save();

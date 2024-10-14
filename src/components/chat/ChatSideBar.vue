@@ -27,11 +27,11 @@
       <ul>
         <li
           v-for="channel in channels"
-          :key="channel._id"
-          @click="selectChannel(channel._id)"
+          :key="channel.id"
+          @click="selectChannel(channel.id)"
           :class="[
             'flex items-center px-4 py-2 cursor-pointer',
-            activeChannelId === channel._id
+            activeChannelId === channel.id
               ? 'bg-gray-200'
               : 'hover:bg-gray-100',
           ]"
@@ -100,11 +100,15 @@ const userStore = useUserStore();
 const router = useRouter();
 const channels = computed(() => userStore.channels);
 const activeChannelId = computed(() => userStore.activeChannelId);
+const organizationName = computed(
+  () => userStore.user?.organizationId?.name || "Organization"
+);
 
 const selectChannel = (channelId) => {
   userStore.setActiveChannel(channelId);
   router.push({ name: "Chat", params: { channelId } });
 };
+const users = computed(() => userStore.users);
 
 const isCreateChannelModalOpen = ref(false);
 const isSettingsMenuOpen = ref(false);

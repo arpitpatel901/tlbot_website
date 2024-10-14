@@ -10,7 +10,7 @@
 
       <!-- Messages List -->
       <div v-if="messages.length > 0" class="space-y-4">
-        <template v-for="message in messages" :key="message._id">
+        <template v-for="message in messages" :key="message.id">
           <UserMessage :message="message" />
         </template>
       </div>
@@ -103,6 +103,7 @@ const scrollToBottom = () => {
   }
 };
 
+// Automatically scroll to bottom when new messages arrive
 watch(messages, () => {
   nextTick(() => {
     scrollToBottom();

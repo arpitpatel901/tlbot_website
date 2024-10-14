@@ -7,11 +7,10 @@ import axios from 'axios';
 export const useUserStore = defineStore('user', () => {
   // State
   const user = ref(null);
-  // const users = ref([]); // List of all users
+  const users = ref([]); // List of all users
   const channels = ref([]);
   const activeChannelId = ref(null);
   const messages = ref([]);
-
   const chatSessions = ref([]);
   const activeChatSessionId = ref(null);
 
@@ -20,27 +19,35 @@ export const useUserStore = defineStore('user', () => {
   // User initialization and authentication
   const initializeUser = async () => {
     try {
-      // First, check if user data exists in localStorage
       const storedUser = localStorage.getItem('user');
       if (storedUser) {
         user.value = JSON.parse(storedUser);
         console.log("userStore: User loaded from localStorage:", user.value);
       } else {
-        // If not in localStorage, try to fetch from backend
         const response = await axios.get('/api/protected/user');
         user.value = response.data;
         console.log("userStore: User initialized from backend:", user.value);
         localStorage.setItem('user', JSON.stringify(user.value));
       }
+      await fetchUsers();
       await fetchChannels();
     } catch (error) {
       console.error('userStore: Error initializing user:', error);
-      // If user was loaded from localStorage but backend is down, retain the user state
       if (!user.value) {
         user.value = null;
-        clearUser(); // clear localStorage if no user is present
+        clearUser();
       }
-      // If user was loaded from localStorage, do not clear it
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get('/api/users');
+      users.value = response.data || [];
+      console.log("userStore: Users fetched:", users.value);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      users.value = [];
     }
   };
 
@@ -65,16 +72,6 @@ export const useUserStore = defineStore('user', () => {
     console.log("userStore: User state cleared");
   };
 
-  // const fetchUsers = async () => {
-  //   try {
-  //     const response = await axios.get('/api/users'); // Ensure this endpoint exists
-  //     users = response.data;
-  //   } catch (error) {
-  //     console.error('Error fetching users:', error);
-  //     users = [];
-  //   }
-  // };
-
   // Channel-related functions
   const fetchChannels = async () => {
     try {
@@ -90,9 +87,10 @@ export const useUserStore = defineStore('user', () => {
     try {
       console.log("userStore: Creating channel:", name);
       const response = await axios.post('/api/channels', { name, description });
-      channels.value.push(response.data);
-      console.log("userStore: Channel created:", response.data);
-      await setActiveChannel(response.data._id);
+      const newChannel = response.data;
+      channels.value.push(newChannel);
+      console.log("userStore: Channel created:", newChannel);
+      await setActiveChannel(newChannel.id); // Use 'id' instead of '_id'
     } catch (error) {
       console.error('userStore: Error creating channel:', error);
     }
@@ -112,6 +110,7 @@ export const useUserStore = defineStore('user', () => {
       console.log("userStore: Messages fetched:", messages.value);
     } catch (error) {
       console.error('userStore: Error fetching messages:', error);
+      messages.value = [];
     }
   };
 
@@ -214,6 +213,7 @@ export const useUserStore = defineStore('user', () => {
   // Return all necessary state and actions
   return {
     user,
+    users,
     channels,
     activeChannelId,
     messages,
@@ -230,5 +230,6 @@ export const useUserStore = defineStore('user', () => {
     initializeNewChat,
     setActiveChatSession,
     addMessageToSession,
+    fetchUsers,
   };
 });
