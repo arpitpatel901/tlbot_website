@@ -7,6 +7,7 @@ import axios from 'axios';
 export const useUserStore = defineStore('user', () => {
   // State
   const user = ref(null);
+  // const users = ref([]); // List of all users
   const channels = ref([]);
   const activeChannelId = ref(null);
   const messages = ref([]);
@@ -63,6 +64,16 @@ export const useUserStore = defineStore('user', () => {
     localStorage.removeItem('user'); // Remove only user data
     console.log("userStore: User state cleared");
   };
+
+  // const fetchUsers = async () => {
+  //   try {
+  //     const response = await axios.get('/api/users'); // Ensure this endpoint exists
+  //     users = response.data;
+  //   } catch (error) {
+  //     console.error('Error fetching users:', error);
+  //     users = [];
+  //   }
+  // };
 
   // Channel-related functions
   const fetchChannels = async () => {

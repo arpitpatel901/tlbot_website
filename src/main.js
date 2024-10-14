@@ -1,10 +1,9 @@
 // src/main.js
-import "./assets/main.css";
+import "./assets/main.css"; // Assuming this is your Tailwind CSS file
 
 import { createApp } from "vue";
 import PrimeVue from "primevue/config";
-import Lara from "@/presets/lara"; // import preset
-// import Wind from '@/presets/wind';      // import preset
+import Lara from "@/presets/lara";
 import axios from 'axios';
 import vue3GoogleLogin from "vue3-google-login";
 import router from "./router";
@@ -17,8 +16,6 @@ axios.defaults.baseURL = 'http://localhost:3001';
 // Include credentials (cookies) with requests
 axios.defaults.withCredentials = true;
 
-
-// Constants
 const CLIENT_ID = import.meta.env.VITE_APP_CLIENT_ID;
 const app = createApp(App);
 const pinia = createPinia();
@@ -27,8 +24,8 @@ const pinia = createPinia();
 app.use(PrimeVue, {
   unstyled: true,
   pt: Lara, // apply preset
-  // pt: Wind  // apply preset
 });
+
 // Pinia Store
 app.use(pinia);
 // Router setup

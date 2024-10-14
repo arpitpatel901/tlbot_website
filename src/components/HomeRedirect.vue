@@ -19,7 +19,7 @@ onMounted(async () => {
   if (userStore.user) {
     router.replace({ name: "MainDashboard" });
   } else {
-    router.replace({ name: "Home" });
+    router.replace({ name: "Login" });
   }
 });
 </script>

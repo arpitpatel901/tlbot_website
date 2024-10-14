@@ -1,52 +1,93 @@
 <!-- src/components/chat/ChatSideBar.vue -->
 <template>
-  <div class="w-1/4 border-r p-4 overflow-auto flex flex-col">
-    <!-- Header with Channels title and New Channel button -->
-    <div class="flex justify-between items-center mb-4">
-      <h4 class="text-lg font-semibold text-black">Channels</h4>
+  <aside class="w-64 bg-white border-r flex flex-col">
+    <!-- Header -->
+    <div class="flex items-center justify-between px-4 py-4 border-b">
+      <h2 class="text-xl font-semibold text-gray-800">Channels</h2>
       <button
         @click="openCreateChannelModal"
-        class="p-2 rounded-full bg-blue-500 text-white hover:bg-blue-600"
+        class="text-gray-600 hover:text-gray-800 focus:outline-none"
         aria-label="Create a new channel"
       >
+        <!-- Plus Icon -->
         <svg
-          xmlns="http://www.w3.org/2000/svg"
           class="h-6 w-6"
+          xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M12 4v16m8-8H4"
-          />
+          <path d="M12 4v16m8-8H4" />
         </svg>
       </button>
     </div>
 
     <!-- Channels List -->
-    <ul class="flex-1 overflow-y-auto">
-      <li
-        v-for="channel in channels"
-        :key="channel._id"
-        :class="[
-          'p-2 mb-2 rounded cursor-pointer flex justify-between items-center',
-          activeChannelId === channel._id ? 'bg-blue-100' : 'hover:bg-gray-100',
-        ]"
-        @click="selectChannel(channel._id)"
-      >
-        <span class="text-black"> # {{ channel.name }} </span>
-      </li>
-    </ul>
+    <nav class="flex-1 overflow-y-auto">
+      <ul>
+        <li
+          v-for="channel in channels"
+          :key="channel._id"
+          @click="selectChannel(channel._id)"
+          :class="[
+            'flex items-center px-4 py-2 cursor-pointer',
+            activeChannelId === channel._id
+              ? 'bg-gray-200'
+              : 'hover:bg-gray-100',
+          ]"
+        >
+          <span class="text-gray-700"># {{ channel.name }}</span>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Footer with Dropdown Menu -->
+    <div class="px-4 py-4 border-t">
+      <div class="relative">
+        <button
+          @click="toggleSettingsMenu"
+          class="w-full flex items-center justify-between px-4 py-2 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none"
+        >
+          <span class="text-gray-700">Settings</span>
+          <!-- Dropdown Icon -->
+          <svg
+            class="h-5 w-5 text-gray-600"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <!-- Settings Menu -->
+        <div
+          v-if="isSettingsMenuOpen"
+          @click.away="isSettingsMenuOpen = false"
+          class="absolute bottom-14 left-4 w-56 bg-white border border-gray-200 rounded-md shadow-lg py-1 z-20"
+        >
+          <a
+            @click="navigateToDataConnectors"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+          >
+            Data Connectors
+          </a>
+          <a
+            @click="logout"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+          >
+            Logout
+          </a>
+        </div>
+      </div>
+    </div>
 
     <!-- Create Channel Modal -->
     <CreateChannelModal
       v-if="isCreateChannelModalOpen"
       @close="closeCreateChannelModal"
     />
-  </div>
+  </aside>
 </template>
 
 <script setup>
@@ -61,32 +102,35 @@ const channels = computed(() => userStore.channels);
 const activeChannelId = computed(() => userStore.activeChannelId);
 
 const selectChannel = (channelId) => {
-  console.log(`ChatSideBar.vue: Selected channel ID: ${channelId}`);
   userStore.setActiveChannel(channelId);
-  userStore.fetchMessages(channelId); // Fetch the messages for the selected channel
-
-  // Navigate to the Chat route with channelId as a route param
   router.push({ name: "Chat", params: { channelId } });
 };
 
 const isCreateChannelModalOpen = ref(false);
+const isSettingsMenuOpen = ref(false);
 
 const openCreateChannelModal = () => {
-  console.log("ChatSideBar.vue: Create Channel button clicked");
   isCreateChannelModalOpen.value = true;
 };
 
 const closeCreateChannelModal = () => {
   isCreateChannelModalOpen.value = false;
 };
+
+const toggleSettingsMenu = () => {
+  isSettingsMenuOpen.value = !isSettingsMenuOpen.value;
+};
+
+const logout = async () => {
+  await userStore.logout();
+  router.push({ name: "HomeRedirect" });
+};
+
+const navigateToDataConnectors = () => {
+  router.push({ name: "ConnectDataSources" });
+};
 </script>
 
 <style scoped>
-/* Ensure the text color is black */
-input,
-textarea {
-  color: black;
-}
-
-/* Optional: Add any specific styles here */
+/* Optional: Add custom styles if needed */
 </style>
